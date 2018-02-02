@@ -9,6 +9,8 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        //not blank
+
+        //Kiss my butt android studio!!!
+        //I <3 dr. cherry
     }
 }
