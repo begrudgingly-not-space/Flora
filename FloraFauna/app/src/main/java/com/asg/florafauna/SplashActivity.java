@@ -10,7 +10,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        //Kiss my butt android studio!!!
+        
         //I <3 dr. cherry
     }
 }
