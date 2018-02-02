@@ -11,7 +11,6 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         // Testing new
 
-        //Kiss my butt android studio!!!
-        //I <3 dr. cherry
+        //NOOOOOO!!!!
     }
 }
