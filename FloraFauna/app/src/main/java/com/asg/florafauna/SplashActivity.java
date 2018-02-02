@@ -12,6 +12,5 @@ public class SplashActivity extends AppCompatActivity {
 
         //Kiss my butt android studio!!!
         //I <3 dr. cherry
-        //not blank
     }
 }
