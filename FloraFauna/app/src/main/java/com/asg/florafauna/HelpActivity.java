@@ -1,20 +1,23 @@
 package com.asg.florafauna;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-public class SplashActivity extends AppCompatActivity {
+/**
+ * Created by brada on 2/2/2018.
+ */
 
+public class HelpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
+        setContentView(R.layout.activity_help);
     }
 
     public void sendMessage(View view){
-        Intent intent = new Intent(SplashActivity.this, HelpActivity.class);
+        Intent intent = new Intent(HelpActivity.this, SplashActivity.class);
         startActivity(intent);
 
     }
