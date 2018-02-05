@@ -18,4 +18,10 @@ public class SplashActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
+
+    public void goToSettings(View view){
+        Intent intent = new Intent(SplashActivity.this, SettingsActivity.class);
+        startActivity(intent);
+
+    }
 }

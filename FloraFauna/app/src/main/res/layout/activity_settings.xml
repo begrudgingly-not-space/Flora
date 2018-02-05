@@ -17,6 +17,7 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="12dp"
-            android:text="Back" />
+            android:text="Back"
+            android:onClick="goBack"/>
     </RelativeLayout>
 </android.support.constraint.ConstraintLayout>
