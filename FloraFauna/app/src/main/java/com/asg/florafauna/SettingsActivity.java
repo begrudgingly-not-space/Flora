@@ -16,6 +16,4 @@ public class SettingsActivity extends AppCompatActivity {
         finish();
     }
 
-    //testing if this works
-
 }
