@@ -1,19 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.asg.florafauna.SettingsActivity"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="8dp"
+    android:orientation="vertical"
+    android:background="#99ff99" >
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="This is the help page. It needs help." />
+        android:text="Search Page"
+        android:textColor="@color/white"
+        android:background="@drawable/rounded_lime_box"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Information about search page."
+        android:textColor="@color/white"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/rounded_green_box"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Map Page"
+        android:textColor="@color/white"
+        android:background="@drawable/rounded_lime_box"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Information about map page."
+        android:textColor="@color/white"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/rounded_green_box"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="What's Around Me"
+        android:textColor="@color/white"
+        android:background="@drawable/rounded_lime_box"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Information about What's Around Me feature."
+        android:textColor="@color/white"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/rounded_green_box"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Image Recognition"
+        android:textColor="@color/white"
+        android:background="@drawable/rounded_lime_box"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="We don't actually plan on doing this."
+        android:textColor="@color/white"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/rounded_green_box"/>
 
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="0"
         android:onClick="sendMessage"
         android:text="Return" />
 
