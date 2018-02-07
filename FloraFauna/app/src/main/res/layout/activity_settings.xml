@@ -13,9 +13,9 @@
             android:id="@+id/Back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dp"
+            android:layout_marginBottom="14dp"
             android:onClick="goBack"
             android:text="@string/Back" />
 
