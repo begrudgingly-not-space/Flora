@@ -10,19 +10,9 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
-        // Comment to test merge
-    }
 
-    public void sendMessage(View view){
-        Intent intent = new Intent(SplashActivity.this, HelpActivity.class);
+        Intent intent = new Intent(SplashActivity.this, SearchActivity.class);
         startActivity(intent);
-
-    }
-
-    public void goToSettings(View view){
-        Intent intent = new Intent(SplashActivity.this, SettingsActivity.class);
-        startActivity(intent);
-
+        finish();
     }
 }
