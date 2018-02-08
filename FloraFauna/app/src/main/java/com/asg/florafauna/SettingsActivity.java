@@ -13,6 +13,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public void goBack(View view){
+        /* closes the activity */
         finish();
     }
 
