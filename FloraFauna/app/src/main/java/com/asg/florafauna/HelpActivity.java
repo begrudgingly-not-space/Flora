@@ -17,8 +17,7 @@ public class HelpActivity extends AppCompatActivity {
     }
 
     public void sendMessage(View view){
-        Intent intent = new Intent(HelpActivity.this, SplashActivity.class);
-        startActivity(intent);
+        finish();
 
     }
 }
