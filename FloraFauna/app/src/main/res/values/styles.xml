@@ -5,6 +5,11 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/limegreen</item>
         <item name="colorPrimaryDark">@color/black</item>
+
+        <!-- change the color of the app background
+        <item name="android:windowBackground">@color/mint</item>
+         -->
+
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
