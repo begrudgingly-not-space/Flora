@@ -1,69 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.asg.florafauna.SettingsActivity"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:paddingTop="8dp"
+    android:paddingTop="16dp"
     android:orientation="vertical"
-    android:background="#99ff99" >
+    android:background="@color/mint" >
+
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Search Page"
+        android:text=" Search Page"
         android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
         android:background="@drawable/rounded_lime_box"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Information about search page."
+        android:textSize="15sp"
+        android:text=" The search page allows you to search for species
+ by typing the common name or scientific name of
+ the species into the search bar. You can also
+ search for species by state and county/parish by
+ typing this information into the search bar. After
+ performing a search, you can filter results by
+ location, taxonomy, habitat, and date."
         android:textColor="@color/white"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/rounded_green_box"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Map Page"
+        android:text=" What's Around Me"
         android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
         android:background="@drawable/rounded_lime_box"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="15sp"
         android:text="Information about map page."
         android:textColor="@color/white"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/rounded_green_box"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="What's Around Me"
+        android:text=" Map Page"
         android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
         android:background="@drawable/rounded_lime_box"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="15sp"
         android:text="Information about What's Around Me feature."
         android:textColor="@color/white"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/rounded_green_box"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Image Recognition"
+        android:text=" Personal Recordings Page"
         android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
         android:background="@drawable/rounded_lime_box"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:text="Information about What's Around Me feature."
+        android:textColor="@color/white"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/rounded_green_box"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=" Image Recognition"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:background="@drawable/rounded_lime_box"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
         android:text="We don't actually plan on doing this."
         android:textColor="@color/white"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/rounded_green_box"/>
 
     <Button
@@ -72,6 +113,11 @@
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:onClick="sendMessage"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/bluegreen"
+        android:textStyle="bold"
         android:text="Return" />
 
-</LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

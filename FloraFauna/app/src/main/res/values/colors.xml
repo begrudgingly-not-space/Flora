@@ -10,4 +10,7 @@
     <color name="blue">#0000FF</color>
     <color name="limegreen">#32CD32</color>
     <color name="mint">#99ff99</color>
+    <color name="lightmint">#adffad</color>
+    <color name="bluegreen">#1b915c</color>
+    <color name="lightbg">#45dc99</color>
 </resources>
