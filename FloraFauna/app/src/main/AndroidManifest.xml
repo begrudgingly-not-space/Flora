@@ -24,7 +24,7 @@
             android:screenOrientation="sensorPortrait">
         </activity>
         <activity android:name=".HelpActivity"
-            android:label="Help and Support"
+            android:label="Help Page"
             android:screenOrientation="sensorPortrait">
         </activity>
         <activity android:name=".SettingsActivity"

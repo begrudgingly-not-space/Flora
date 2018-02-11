@@ -21,4 +21,9 @@ public class HelpActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
+
+    public void goBack(View view){
+        finish();
+    }
+
 }
