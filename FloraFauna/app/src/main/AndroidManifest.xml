@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.asg.florafauna">
+    
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -22,7 +24,7 @@
             android:screenOrientation="sensorPortrait">
         </activity>
         <activity android:name=".HelpActivity"
-            android:label="Help and Support"
+            android:label="Help Page"
             android:screenOrientation="sensorPortrait">
         </activity>
         <activity android:name=".SettingsActivity"

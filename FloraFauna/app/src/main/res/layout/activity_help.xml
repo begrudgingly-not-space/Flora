@@ -1,69 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.asg.florafauna.SettingsActivity"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:paddingTop="8dp"
+    android:paddingTop="16dp"
     android:orientation="vertical"
-    android:background="#99ff99" >
+    android:background="@color/mint" >
+
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Search Page"
+        android:text=" Search Page"
         android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
         android:background="@drawable/rounded_lime_box"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Information about search page."
+        android:textSize="15sp"
+        android:paddingTop="2dp"
+        android:paddingBottom="4dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:text="The search page allows you to search for species
+by typing the common name or scientific name of
+the species into the search bar. You can also
+search for species by state and county/parish by
+typing this information into the search bar. After
+performing a search, you can filter results by
+location, taxonomy, habitat, and date."
         android:textColor="@color/white"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/rounded_green_box"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Map Page"
+        android:text=" What's Around Me"
         android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
         android:background="@drawable/rounded_lime_box"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Information about map page."
+        android:textSize="15sp"
+        android:paddingTop="2dp"
+        android:paddingBottom="4dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:text="By clicking the What's Around Me button, you can view the different species that are near your location on a map."
         android:textColor="@color/white"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/rounded_green_box"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="What's Around Me"
+        android:text=" Map Page"
         android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
         android:background="@drawable/rounded_lime_box"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Information about What's Around Me feature."
+        android:textSize="15sp"
+        android:paddingTop="2dp"
+        android:paddingBottom="4dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:text="The map page allows you to view the occurrences of a species by typing the common name or scientific name of the species into a search bar. You can view the occurrences of a species in a state, county/parish, or a certain radius from your position."
         android:textColor="@color/white"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/rounded_green_box"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Image Recognition"
+        android:text=" Personal Recordings Page"
         android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
         android:background="@drawable/rounded_lime_box"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="We don't actually plan on doing this."
+        android:textSize="15sp"
+        android:paddingTop="2dp"
+        android:paddingBottom="4dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:text="The personal recordings page allows you to record your own sighting of a species. You can record the location that you saw the species as well as an image and/or sound recording of the sighting. This feature is helpful if you would like to remember where you say a species for future reference."
         android:textColor="@color/white"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/rounded_green_box"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=" Image Recognition"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:background="@drawable/rounded_lime_box"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:paddingTop="2dp"
+        android:paddingBottom="4dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:text="You can upload a image of an unknown species and the application will determine the scientific and common name of the species."
+        android:textColor="@color/white"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/rounded_green_box"/>
 
     <Button
@@ -72,6 +133,11 @@
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:onClick="sendMessage"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/bluegreen"
+        android:textStyle="bold"
         android:text="Return" />
 
-</LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
