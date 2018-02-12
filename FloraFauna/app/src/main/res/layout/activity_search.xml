@@ -1,37 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.asg.florafauna.SplashActivity">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginBottom="12dp"
-            android:layout_marginStart="25dp"
-            android:onClick="sendMessage"
-            android:text="@string/Help"
-            tools:layout_editor_absoluteX="265dp"
-            tools:layout_editor_absoluteY="16dp" />
-
-        <Button
-            android:id="@+id/Settings_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/button"
-            android:layout_marginEnd="19dp"
-            android:onClick="goToSettings"
-            android:text="@string/Settings" />
-    </RelativeLayout>
-
-</android.support.constraint.ConstraintLayout>
+    android:background="@color/white">
+    <TextView
+        android:id="@+id/SearchText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search:"
+        android:textColor="@color/black"/>
+    <EditText
+        android:layout_width="250dp"
+        android:layout_height="10dp"
+        android:layout_toEndOf="@id/SearchText"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/rounded_lime_box"
+        android:inputType="text"/>
+</RelativeLayout>
