@@ -13,7 +13,7 @@ import android.view.Menu;
  * Edited by ncooley on 2/13.
  */
 
-public class SearchActivity extends AppCompatActivity extends ActionBarActivity {
+public class SearchActivity extends AppCompatActivity {
 
     private Toolbar toolbar; //Declaring the toolbar object (Nathan 2/13)
 
