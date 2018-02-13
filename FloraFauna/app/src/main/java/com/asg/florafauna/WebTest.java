@@ -26,9 +26,10 @@ public class WebTest
             while ((line = input.readLine()) != null)
             {
                 System.out.println(line);//this is a json
-                //JSONOBject obj = new JSONObject(line);
+                JSONArray obj = new JSONArray(line);
+                System.out.println("got here");
                 //System.out.println(obj.getString("link"));
-
+                //System.out.println(obj.toString());
             }
         }
         catch(Exception e){
