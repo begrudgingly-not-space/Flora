@@ -20,7 +20,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.action_bar_menu, menu);
+        getMenuInflater().inflate(R.menu.settings_menu, menu);
         return true;
     }
 
@@ -28,6 +28,10 @@ public class SettingsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch(item.getItemId()){
+
+            case R.id.action_home:
+                startActivity(new Intent(this, SearchActivity.class));
+                return true;
 
             case R.id.action_help:
                 startActivity(new Intent(this, HelpActivity.class));
