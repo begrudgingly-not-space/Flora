@@ -31,6 +31,7 @@
             android:cropToPadding="false"
             android:onClick="goToSettings"
             android:scaleType="centerCrop"
+            android:background="@null"
             app:srcCompat="@drawable/cogs"
             tools:layout_editor_absoluteX="203dp"
             tools:layout_editor_absoluteY="249dp" />
