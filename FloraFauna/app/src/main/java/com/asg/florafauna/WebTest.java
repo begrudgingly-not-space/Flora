@@ -4,13 +4,21 @@ package com.asg.florafauna;
  * Created by steven on 2/8/18.
  */
 
-import java.util.*;
 import java.io.*;
 import java.net.*;
-import org.json.*;
+import org.jsoup.*;
+import org.jsoup.nodes.*;
+import org.jsoup.select.*;
+import org.jsoup.Connection.Response;
+
+
 
 public class WebTest
 {
+
+    private static Document doc;
+    private static Response res;
+
     public static void main(String args[])
     {
         try
@@ -25,11 +33,22 @@ public class WebTest
             String line;
             while ((line = input.readLine()) != null)
             {
-                System.out.println(line);//this is a json
-                JSONArray obj = new JSONArray(line);
-                System.out.println("got here");
-                //System.out.println(obj.getString("link"));
-                //System.out.println(obj.toString());
+                //System.out.println(line);//this is a json
+                int start = line.indexOf("http");
+                int stop = line.indexOf("?");
+                String link= line.substring(start,stop);
+                res = Jsoup.connect(link).timeout(10000).execute();
+                doc=res.parse();
+                //System.out.println(doc);
+                String hold=doc.toString();
+                //System.out.println(hold);
+                start=hold.indexOf("<h4>Description</h4>")+21;
+                stop=hold.indexOf("\n", start);
+                //System.out.println(start);
+                //System.out.println(stop);
+                String description=hold.substring(start,stop);
+                //System.out.println(description);
+                //System.out.println(doc.select("h4"));
             }
         }
         catch(Exception e){
