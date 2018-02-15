@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.asg.florafauna.SplashActivity">
+    android:layout_height="match_parent">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
@@ -29,7 +28,7 @@
             android:layout_alignParentEnd="true"
             android:adjustViewBounds="true"
             android:cropToPadding="false"
-            android:onClick="goToSettings"
+            android:onClick="openSettings"
             android:scaleType="centerCrop"
             android:background="@null"
             app:srcCompat="@drawable/cogs"
@@ -44,11 +43,10 @@
             android:layout_alignParentStart="true"
             android:layout_marginBottom="12dp"
             android:layout_marginStart="25dp"
-            android:onClick="sendMessage"
+            android:onClick="openHelp"
             android:text="@string/Help"
             tools:layout_editor_absoluteX="265dp"
             tools:layout_editor_absoluteY="16dp" />
 
     </RelativeLayout>
-
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

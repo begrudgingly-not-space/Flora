@@ -48,12 +48,10 @@ public class SearchActivity extends AppCompatActivity {
     public void openHelp(View view){
         Intent intent = new Intent(SearchActivity.this, HelpActivity.class);
         startActivity(intent);
-
     }
 
     public void openSettings(View view){
         Intent intent = new Intent(SearchActivity.this, SettingsActivity.class);
         startActivity(intent);
-
     }
 }
