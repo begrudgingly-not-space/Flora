@@ -42,16 +42,10 @@ public class WebTest
                 String link= line.substring(start,stop);
                 res = Jsoup.connect(link).timeout(10000).execute();
                 doc=res.parse();
-                //System.out.println(doc);
                 String hold=doc.toString();
-                //System.out.println(hold);
                 start=hold.indexOf("<h4>Description</h4>")+21;
                 stop=hold.indexOf("\n", start);
-                //System.out.println(start);
-                //System.out.println(stop);
                 String description=hold.substring(start,stop);
-                //System.out.println(description);
-                //System.out.println(doc.select("h4"));
             }
         }
         catch(Exception e){
