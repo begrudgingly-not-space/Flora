@@ -45,11 +45,6 @@ public class HelpActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void sendMessage(View view){
-        finish();
-
-    }
-
     public void goBack(View view){
         finish();
     }
