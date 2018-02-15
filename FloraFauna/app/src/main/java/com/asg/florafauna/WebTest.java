@@ -23,7 +23,10 @@ public class WebTest
     {
         try
         {
-            URL page = new URL("http://eol.org/api/search/1.0.json?q=Ursus+arctos&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=");
+            String query=eolQuery("Ursus arctos");
+            //URL page = new URL("http://eol.org/api/search/1.0.json?q=Ursus+arctos&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=");
+            System.out.println(query);
+            URL page = new URL(query);
 
             URLConnection connection=page.openConnection();
 
@@ -54,5 +57,18 @@ public class WebTest
         catch(Exception e){
             System.out.println(e.toString());
         }
+    }
+    private static String eolQuery(String name)
+    {
+        String first="http://eol.org/api/search/1.0.json?q=";
+        String last="&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=";
+        name=name.replaceAll(" ","+");
+        return first+name+last;
+    }
+    private static String gbifQuery(String name)
+    {
+        String first = "http://api.gbif.org/v1/species?name=";
+        name=name.replaceAll(" ","+");
+        return first+name;
     }
 }
