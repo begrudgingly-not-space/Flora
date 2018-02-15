@@ -45,12 +45,6 @@ public class HelpActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void sendMessage(View view){
-        Intent intent = new Intent(HelpActivity.this, SplashActivity.class);
-        startActivity(intent);
-
-    }
-
     public void goBack(View view){
         finish();
     }

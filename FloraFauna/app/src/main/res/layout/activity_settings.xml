@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.asg.florafauna.SettingsActivity">
+    tools:context="com.asg.florafauna.SettingsActivity"
+    android:background="@color/mint">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
@@ -25,9 +26,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dp"
+            android:layout_marginBottom="18dp"
             android:onClick="goBack"
-            android:text="@string/Back" />
+            android:text="return" />
 
 
     </RelativeLayout>
