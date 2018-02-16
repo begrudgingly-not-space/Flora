@@ -4,14 +4,9 @@ package com.asg.florafauna;
  * Created by steven on 2/8/18.
  */
 
-import java.io.*;
-import java.net.*;
 import org.jsoup.*;
 import org.jsoup.nodes.*;
-import org.jsoup.select.*;
 import org.jsoup.Connection.Response;
-
-
 
 public class WebTest
 {
