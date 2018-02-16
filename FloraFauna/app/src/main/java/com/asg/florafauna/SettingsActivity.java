@@ -14,31 +14,19 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        Toolbar actionToolbar = findViewById(R.id.my_toolbar);
-        setSupportActionBar(actionToolbar);
+
+        FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_settings);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.settings_menu, menu);
-        return true;
+    public void openHelp(View view){
+        Intent intent = new Intent(SettingsActivity.this, HelpActivity.class);
+        startActivity(intent);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch(item.getItemId()){
-
-            case R.id.action_home:
-                startActivity(new Intent(this, SearchActivity.class));
-                return true;
-
-            case R.id.action_help:
-                startActivity(new Intent(this, HelpActivity.class));
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    //opens settings
+    public void openSettings(View view){
+        Intent intent = new Intent(SettingsActivity.this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     public void goBack(View view){

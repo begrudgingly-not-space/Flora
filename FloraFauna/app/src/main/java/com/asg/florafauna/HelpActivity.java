@@ -18,31 +18,19 @@ public class HelpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help);
-        Toolbar actionToolbar = findViewById(R.id.my_toolbar);
-        setSupportActionBar(actionToolbar);
 
+        FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_help);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.help_menu, menu);
-        return true;
+    public void openHelp(View view){
+        Intent intent = new Intent(HelpActivity.this, HelpActivity.class);
+        startActivity(intent);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch(item.getItemId()){
-
-            case R.id.action_home:
-                startActivity(new Intent(this, SearchActivity.class));
-                return true;
-
-            case R.id.action_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
-        }
-
-        return super.onOptionsItemSelected(item);
+    //opens settings
+    public void openSettings(View view){
+        Intent intent = new Intent(HelpActivity.this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     public void goBack(View view){
