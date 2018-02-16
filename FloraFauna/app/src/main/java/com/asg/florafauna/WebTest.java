@@ -28,15 +28,13 @@ public class WebTest
         {
             String query=eolQuery(name);
             String json = Jsoup.connect(query).ignoreContentType(true).execute().body();
-            int start = json.indexOf("http");
-            int stop = json.indexOf("?");
-            String link = json.substring(start,stop);
+            String link = json.substring(json.indexOf("http"),json.indexOf("?"));
             res = Jsoup.connect(link).timeout(10000).execute();
-            doc=res.parse();
-            String hold=doc.toString();
-            start=hold.indexOf("<h4>Description</h4>")+21;
-            stop=hold.indexOf("\n", start);
-            String description=hold.substring(start,stop);
+            String page = res.parse().toString();
+            //this wont work, not all are labled with just description, but should be able to look for <h4>description... and find the next h4 as the start
+            int start = page.indexOf("<h4>Description</h4>")+21;
+            int stop = page.indexOf("\n", start);
+            String description=page.substring(start,stop);
             return description;
         }
         catch(Exception e)
