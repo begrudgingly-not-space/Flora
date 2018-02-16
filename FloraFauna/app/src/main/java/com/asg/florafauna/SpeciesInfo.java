@@ -8,28 +8,34 @@ import org.jsoup.*;
 
 public class SpeciesInfo
 {
-    String name;
+    String scientificName;
+    String commonName;
     String eolLink;
     String description;
+    String imageLink;
 
     public SpeciesInfo(String name)
     {
-        this.name=name;
+        this.scientificName=name;
+        setFromEOL(name);
     }
-    private void setEOLDescription(String name)
+    private void setFromEOL(String name)
     {
         try
         {
             String query=eolQuery(name);
 
-            String json = Jsoup.connect(query).ignoreContentType(true).execute().body();
+            String json = Jsoup.connect(query).ignoreContentType(true).execute().parse().toString();
             eolLink = json.substring(json.indexOf("http"),json.indexOf("?"));
 
             String page = Jsoup.connect(eolLink).timeout(10000).execute().parse().toString();
             int start = page.indexOf("</h4>",page.indexOf("<h4>Description"))+6;
             int stop = page.indexOf("\n", start);
             description=page.substring(start,stop);
-            //return description;
+
+            start=page.indexOf("<title>")+7;
+            stop = page.indexOf("-",start);
+            commonName=page.substring(start,stop);
         }
         catch(Exception e)
         {
