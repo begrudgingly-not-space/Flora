@@ -4,4 +4,8 @@
     <string name="Settings">Settings</string>
     <string name="Help">HELP</string>
     <string name="Home">Home</string>
+    <string name="Images">Images ON/OFF</string>
+    <string name="Clear">Clear</string>
+    <string name="clear_search_history">Clear search history</string>
+    <string name="clear_cached_data">Clear Cached Data</string>
 </resources>
