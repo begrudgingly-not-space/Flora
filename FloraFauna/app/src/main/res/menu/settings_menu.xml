@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_settings"
-        android:icon="@drawable/ic_settings"
-        android:title="@string/Settings"
+        android:id="@+id/action_home"
+        android:icon="@drawable/ic_home"
+        android:title="@string/Home"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_help"
