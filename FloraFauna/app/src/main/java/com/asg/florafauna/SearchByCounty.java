@@ -44,6 +44,10 @@ public class SearchByCounty{
 
             System.out.println(text);
 
+            JSONObject speciesObject = new JSONObject(text);
+            JSONArray results = speciesObject.getJSONArray("observation");
+            //String num = results.getJSON
+
         }
 
         catch(Exception e){
