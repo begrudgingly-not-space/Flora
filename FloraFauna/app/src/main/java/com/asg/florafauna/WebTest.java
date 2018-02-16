@@ -20,7 +20,7 @@ public class WebTest
     private static Response res;
     public static void main(String args[])
     {
-        System.out.println(setEOLDescription("Ursus arctos"));
+        System.out.println(setEOLDescription("Panthera leo"));
     }
     private static String setEOLDescription(String name)
     {
@@ -31,8 +31,7 @@ public class WebTest
             String link = json.substring(json.indexOf("http"),json.indexOf("?"));
             res = Jsoup.connect(link).timeout(10000).execute();
             String page = res.parse().toString();
-            //this wont work, not all are labled with just description, but should be able to look for <h4>description... and find the next h4 as the start
-            int start = page.indexOf("<h4>Description</h4>")+21;
+            int start = page.indexOf("</h4>",page.indexOf("<h4>Description"))+6;
             int stop = page.indexOf("\n", start);
             String description=page.substring(start,stop);
             return description;
