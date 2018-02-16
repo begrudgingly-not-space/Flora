@@ -3,23 +3,20 @@ package com.asg.florafauna;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.util.ArrayList;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import org.json.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.xml.sax.InputSource;
+import org.w3c.dom.*;
 
 /**
  * Created by shelby on 2/7/18.
  */
 
 public class CommonNameSearch extends AsyncTask<Void, Void, String> {
-
-    // base address for searching for a species
-    // rank is a parameter for the web call
-    // it will be used both for searching by common and scientific names
-    String baseAddress = "http://api.gbif.org/v1/species/search?q=";
-    String rank = "&rank=species";
 
     private Exception exception;
 
@@ -31,12 +28,16 @@ public class CommonNameSearch extends AsyncTask<Void, Void, String> {
 
     protected String doInBackground(Void...params)
     {
+        ArrayList<String> speciesNames = new ArrayList<String>();
+        // base address for searching for a species
+        String baseAddress = "https://www.itis.gov/ITISWebService/services/ITISService/searchForAnyMatch?srchKey=";
         // test user query
-        String[] query = {"American", "Alligator"};
+        String query = "American Alligator";
+        query = query.replaceAll(" ", "%20");
 
         try
         {
-            URL fullAddress = new URL(baseAddress + query[0] + "%20" + query[1] + rank);
+            URL fullAddress = new URL(baseAddress + query);
             HttpURLConnection connection = (HttpURLConnection) fullAddress.openConnection();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 
@@ -50,18 +51,24 @@ public class CommonNameSearch extends AsyncTask<Void, Void, String> {
 
             bufferedReader.close();
 
-            // need to grab the vernacular name and species name from text
-            // 'results' is a json array
-            JSONObject speciesObject = new JSONObject(text);
-            JSONArray results = speciesObject.getJSONArray("results");
+            // itis web call results in xml data
+            // get the scientific and common name from the resulting text
+            // commonName & sciName
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            DocumentBuilder builder = factory.newDocumentBuilder();
 
-            String scientificName = results.getJSONObject(0).getString("species");
+            // parse the results to access XML data
+            Document doc = builder.parse(new InputSource(new StringReader(text)));
 
-            // 'vernacularNames' is an array that holds the common name
-            // vernacularName is the first object of the array, which will give the common name
-            JSONArray vernNames = results.getJSONObject(0).getJSONArray("vernacularNames");
-            String commonName = vernNames.getJSONObject(0).getString("vernacularName");
+            // grab the common names from the data -- get the first (most relevant)
+            NodeList commonNameList = doc.getElementsByTagName("ax23:commonName");
+            String commonName = commonNameList.item(0).getTextContent();
+            NodeList scientificNameList = doc.getElementsByTagName("ax23:sciName");
+            String scientificName = scientificNameList.item(0).getTextContent();
 
+            speciesNames.add(commonName);
+            speciesNames.add(scientificName);
 
         }
 
@@ -77,4 +84,6 @@ public class CommonNameSearch extends AsyncTask<Void, Void, String> {
     {
         // format JSON response here
     }
+
+
 }
