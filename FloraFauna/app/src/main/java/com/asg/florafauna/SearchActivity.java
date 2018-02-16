@@ -50,6 +50,7 @@ public class SearchActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    //opens settings
     public void openSettings(View view){
         Intent intent = new Intent(SearchActivity.this, SettingsActivity.class);
         startActivity(intent);
