@@ -36,20 +36,23 @@ public class SearchActivity extends AppCompatActivity {
             case R.id.action_help:
                 startActivity(new Intent(this, HelpActivity.class));
                 return true;
+
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public void sendMessage(View view){
+    public void openHelp(View view){
         Intent intent = new Intent(SearchActivity.this, HelpActivity.class);
         startActivity(intent);
-
     }
 
-    public void goToSettings(View view){
+    //opens settings
+    public void openSettings(View view){
         Intent intent = new Intent(SearchActivity.this, SettingsActivity.class);
         startActivity(intent);
-
     }
 }
