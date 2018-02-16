@@ -9,7 +9,7 @@
         android:layout_centerInParent="true"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="Flora and Fauna" />
+        android:text="Help" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
