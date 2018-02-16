@@ -3,45 +3,56 @@ package com.asg.florafauna;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 
 /**
  * Created by kkey on 2/1/2018.
- *
- * Edited by ncooley on 2/13.
  */
 
 public class SearchActivity extends AppCompatActivity {
-
-    private Toolbar toolbar; //Declaring the toolbar object (Nathan 2/13)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-
-        toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
+        Toolbar actionToolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(actionToolbar);
     }
 
-    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.action_bar_menu, menu);
         return true;
-    }*/
-
-    public void sendMessage(View view){
-        Intent intent = new Intent(SearchActivity.this, HelpActivity.class);
-        startActivity(intent);
-
     }
 
-    public void goToSettings(View view){
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch(item.getItemId()){
+
+            case R.id.action_help:
+                startActivity(new Intent(this, HelpActivity.class));
+                return true;
+
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void openHelp(View view){
+        Intent intent = new Intent(SearchActivity.this, HelpActivity.class);
+        startActivity(intent);
+    }
+
+    //opens settings
+    public void openSettings(View view){
         Intent intent = new Intent(SearchActivity.this, SettingsActivity.class);
         startActivity(intent);
-
     }
 }
