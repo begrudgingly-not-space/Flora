@@ -22,10 +22,11 @@ public class WebTest
         try
         {
             String query=eolQuery(name);
+
             String json = Jsoup.connect(query).ignoreContentType(true).execute().body();
             String link = json.substring(json.indexOf("http"),json.indexOf("?"));
-            res = Jsoup.connect(link).timeout(10000).execute();
-            String page = res.parse().toString();
+
+            String page = Jsoup.connect(link).timeout(10000).execute().parse().toString();
             int start = page.indexOf("</h4>",page.indexOf("<h4>Description"))+6;
             int stop = page.indexOf("\n", start);
             String description=page.substring(start,stop);
