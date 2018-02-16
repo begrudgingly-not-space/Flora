@@ -27,21 +27,10 @@ public class WebTest
         try
         {
             String query=eolQuery(name);
-            //String query=eolQuery("Ursus arctos");
-            //URL page = new URL("http://eol.org/api/search/1.0.json?q=Ursus+arctos&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=");
-            //System.out.println(query);
-            URL page = new URL(query);
-
-            URLConnection connection=page.openConnection();
-
-            connection.setDoInput(true);
-            InputStream inStream = connection.getInputStream();
-            BufferedReader input =new BufferedReader(new InputStreamReader(inStream));
-            String line=input.readLine();
-
-            int start = line.indexOf("http");
-            int stop = line.indexOf("?");
-            String link= line.substring(start,stop);
+            String json = Jsoup.connect(query).ignoreContentType(true).execute().body();
+            int start = json.indexOf("http");
+            int stop = json.indexOf("?");
+            String link = json.substring(start,stop);
             res = Jsoup.connect(link).timeout(10000).execute();
             doc=res.parse();
             String hold=doc.toString();
