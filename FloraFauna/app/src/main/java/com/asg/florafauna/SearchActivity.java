@@ -1,5 +1,6 @@
 package com.asg.florafauna;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ public class SearchActivity extends AppCompatActivity {
     private EditText searchEditText;
     private ListView speciesListView;
     private InputMethodManager imm;
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,13 +81,66 @@ public class SearchActivity extends AppCompatActivity {
 
     public void search(View view) {
         String searchInput = searchEditText.getText().toString();
+        dialog = ProgressDialog.show(this, "",
+                "Loading. Please wait...", true);
         searchRequest(this, searchInput);
 
+        //searchRequestWithCounty(this, "Louisiana", "22015");
         //String searchOutput = makeWebCall(searchInput);
     }
 
     private void searchRequest(final Context context, final String state) {
         final String url = "https://bison.usgs.gov/api/search.json?state=" + state + "&start=0&count=500";
+        Log.d("url", url);
+
+        // Initialize request queue
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+        JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        dialog.dismiss();
+                        ArrayList<String> scientificNamesArray = new ArrayList<String>();
+
+                        try {
+                            JSONArray speciesArray = response.getJSONArray("data");
+
+                            for(int i = 0; i < speciesArray.length(); i++) {
+                                String currentScientificName = speciesArray.getJSONObject(i).getString("name");
+
+                                if (!scientificNamesArray.contains(currentScientificName)) {
+                                    scientificNamesArray.add(currentScientificName);
+                                }
+                            }
+
+                            Log.d("searchResponse", scientificNamesArray.toString());
+
+                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, scientificNamesArray);
+
+                            speciesListView.setAdapter(adapter);
+                            speciesListView.setVisibility(View.VISIBLE);
+
+                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                        }
+                        catch (JSONException error) {
+                            Log.e("searchResponseException", error.toString());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("onErrorResponse", error.getMessage());
+            }
+        }
+        );
+
+        // Adds request to queue which is then sent
+        requestQueue.add(searchRequest);
+    }
+
+    private void searchRequestWithCounty(final Context context, final String state, final String countyFips) {
+        final String url = "https://bison.usgs.gov/api/search.json?state=" + state + "&countyFips=" + countyFips + "&start=0&count=500";
         Log.d("url", url);
 
         // Initialize request queue
@@ -108,7 +163,7 @@ public class SearchActivity extends AppCompatActivity {
                                 }
                             }
 
-                            Log.d("searchResponse", scientificNamesArray.toString());
+                            Log.d("searchRespWithCounty", scientificNamesArray.toString());
 
                             ArrayAdapter<String> adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, scientificNamesArray);
 
@@ -186,7 +241,5 @@ public class SearchActivity extends AppCompatActivity {
         }
 
         return results;
-
-
     }
 }
