@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -42,22 +44,48 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 public class SearchActivity extends AppCompatActivity {
 
-    EditText searchEditText;
+    private EditText searchEditText;
+    private ListView speciesListView;
+    private InputMethodManager imm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); // Enable hiding/showing keyboard
 
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_search);
 
-        searchRequest(this, "Louisiana");
+        searchEditText = findViewById(R.id.SearchEditText);
+        speciesListView = findViewById(R.id.ListSpecies);
+    }
 
-        //searchEditText = findViewById(R.id.SearchEditText);
+    public void openHelp(View view){
+        Intent intent = new Intent(SearchActivity.this, HelpActivity.class);
+        startActivity(intent);
+    }
+
+    // opens settings
+    public void openSettings(View view){
+        Intent intent = new Intent(SearchActivity.this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        // Disables going back by manually pressing the back button
+    }
+
+    public void search(View view) {
+        String searchInput = searchEditText.getText().toString();
+        searchRequest(this, searchInput);
+
+        //String searchOutput = makeWebCall(searchInput);
     }
 
     private void searchRequest(final Context context, final String state) {
-        final String url = "https://bison.usgs.gov/api/search.json?state=" + state + "&start=0&count=50";
+        final String url = "https://bison.usgs.gov/api/search.json?state=" + state + "&start=0&count=500";
         Log.d("url", url);
 
         // Initialize request queue
@@ -81,6 +109,13 @@ public class SearchActivity extends AppCompatActivity {
                             }
 
                             Log.d("searchResponse", scientificNamesArray.toString());
+
+                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, scientificNamesArray);
+
+                            speciesListView.setAdapter(adapter);
+                            speciesListView.setVisibility(View.VISIBLE);
+
+                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                         }
                         catch (JSONException error) {
                             Log.e("searchResponseException", error.toString());
@@ -96,30 +131,6 @@ public class SearchActivity extends AppCompatActivity {
 
         // Adds request to queue which is then sent
         requestQueue.add(searchRequest);
-    }
-
-    public void openHelp(View view){
-        Intent intent = new Intent(SearchActivity.this, HelpActivity.class);
-        startActivity(intent);
-    }
-
-    // opens settings
-    public void openSettings(View view){
-        Intent intent = new Intent(SearchActivity.this, SettingsActivity.class);
-        startActivity(intent);
-    }
-
-    @Override
-    public void onBackPressed()
-    {
-        // Disables going back by manually pressing the back button
-    }
-
-    public void search(View view) {
-        String searchInput = searchEditText.getText().toString();
-        String searchOutput = makeWebCall(searchInput);
-        Toast.makeText(this, searchOutput, Toast.LENGTH_LONG).show();
-        Log.i("searchOutput", searchOutput);
     }
 
     public String makeWebCall(String speciesName)
