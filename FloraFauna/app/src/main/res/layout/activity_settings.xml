@@ -14,25 +14,14 @@
         android:theme="@style/ToolBarStyle"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
-    <Button
-        android:id="@+id/Back_button"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="18dp"
-        android:onClick="goBack"
-        android:text="@string/Back" />
-
     <Switch
         android:id="@+id/Image_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/textView"
         android:layout_alignBottom="@+id/textView"
-        android:layout_marginStart="30dp"
-        android:layout_toEndOf="@+id/Back_button"
+        android:layout_alignStart="@+id/button3"
+        android:layout_marginStart="12dp"
         android:switchMinWidth="60dp" />
 
     <TextView
@@ -52,10 +41,9 @@
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/button4"
         android:layout_below="@+id/Image_switch"
-        android:layout_marginStart="18dp"
         android:layout_marginTop="28dp"
-        android:layout_toEndOf="@+id/Back_button"
         android:text="@string/Clear" />
 
     <TextView
@@ -74,9 +62,9 @@
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/button3"
+        android:layout_alignStart="@+id/miles"
         android:layout_below="@+id/button3"
-        android:layout_marginTop="29dp"
+        android:layout_marginTop="31dp"
         android:text="@string/Clear" />
 
     <TextView
@@ -94,9 +82,10 @@
         android:id="@+id/miles"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/button4"
+        android:layout_alignParentEnd="true"
         android:layout_below="@+id/button4"
-        android:layout_marginTop="38dp"
+        android:layout_marginEnd="51dp"
+        android:layout_marginTop="27dp"
         android:entries="@array/millage"
         android:prompt="@string/miles" />
 
