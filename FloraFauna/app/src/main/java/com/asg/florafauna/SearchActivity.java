@@ -32,4 +32,10 @@ public class SearchActivity extends AppCompatActivity {
         Intent intent = new Intent(SearchActivity.this, SettingsActivity.class);
         startActivity(intent);
     }
+
+    @Override
+    public void onBackPressed()
+    {
+        // Disables going back by manually pressing the back button
+    }
 }
