@@ -31,16 +31,16 @@ public class SpeciesInfo
             String page = Jsoup.connect(eolLink).timeout(10000).execute().parse().toString();
             int start = page.indexOf("</h4>",page.indexOf("<h4>Description"))+6;
             int stop = page.indexOf("\n", start);
-            description=page.substring(start,stop);
+            description = page.substring(start,stop);
 
-            start=page.indexOf("<title>")+7;
+            start = page.indexOf("<title>")+7;
             stop = page.indexOf("-",start);
-            commonName=page.substring(start,stop);
+            commonName = page.substring(start,stop);
 
-            start=page.indexOf("<img alt");
-            start=page.indexOf("src",start)+5;
-            stop=page.indexOf("\"",start);
-            imageLink=page.substring(start,stop);
+            start = page.indexOf("<img alt");
+            start = page.indexOf("src",start)+5;
+            stop = page.indexOf("\"",start);
+            imageLink = page.substring(start,stop);
         }
         catch(Exception e)
         {
