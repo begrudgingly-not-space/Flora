@@ -40,6 +40,25 @@
             android:layout_marginEnd="19dp"
             android:onClick="openSettings"
             android:text="@string/Settings" />
+
+        <EditText
+            android:id="@+id/SearchEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="62dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Name" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search"
+            android:layout_below="@id/SearchEditText"
+            android:layout_centerHorizontal="true"
+            android:onClick="search"/>
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
