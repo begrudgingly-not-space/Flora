@@ -14,10 +14,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.asg.florafauna.FloraFaunaActionBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,7 +23,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -58,7 +55,7 @@ public class SearchActivity extends AppCompatActivity {
 
         searchRequest(this, "Louisiana");
 
-        searchEditText = findViewById(R.id.SearchEditText);
+        //searchEditText = findViewById(R.id.SearchEditText);
     }
 
     private void searchRequest(final Context context, final String state) {
