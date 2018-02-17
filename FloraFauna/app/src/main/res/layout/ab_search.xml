@@ -10,17 +10,23 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="Flora and Fauna" />
-    <TextView
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="?"
-        android:textSize="25sp"
-        android:textColor="@color/white"
+        android:src="@drawable/ic_help_action_white"
         android:layout_centerVertical="true"
-        android:layout_marginStart="10dp"
-        android:textStyle="bold"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="50dp"
         android:onClick="openHelp"/>
     <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_settings_white"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="10dp"
+        android:onClick="openSettings"/>
+    <!--<ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/settings_icon"
@@ -28,4 +34,5 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="10dp"
         android:onClick="openSettings"/>
+    -->
 </RelativeLayout>

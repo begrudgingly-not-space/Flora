@@ -23,9 +23,8 @@ public class SettingsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    //opens settings
-    public void openSettings(View view){
-        Intent intent = new Intent(SettingsActivity.this, SettingsActivity.class);
+    public void openSearch(View view){
+        Intent intent = new Intent(SettingsActivity.this, SearchActivity.class);
         startActivity(intent);
     }
 
