@@ -16,7 +16,7 @@ import org.w3c.dom.*;
  * Created by shelby on 2/7/18.
  */
 
-public class CommonNameSearch extends AsyncTask<Void, Void, String> {
+public class SpeciesSearchHelper extends AsyncTask<Void, Void, String> {
 
     private Exception exception;
 
@@ -26,9 +26,9 @@ public class CommonNameSearch extends AsyncTask<Void, Void, String> {
         // format and get ready for use
     }
 
+    @Override
     protected String doInBackground(Void...params)
     {
-        ArrayList<String> speciesNames = new ArrayList<String>();
         // base address for searching for a species
         String baseAddress = "https://www.itis.gov/ITISWebService/services/ITISService/searchForAnyMatch?srchKey=";
         // test user query
@@ -67,8 +67,8 @@ public class CommonNameSearch extends AsyncTask<Void, Void, String> {
             NodeList scientificNameList = doc.getElementsByTagName("ax23:sciName");
             String scientificName = scientificNameList.item(0).getTextContent();
 
-            speciesNames.add(commonName);
-            speciesNames.add(scientificName);
+            String speciesName = commonName + " " + scientificName;
+
 
         }
 
