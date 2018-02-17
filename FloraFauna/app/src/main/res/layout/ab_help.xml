@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="Help" />
-    <TextView
+    <!--<TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="?"
@@ -20,12 +20,21 @@
         android:layout_marginStart="10dp"
         android:textStyle="bold"
         android:onClick="openHelp"/>
+    -->
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/settings_icon"
+        android:src="@drawable/ic_settings_white"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="50dp"
+        android:onClick="openSearch"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_home_white"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="10dp"
-        android:onClick="openSettings"/>
+        android:onClick="openSearch"/>
 </RelativeLayout>
