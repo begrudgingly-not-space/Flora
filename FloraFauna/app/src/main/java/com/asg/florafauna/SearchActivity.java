@@ -1,7 +1,9 @@
 package com.asg.florafauna;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -81,6 +83,7 @@ public class SearchActivity extends AppCompatActivity {
 
     public void search(View view) {
         String searchInput = searchEditText.getText().toString();
+
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
         searchRequest(this, searchInput);
@@ -130,7 +133,18 @@ public class SearchActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("onErrorResponse", error.getMessage());
+                Log.e("onErrorResponse", error.toString());
+                dialog.dismiss();
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                alertDialog.setTitle("Invalid State");
+                alertDialog.setMessage("Please input the full name of a state.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
             }
         }
         );
