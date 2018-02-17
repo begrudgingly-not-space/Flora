@@ -36,6 +36,11 @@ public class SpeciesInfo
             start=page.indexOf("<title>")+7;
             stop = page.indexOf("-",start);
             commonName=page.substring(start,stop);
+
+            start=page.indexOf("<img alt");
+            start=page.indexOf("src",start)+5;
+            stop=page.indexOf("\"",start);
+            imageLink=page.substring(start,stop);
         }
         catch(Exception e)
         {
