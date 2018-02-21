@@ -221,7 +221,7 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response)
             {
-                // closees the loading, please wait dialog
+                // closes the loading, please wait dialog
                 dialog.dismiss();
 
                 try
@@ -244,8 +244,16 @@ public class SearchActivity extends AppCompatActivity {
                     String scientificName = scientificNameList.item(0).getTextContent();
 
                     // concatenate the common name and scientific name to display both
-                    String speciesName = commonName + ", " + scientificName;
-                    Log.i("species Name: ", speciesName);
+                    String speciesArr[] = {commonName + ", " + scientificName};
+                    Log.i("species name: ", speciesArr[0]);
+
+                    // throw species name in ListView and display
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesArr);
+                    speciesListView.setAdapter(adapter);
+                    speciesListView.setVisibility(View.VISIBLE);
+
+                    // hide the keyboard
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
                 }
                 catch(Exception exception)
