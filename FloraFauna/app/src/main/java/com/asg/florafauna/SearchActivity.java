@@ -17,7 +17,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -31,11 +33,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -87,13 +85,16 @@ public class SearchActivity extends AppCompatActivity {
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
         searchRequest(this, searchInput);
-
+        //searchRequestWithSpecies(this, searchInput);
         //searchRequestWithCounty(this, "Louisiana", "22015");
         //String searchOutput = makeWebCall(searchInput);
     }
 
     private void searchRequest(final Context context, final String state) {
-        final String url = "https://bison.usgs.gov/api/search.json?state=" + state + "&start=0&count=500";
+        // stateInput capitalizes the state
+        // Bison produces an error if you input a state in all lowercase letters
+        String stateInput = state.substring(0, 1).toUpperCase() + state.substring(1);
+        final String url = "https://bison.usgs.gov/api/search.json?state=" + stateInput + "&start=0&count=500";
         Log.d("url", url);
 
         // Initialize request queue
@@ -202,58 +203,66 @@ public class SearchActivity extends AppCompatActivity {
         requestQueue.add(searchRequest);
     }
 
-    public String makeWebCall(String speciesName)
+    private void searchRequestWithSpecies(final Context context, final String speciesName)
     {
-
-        String results = "";
         // base address for searching for a species
         String baseAddress = "https://www.itis.gov/ITISWebService/services/ITISService/searchForAnyMatch?srchKey=";
-        // test user query
-        String query = speciesName;
-        query = query.replaceAll(" ", "%20");
+        // url for searching
+        String formattedName = speciesName.replaceAll(" ", "%20");
+        final String query = baseAddress + formattedName;
 
-        try
+        Log.i("final url:", query);
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+        // set up a StringRequest object for catching XML
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, query, new Response.Listener<String>()
         {
-            URL fullAddress = new URL(baseAddress + query);
-            HttpURLConnection connection = (HttpURLConnection) fullAddress.openConnection();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-            String line;
-            String text = "";
-            // get all text from request
-            while((line = bufferedReader.readLine()) != null)
+            @Override
+            public void onResponse(String response)
             {
-                text += line;
+                // closees the loading, please wait dialog
+                dialog.dismiss();
+
+                try
+                {
+                    Log.i("response: ", response);
+
+                    // create a DocumentBuilderFactory to grab a DocumentBuilder
+                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    factory.setNamespaceAware(true);
+                    DocumentBuilder builder = factory.newDocumentBuilder();
+
+                    // create a Document from the DocumentBuilder to access a parser, then
+                    // parse the results to access the XML data
+                    Document doc = builder.parse(new InputSource(new StringReader(response)));
+
+                    // grab the common names from the data -- get the first (most relevant)
+                    NodeList commonNameList = doc.getElementsByTagName("ax23:commonName");
+                    String commonName = commonNameList.item(0).getTextContent();
+                    NodeList scientificNameList = doc.getElementsByTagName("ax23:sciName");
+                    String scientificName = scientificNameList.item(0).getTextContent();
+
+                    // concatenate the common name and scientific name to display both
+                    String speciesName = commonName + ", " + scientificName;
+                    Log.i("species Name: ", speciesName);
+
+                }
+                catch(Exception exception)
+                {
+                    Log.e("Couldn't grab xml", exception.getMessage());
+                }
             }
+        }, new Response.ErrorListener()
+            {
+                @Override
+                public void onErrorResponse(VolleyError error)
+                {
+                    Log.e("Error: ", error.getMessage());
+                    dialog.dismiss();
+                }
+            });
 
-            bufferedReader.close();
-
-            // itis web call results in xml data
-            // get the scientific and common name from the resulting text
-            // commonName & sciName
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            DocumentBuilder builder = factory.newDocumentBuilder();
-
-            // parse the results to access XML data
-            Document doc = builder.parse(new InputSource(new StringReader(text)));
-
-            // grab the common names from the data -- get the first (most relevant)
-            NodeList commonNameList = doc.getElementsByTagName("ax23:commonName");
-            String commonName = commonNameList.item(0).getTextContent();
-            NodeList scientificNameList = doc.getElementsByTagName("ax23:sciName");
-            String scientificName = scientificNameList.item(0).getTextContent();
-
-            results = commonName + " " + scientificName;
-
-            return results;
-
-        }
-        catch(Exception e)
-        {
-            Log.e("Error: No Results", e.getMessage(), e);
-        }
-
-        return results;
+        requestQueue.add(stringRequest);
     }
 }
