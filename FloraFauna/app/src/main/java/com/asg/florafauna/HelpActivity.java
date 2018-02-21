@@ -19,13 +19,18 @@ public class HelpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help);
 
-
+        FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_help);
     }
 
-    public void sendMessage(View view){
-        Intent intent = new Intent(HelpActivity.this, SplashActivity.class);
+    //opens settings
+    public void openSettings(View view){
+        Intent intent = new Intent(HelpActivity.this, SettingsActivity.class);
         startActivity(intent);
+    }
 
+    public void openSearch(View view){
+        Intent intent = new Intent(HelpActivity.this, SearchActivity.class);
+        startActivity(intent);
     }
 
     public void goBack(View view){
