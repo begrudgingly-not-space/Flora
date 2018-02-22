@@ -26,7 +26,7 @@ public class SearchByCounty{
 
         String[] query = {"Mimus", "polyglottos", "scientific_name", "Louisiana", "22015"};
 
-        try {
+       try {
 
             URL fullUrl = new URL(baseUrl + speciesParam + query[0] + "%20" + query[1] + typeParam + query[2] + stateParam + query[3] + countyParam + query[4]);
             System.out.println(fullUrl);
@@ -50,7 +50,7 @@ public class SearchByCounty{
             //String num = results.getJSONObject(0).getString("occurrences");
             //System.out.println(num);
 
-        }
+       }
 
         catch(Exception e){
             Log.e("Error: no results", e.getMessage(), e);
