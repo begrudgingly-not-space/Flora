@@ -1,24 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/my_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/bluegreen"
-        android:elevation="4dp"
-        android:theme="@style/ToolBarStyle"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-
-    <ScrollView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/scroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/mint">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
@@ -28,13 +13,11 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingTop="16dp"
-            android:orientation="vertical"
-            android:background="@color/mint" >
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="56sp"
                 android:text=" Search Page"
                 android:textColor="@color/white"
                 android:textSize="20sp"
@@ -142,18 +125,6 @@ location, taxonomy, habitat, and date."
                 android:textColor="@color/white"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/rounded_green_box"/>
-
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:onClick="goBack"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/bluegreen"
-                android:textStyle="bold"
-                android:text="@string/Back" />
-
         </LinearLayout>
-    </ScrollView>
-</RelativeLayout>
+</ScrollView>
+

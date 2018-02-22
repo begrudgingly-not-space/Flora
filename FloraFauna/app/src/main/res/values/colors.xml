@@ -6,7 +6,6 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="red">#FF0000</color>
-    <color name="green">#00FF00</color>
     <color name="blue">#0000FF</color>
     <color name="limegreen">#32CD32</color>
     <color name="mint">#99FF99</color>
@@ -14,4 +13,5 @@
     <color name="bluegreen">#1B915C</color>
     <color name="lightbg">#45DC99</color>
     <color name="darkbg">#188052</color>
+    <color name="midGrey">#9D9D9D</color>
 </resources>
