@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.android.volley.Request;
@@ -50,6 +51,8 @@ public class SearchActivity extends AppCompatActivity {
     private InputMethodManager imm;
     private ProgressDialog dialog;
 
+    private int offset = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +63,20 @@ public class SearchActivity extends AppCompatActivity {
 
         searchEditText = findViewById(R.id.SearchEditText);
         speciesListView = findViewById(R.id.ListSpecies);
+
+        //setup for load more button
+        Button btnLoadMore = new Button(this);
+        btnLoadMore.setText("Load More");
+        speciesListView.addFooterView(btnLoadMore);
+
+        //listener for load more button
+        btnLoadMore.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                loadMore();
+            }
+        });
     }
 
     public void openHelp(View view){
@@ -94,7 +111,7 @@ public class SearchActivity extends AppCompatActivity {
         // stateInput capitalizes the state
         // Bison produces an error if you input a state in all lowercase letters
         String stateInput = state.substring(0, 1).toUpperCase() + state.substring(1);
-        final String url = "https://bison.usgs.gov/api/search.json?state=" + stateInput + "&start=0&count=500";
+        final String url = "https://bison.usgs.gov/api/search.json?state=" + stateInput + "&start=" + offset + "&count=500";
         Log.d("url", url);
 
         // Initialize request queue
@@ -149,6 +166,8 @@ public class SearchActivity extends AppCompatActivity {
             }
         }
         );
+
+
 
         // Adds request to queue which is then sent
         requestQueue.add(searchRequest);
@@ -272,5 +291,12 @@ public class SearchActivity extends AppCompatActivity {
             });
 
         requestQueue.add(stringRequest);
+    }
+
+    //changes offset and reruns search
+    public void loadMore(){
+        offset += 500;
+        String searchInput = searchEditText.getText().toString();
+        searchRequest(this, searchInput);
     }
 }
