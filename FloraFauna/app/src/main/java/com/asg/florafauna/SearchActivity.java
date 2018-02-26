@@ -28,6 +28,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -273,4 +274,60 @@ public class SearchActivity extends AppCompatActivity {
 
         requestQueue.add(stringRequest);
     }
+
+    public void whatsAroundMe(View view) {
+        String polygon = "-111.31079356054,38.814339278134,-110.57470957617,39.215537729772";
+        whatsAroundMeRequest(this, polygon);
+    }
+
+    private void whatsAroundMeRequest(final Context context, final String polygon)
+    {
+        final String url = "https://bison.usgs.gov/api/search.json?aoibbox=" + polygon;
+        Log.d("url", url);
+
+        // Initialize request queue
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+        JsonObjectRequest whatsAroundMeRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        ArrayList<String> scientificNamesArray = new ArrayList<String>();
+
+                        try {
+                            JSONArray speciesArray = response.getJSONArray("data");
+
+                            for(int i = 0; i < speciesArray.length(); i++) {
+                                String currentScientificName = speciesArray.getJSONObject(i).getString("name");
+
+                                if (!scientificNamesArray.contains(currentScientificName)) {
+                                    scientificNamesArray.add(currentScientificName);
+                                }
+                            }
+
+                            Log.d("whatsAroundMeResponse", scientificNamesArray.toString());
+
+                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, scientificNamesArray);
+
+                            speciesListView.setAdapter(adapter);
+                            speciesListView.setVisibility(View.VISIBLE);
+
+                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                        }
+                        catch (JSONException error) {
+                            Log.e("whatsAroundMeRespExcept", error.toString());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("onErrorResponse", error.getMessage());
+            }
+        }
+        );
+
+        // Adds request to queue which is then sent
+        requestQueue.add(whatsAroundMeRequest);
+    }
+
 }
