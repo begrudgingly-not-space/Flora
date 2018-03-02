@@ -39,6 +39,8 @@ import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import static com.asg.florafauna.CountyFinder.countyFinder;
+
 
 /**
  * Created by kkey on 2/1/2018.
@@ -106,7 +108,7 @@ public class SearchActivity extends AppCompatActivity {
 
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
-        searchRequest(this, searchInput);
+        searchRequestWithCounty(this, searchInput);
         //searchRequestWithSpecies(this, searchInput);
         //searchRequestWithCounty(this, "Louisiana", "22015");
         //String searchOutput = makeWebCall(searchInput);
@@ -183,7 +185,20 @@ public class SearchActivity extends AppCompatActivity {
         requestQueue.add(searchRequest);
     }
 
-    private void searchRequestWithCounty(final Context context, final String state, final String countyFips) {
+    private void searchRequestWithCounty(final Context context, final String searchInput) {
+        String searchTerms[] = searchInput.split(",");
+        String county = searchTerms[0];
+        String state = searchTerms[1];
+
+        state = state.substring(1, 2).toUpperCase() + state.substring(2);
+
+        String countyFips = countyFinder(state, county);
+
+        Log.d("searchterms", county);
+        Log.d("searchterms", state);
+
+        state = state.replaceAll(" ", "%20");
+
         final String url = "https://bison.usgs.gov/api/search.json?state=" + state + "&countyFips=" + countyFips + "&start=0&count=500";
         Log.d("url", url);
 
@@ -194,6 +209,7 @@ public class SearchActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        dialog.dismiss();
                         ArrayList<String> scientificNamesArray = new ArrayList<String>();
 
                         try {
@@ -223,7 +239,18 @@ public class SearchActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("onErrorResponse", error.getMessage());
+                Log.e("onErrorResponse", error.toString());
+                dialog.dismiss();
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                alertDialog.setTitle("Invalid State");
+                alertDialog.setMessage("Please input the full name of a state.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
             }
         }
         );
