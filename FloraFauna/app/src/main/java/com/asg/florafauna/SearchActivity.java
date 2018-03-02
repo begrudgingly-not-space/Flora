@@ -115,6 +115,8 @@ public class SearchActivity extends AppCompatActivity {
     private void searchRequest(final Context context, final String state) {
         // stateInput capitalizes the state
         // Bison produces an error if you input a state in all lowercase letters
+        final int position = scientificNamesArray.size();
+
         String stateInput = state.substring(0, 1).toUpperCase() + state.substring(1);
         stateInput = stateInput.replaceAll(" ","%20");
 
@@ -148,6 +150,7 @@ public class SearchActivity extends AppCompatActivity {
 
                             speciesListView.setAdapter(adapter);
                             speciesListView.setVisibility(View.VISIBLE);
+                            speciesListView.setSelection(position);
 
                             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                         }
@@ -305,6 +308,5 @@ public class SearchActivity extends AppCompatActivity {
         offset += 500;
         String searchInput = searchEditText.getText().toString();
         searchRequest(this, searchInput);
-
     }
 }
