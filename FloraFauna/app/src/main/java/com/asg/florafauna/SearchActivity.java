@@ -210,6 +210,7 @@ public class SearchActivity extends AppCompatActivity {
         // url for searching
         String formattedName = speciesName.replaceAll(" ", "%20");
         final String query = baseAddress + formattedName;
+        final SpeciesSearchHelper helper = new SpeciesSearchHelper();
 
         Log.i("final url:", query);
 
@@ -241,8 +242,10 @@ public class SearchActivity extends AppCompatActivity {
                     NodeList commonNameList = doc.getElementsByTagName("ax21:commonName");
                     String commonName = commonNameList.item(0).getTextContent();
                     Log.i("Common Name List: ", commonName);
+                    commonName = helper.capitalizeName(commonName);
                     NodeList scientificNameList = doc.getElementsByTagName("ax21:sciName");
                     String scientificName = scientificNameList.item(0).getTextContent();
+                    scientificName = helper.capitalizeName(scientificName);
 
                     // concatenate the common name and scientific name to display both
                     String speciesArr[] = {commonName + ", " + scientificName};
