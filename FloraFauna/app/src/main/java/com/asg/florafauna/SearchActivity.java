@@ -238,9 +238,10 @@ public class SearchActivity extends AppCompatActivity {
                     Document doc = builder.parse(new InputSource(new StringReader(response)));
 
                     // grab the common names from the data -- get the first (most relevant)
-                    NodeList commonNameList = doc.getElementsByTagName("ax23:commonName");
+                    NodeList commonNameList = doc.getElementsByTagName("ax21:commonName");
                     String commonName = commonNameList.item(0).getTextContent();
-                    NodeList scientificNameList = doc.getElementsByTagName("ax23:sciName");
+                    Log.i("Common Name List: ", commonName);
+                    NodeList scientificNameList = doc.getElementsByTagName("ax21:sciName");
                     String scientificName = scientificNameList.item(0).getTextContent();
 
                     // concatenate the common name and scientific name to display both
