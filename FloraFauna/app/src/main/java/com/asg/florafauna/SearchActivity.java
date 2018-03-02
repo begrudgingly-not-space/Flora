@@ -53,7 +53,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private int offset = 0;
 
-    //private ArrayList<String> scientificNamesArray = new ArrayList<String>();
+    private ArrayList<String> scientificNamesArray = new ArrayList<String>();
 
 
     @Override
@@ -101,6 +101,8 @@ public class SearchActivity extends AppCompatActivity {
 
     public void search(View view) {
         String searchInput = searchEditText.getText().toString();
+        scientificNamesArray = new ArrayList<String>();
+        offset = 0;
 
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
@@ -127,7 +129,7 @@ public class SearchActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         dialog.dismiss();
-                        ArrayList<String> scientificNamesArray = new ArrayList<String>();
+                        //ArrayList<String> scientificNamesArray = new ArrayList<String>();
 
                         try {
                             JSONArray speciesArray = response.getJSONArray("data");
@@ -303,5 +305,6 @@ public class SearchActivity extends AppCompatActivity {
         offset += 500;
         String searchInput = searchEditText.getText().toString();
         searchRequest(this, searchInput);
+
     }
 }
