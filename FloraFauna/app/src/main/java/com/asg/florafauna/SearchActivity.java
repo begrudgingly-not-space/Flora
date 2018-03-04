@@ -192,7 +192,7 @@ public class SearchActivity extends AppCompatActivity {
 
         state = state.substring(1, 2).toUpperCase() + state.substring(2);
 
-        String countyFips = countyFinder(state, county);
+        String countyFips = countyFinder(context, state, county);
 
         Log.d("searchterms", county);
         Log.d("searchterms", state);
