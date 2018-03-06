@@ -186,6 +186,8 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void searchRequestWithCounty(final Context context, final String searchInput) {
+        final int position = scientificNamesArray.size();
+
         String searchTerms[] = searchInput.split(",");
         String county = searchTerms[0];
         String state = searchTerms[1];
@@ -199,7 +201,7 @@ public class SearchActivity extends AppCompatActivity {
 
         state = state.replaceAll(" ", "%20");
 
-        final String url = "https://bison.usgs.gov/api/search.json?state=" + state + "&countyFips=" + countyFips + "&start=0&count=500";
+        final String url = "https://bison.usgs.gov/api/search.json?state=" + state + "&countyFips=" + countyFips + "&start=" + offset + "&count=500";
         Log.d("url", url);
 
         // Initialize request queue
@@ -210,7 +212,7 @@ public class SearchActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         dialog.dismiss();
-                        ArrayList<String> scientificNamesArray = new ArrayList<String>();
+                        //ArrayList<String> scientificNamesArray = new ArrayList<String>();
 
                         try {
                             JSONArray speciesArray = response.getJSONArray("data");
@@ -229,6 +231,7 @@ public class SearchActivity extends AppCompatActivity {
 
                             speciesListView.setAdapter(adapter);
                             speciesListView.setVisibility(View.VISIBLE);
+                            speciesListView.setSelection(position);
 
                             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                         }
@@ -334,6 +337,6 @@ public class SearchActivity extends AppCompatActivity {
     public void loadMore(){
         offset += 500;
         String searchInput = searchEditText.getText().toString();
-        searchRequest(this, searchInput);
+        searchRequestWithCounty(this, searchInput);
     }
 }
