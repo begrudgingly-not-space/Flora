@@ -80,12 +80,15 @@ public class SearchActivity extends AppCompatActivity {
         // Disables going back by manually pressing the back button
     }
 
+    //SEARCH FUNCTIONS
     public void search(View view) {
         String searchInput = searchEditText.getText().toString();
 
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
+        //Search by state
         searchRequest(this, searchInput);
+
         //searchRequestWithSpecies(this, searchInput);
         //searchRequestWithCounty(this, "Louisiana", "22015");
         //String searchOutput = makeWebCall(searchInput);
