@@ -35,7 +35,6 @@
                 android:textSize="15sp"
                 android:inputType="textNoSuggestions"/>
         </LinearLayout>
-
         <TextView
             android:layout_width="60dp"
             android:layout_height="wrap_content"
@@ -50,14 +49,25 @@
             android:onClick="search"/>
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/WhatsAroundMeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="What's Around Me?"
+        android:textColor="@color/black"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/SearchBox"
+        android:onClick="whatsAroundMe"/>
+
     <ListView
         android:id="@+id/ListSpecies"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:layout_below="@+id/SearchBox"
+        android:layout_below="@+id/WhatsAroundMeButton"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:visibility="invisible">
     </ListView>
 </RelativeLayout>

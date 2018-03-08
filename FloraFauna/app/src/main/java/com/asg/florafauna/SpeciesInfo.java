@@ -60,4 +60,13 @@ public class SpeciesInfo
         name=name.replaceAll(" ","+");
         return first+name;
     }
+
+    public String getScientificName()
+    {
+        return scientificName;
+    }
+    public String getCommonName()
+    {
+        return commonName;
+    }
 }
