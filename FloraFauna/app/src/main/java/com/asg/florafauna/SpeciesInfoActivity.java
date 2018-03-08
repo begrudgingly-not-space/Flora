@@ -11,28 +11,38 @@ import android.widget.TextView;
 
 public class SpeciesInfoActivity extends AppCompatActivity
 {
-
+    //copied from HelpActivity.java, no clue how this works
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speciesinfo);
 
-        Bundle extras = getIntent().getExtras();
+        //default variables to take values from the results menu from the search/history
         String name;
+        String link;
+
+        //pull values passed by previous page
+        Bundle extras = getIntent().getExtras();
         if (extras != null)
         {
-            name=extras.getString("name");
+            name=extras.getString("link");
+            //link=extras.getString("name");
         }
-        else
+        else //default values for testing before pages are linked properly
         {
-            name="Gorilla Gorilla";
+            name="Ursus arctos";
+            //link="http://eol.org/pages/326447/overview";
         }
+
+        //create object for the animal selected
         SpeciesInfo test = new SpeciesInfo(name);
 
-
-        TextView SNgetText = (TextView) findViewById(R.id.ScientificName);
+        //copied from stackoverflow to set the text in the ScientificName section to what i want
+        //(the scientific name from the object created)
+        TextView SNgetText = findViewById(R.id.ScientificName);
         SNgetText.setText(String.valueOf(test.getScientificName()));
 
+        //action bar creation copied form HelpActivity.java
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_help);
     }
 }
