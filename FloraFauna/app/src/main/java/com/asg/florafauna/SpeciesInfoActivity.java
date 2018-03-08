@@ -39,6 +39,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
         //copied from stackoverflow to set the text in the ScientificName section to what i want
         //(the scientific name from the object created)
+        //https://stackoverflow.com/questions/5821051/how-to-display-the-value-of-a-variable-on-the-screen#5821117
         TextView SNgetText = findViewById(R.id.ScientificName);
         SNgetText.setText(String.valueOf(test.getScientificName()));
 
