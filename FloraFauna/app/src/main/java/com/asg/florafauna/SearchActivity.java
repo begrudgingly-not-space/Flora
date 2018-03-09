@@ -255,7 +255,7 @@ public class SearchActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("onErrorResponse", error.getMessage());
+                Log.e("onErrorResponse", error.toString());
             }
         }
         );
@@ -319,7 +319,7 @@ public class SearchActivity extends AppCompatActivity {
                 }
                 catch(Exception exception)
                 {
-                    Log.e("Couldn't grab xml", exception.getMessage());
+                    Log.e("Couldn't grab xml", exception.toString());
                 }
             }
         }, new Response.ErrorListener()
@@ -327,7 +327,7 @@ public class SearchActivity extends AppCompatActivity {
                 @Override
                 public void onErrorResponse(VolleyError error)
                 {
-                    Log.e("Error: ", error.getMessage());
+                    Log.e("Error: ", error.toString());
                     dialog.dismiss();
                 }
             });
@@ -337,6 +337,8 @@ public class SearchActivity extends AppCompatActivity {
 
     public void whatsAroundMe(View view) {
         String polygon = "-111.31079356054,38.814339278134,-110.57470957617,39.215537729772";
+        dialog = ProgressDialog.show(this, "",
+                "Loading. Please wait...", true);
         whatsAroundMeRequest(this, polygon);
     }
 
@@ -352,6 +354,7 @@ public class SearchActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        dialog.dismiss();
                         ArrayList<String> scientificNamesArray = new ArrayList<String>();
 
                         try {
@@ -381,7 +384,18 @@ public class SearchActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("onErrorResponse", error.getMessage());
+                Log.e("onErrorResponse", error.toString());
+                dialog.dismiss();
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                alertDialog.setTitle("What's Around Me Error Description");
+                alertDialog.setMessage(error.toString());
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
             }
         }
         );
