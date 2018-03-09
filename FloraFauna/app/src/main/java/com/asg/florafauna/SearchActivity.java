@@ -17,7 +17,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -28,7 +27,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.RadioButton;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -86,11 +85,28 @@ public class SearchActivity extends AppCompatActivity {
 
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
-        //Search by state
-        searchRequest(this, searchInput);
 
-        //searchRequestWithSpecies(this, searchInput);
-        //searchRequestWithCounty(this, "Louisiana", "22015");
+        //create links to radio buttons
+        RadioButton Scientific = findViewById(R.id.SpeciesButton);
+        RadioButton County = findViewById(R.id.CountyButton);
+        RadioButton State = findViewById(R.id.StateButton);
+
+        if(State.isChecked())
+        {
+            //search by State
+            searchRequest(this, searchInput);
+        }
+        else if(Scientific.isChecked())
+        {
+            //search by Species/common name
+            searchRequestWithSpecies(this, searchInput);
+        }
+        else if(County.isChecked())
+        {
+            //search by County
+            searchRequestWithCounty(this, "Louisiana", "22015");
+        }
+
         //String searchOutput = makeWebCall(searchInput);
     }
 
