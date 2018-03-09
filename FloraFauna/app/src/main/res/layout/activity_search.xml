@@ -68,13 +68,13 @@
 
             <RadioButton
                 android:id="@+id/SpeciesButton"
-                android:layout_width="138dp"
+                android:layout_width="134dp"
                 android:layout_height="match_parent"
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:text="Scientific/Common Name"
                 android:textColor="@color/white"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
 
             <RadioButton
                 android:id="@+id/CountyButton"
@@ -84,17 +84,17 @@
                 android:scaleY="0.8"
                 android:text="County, State"
                 android:textColor="@color/white"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
 
             <RadioButton
                 android:id="@+id/StateButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:text="State"
                 android:textColor="@color/white"
-                android:textSize="10sp" />
+                android:textSize="12sp" />
         </RadioGroup>
 
     </RelativeLayout>

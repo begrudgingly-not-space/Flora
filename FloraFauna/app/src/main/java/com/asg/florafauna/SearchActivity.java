@@ -110,6 +110,7 @@ public class SearchActivity extends AppCompatActivity {
         //String searchOutput = makeWebCall(searchInput);
     }
 
+    //search by state
     private void searchRequest(final Context context, final String state) {
         // stateInput capitalizes the state
         // Bison produces an error if you input a state in all lowercase letters
