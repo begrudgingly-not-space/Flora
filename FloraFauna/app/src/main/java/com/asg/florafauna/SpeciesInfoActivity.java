@@ -22,6 +22,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
         String link;
 
         //pull values passed by previous page
+        //stolen from:
+        //https://stackoverflow.com/questions/2091465/how-do-i-pass-data-between-activities-in-android-application#7325248
         Bundle extras = getIntent().getExtras();
         if (extras != null)
         {
