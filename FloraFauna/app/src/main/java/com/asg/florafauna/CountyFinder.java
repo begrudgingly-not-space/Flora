@@ -29,7 +29,10 @@ public class CountyFinder {
             s.nextLine();
         }
 
-        countyFips = countyFips.substring(0,5);
+        if (!countyFips.equals("")) {
+            countyFips = countyFips.substring(0, 5);
+        }
+
         Log.d("scanresults", countyFips);
 
         return countyFips;

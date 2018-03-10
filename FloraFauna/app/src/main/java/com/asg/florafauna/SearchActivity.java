@@ -188,11 +188,22 @@ public class SearchActivity extends AppCompatActivity {
     private void searchRequestWithCounty(final Context context, final String searchInput) {
         final int position = scientificNamesArray.size();
 
-        String searchTerms[] = searchInput.split(",");
-        String county = searchTerms[0];
-        String state = searchTerms[1];
+        String searchTerms[];
+        String county = "";
+        String state = "";
 
-        state = state.substring(1, 2).toUpperCase() + state.substring(2);
+        if (searchInput.contains(",") && searchInput.length() >= 3) {
+            searchTerms = searchInput.split(",");
+
+            if (searchTerms.length == 2) {
+                county = searchTerms[0];
+                state = searchTerms[1];
+            }
+        }
+
+        if (state.length() >= 2) {
+            state = state.substring(1, 2).toUpperCase() + state.substring(2);
+        }
 
         String countyFips = countyFinder(context, state, county);
 
