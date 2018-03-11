@@ -86,10 +86,9 @@ public class SearchActivity extends AppCompatActivity {
 
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
-        //searchRequest(this, searchInput);
-        searchRequestWithSpecies(this, searchInput);
+        searchRequest(this, searchInput);
+        //searchRequestWithSpecies(this, searchInput);
         //searchRequestWithCounty(this, "Louisiana", "22015");
-        //String searchOutput = makeWebCall(searchInput);
     }
 
     private void searchRequest(final Context context, final String state) {
@@ -128,6 +127,15 @@ public class SearchActivity extends AppCompatActivity {
                             speciesListView.setVisibility(View.VISIBLE);
 
                             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                            speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                            {
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                                {
+                                    Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
+                                    startActivity(intent);
+                                }
+                            });
                         }
                         catch (JSONException error) {
                             Log.e("searchResponseException", error.toString());
@@ -188,6 +196,15 @@ public class SearchActivity extends AppCompatActivity {
                             speciesListView.setVisibility(View.VISIBLE);
 
                             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                            speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                            {
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                                {
+                                    Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
+                                    startActivity(intent);
+                                }
+                            });
                         }
                         catch (JSONException error) {
                             Log.e("searchResponseException", error.toString());
@@ -207,6 +224,9 @@ public class SearchActivity extends AppCompatActivity {
 
     private void searchRequestWithSpecies(final Context context, final String speciesName)
     {
+        Log.i("species input", speciesName);
+        // test for invalid input
+
         // base address for searching for a species
         String baseAddress = "https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchForAnyMatch?srchKey=";
         // url for searching
@@ -278,6 +298,8 @@ public class SearchActivity extends AppCompatActivity {
                 {
                     Log.e("Error: ", error.getMessage());
                     dialog.dismiss();
+
+
                 }
             });
 
