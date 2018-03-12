@@ -336,7 +336,9 @@ public class SearchActivity extends AppCompatActivity {
                             {
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                                 {
+                                    String speciesName = speciesListView.getItemAtPosition(position).toString();
                                     Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
+                                    intent.putExtra(INTENT_EXTRA_SPECIES_NAME, speciesName);
                                     startActivity(intent);
                                 }
                             });
@@ -424,7 +426,9 @@ public class SearchActivity extends AppCompatActivity {
                     {
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                         {
+                            String speciesName = speciesListView.getItemAtPosition(position).toString();
                             Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
+                            intent.putExtra(INTENT_EXTRA_SPECIES_NAME, speciesName);
                             startActivity(intent);
                         }
                     });
@@ -502,6 +506,17 @@ public class SearchActivity extends AppCompatActivity {
                             speciesListView.setVisibility(View.VISIBLE);
 
                             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                            speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                            {
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                                {
+                                    String speciesName = speciesListView.getItemAtPosition(position).toString();
+                                    Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
+                                    intent.putExtra(INTENT_EXTRA_SPECIES_NAME, speciesName);
+                                    startActivity(intent);
+                                }
+                            });
                         }
                         catch (JSONException error) {
                             Log.e("whatsAroundMeRespExcept", error.toString());
