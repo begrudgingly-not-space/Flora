@@ -12,7 +12,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -26,9 +25,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -39,15 +36,6 @@ import java.util.ArrayList;
 
 import android.widget.EditText;
 import android.widget.Toast;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
-import java.io.StringReader;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import static com.asg.florafauna.CountyFinder.countyFinder;
 
@@ -64,6 +52,7 @@ public class SearchActivity extends AppCompatActivity {
     private ProgressDialog dialog;
     private LocationManager locationManager;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
+    private int searchType = 0;
 
 
     private int offset = 0;
@@ -125,7 +114,10 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View arg0) {
-                loadMore();
+                if (searchType != 0) {
+                    loadMore(searchType);
+                }
+
             }
         });
     }
@@ -170,12 +162,12 @@ public class SearchActivity extends AppCompatActivity {
 
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
-        searchRequestWithCounty(this, searchInput);
+        //searchRequestWithCounty(this, searchInput);
         //searchRequestWithSpecies(this, searchInput);
-        //searchRequest(this, searchInput);
+        searchRequestWithState(this, searchInput);
         }
 
-    private void searchRequest(final Context context, final String state) {
+    private void searchRequestWithState(final Context context, final String state) {
         // stateInput capitalizes the state
         // Bison produces an error if you input a state in all lowercase letters
         final int position = scientificNamesArray.size();
@@ -189,7 +181,7 @@ public class SearchActivity extends AppCompatActivity {
         // Initialize request queue
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
-        JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+        JsonObjectRequest searchRequestWithState = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -197,6 +189,7 @@ public class SearchActivity extends AppCompatActivity {
                         //ArrayList<String> scientificNamesArray = new ArrayList<String>();
 
                         try {
+                            searchType = 2;
                             JSONArray speciesArray = response.getJSONArray("data");
 
                             for(int i = 0; i < speciesArray.length(); i++) {
@@ -250,7 +243,7 @@ public class SearchActivity extends AppCompatActivity {
         );
 
         // Adds request to queue which is then sent
-        requestQueue.add(searchRequest);
+        requestQueue.add(searchRequestWithState);
     }
 
     private void searchRequestWithCounty(final Context context, final String searchInput) {
@@ -294,6 +287,7 @@ public class SearchActivity extends AppCompatActivity {
                         //ArrayList<String> scientificNamesArray = new ArrayList<String>();
 
                         try {
+                            searchType = 1;
                             JSONArray speciesArray = response.getJSONArray("data");
 
                             for(int i = 0; i < speciesArray.length(); i++) {
@@ -333,8 +327,8 @@ public class SearchActivity extends AppCompatActivity {
                 Log.e("onErrorResponse", error.toString());
                 dialog.dismiss();
                 AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                alertDialog.setTitle("Invalid State");
-                alertDialog.setMessage("Please input the full name of a state.");
+                alertDialog.setTitle("Invalid County, State");
+                alertDialog.setMessage("Please input the name of a county followed by a comma and then the name of the state");
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface alertDialog, int which) {
@@ -510,9 +504,17 @@ public class SearchActivity extends AppCompatActivity {
         requestQueue.add(whatsAroundMeRequest);
     }
     //changes offset and reruns search
-    public void loadMore(){
+    public void loadMore(int searchType){
+        dialog = ProgressDialog.show(this, "",
+                "Loading. Please wait...", true);
         offset += 500;
         String searchInput = searchEditText.getText().toString();
-        searchRequestWithCounty(this, searchInput);
+        if (searchType == 1) {
+            searchRequestWithCounty(this, searchInput);
+        }
+        else if (searchType == 2) {
+            searchRequestWithState(this, searchInput);
+        }
+
     }
 }
