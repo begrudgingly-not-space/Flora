@@ -25,7 +25,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -35,6 +37,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import static com.asg.florafauna.CountyFinder.countyFinder;
@@ -156,6 +159,7 @@ public class SearchActivity extends AppCompatActivity {
         // Disables going back by manually pressing the back button
     }
 
+    //SEARCH FUNCTIONS
     public void search(View view) {
         String searchInput = searchEditText.getText().toString();
         scientificNamesArray = new ArrayList<String>();
@@ -163,9 +167,26 @@ public class SearchActivity extends AppCompatActivity {
 
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
-        //searchRequestWithCounty(this, searchInput);
-        //searchRequestWithSpecies(this, searchInput);
-        searchRequestWithState(this, searchInput);
+        //create links to radio buttons
+        RadioButton Scientific = findViewById(R.id.SpeciesButton);
+        RadioButton County = findViewById(R.id.CountyButton);
+        RadioButton State = findViewById(R.id.StateButton);
+
+        if(State.isChecked())
+        {
+            // Search by State
+            searchRequestWithState(this, searchInput);
+        }
+        else if(Scientific.isChecked())
+        {
+            // Search by Species/common name
+            searchRequestWithSpecies(this, searchInput);
+        }
+        else if(County.isChecked())
+        {
+            // Search by County
+            searchRequestWithCounty(this, searchInput);
+        }
         }
 
     private void searchRequestWithState(final Context context, final String state) {
@@ -373,6 +394,7 @@ public class SearchActivity extends AppCompatActivity {
 
                 try
                 {
+                    searchType = 4;
                     Log.i("response", response.toString());
 
                     // grab all results from response and place into one JSONObject
@@ -521,6 +543,9 @@ public class SearchActivity extends AppCompatActivity {
         }
         else if (searchType == 3) {
             whatsAroundMeRequest(this, "-111.31079356054,38.814339278134,-110.57470957617,39.215537729772");
+        }
+        else if (searchType == 4) {
+            searchRequestWithSpecies(this, searchInput);
         }
 
     }
