@@ -15,8 +15,6 @@ public class SplashActivity extends AppCompatActivity {
         Intent intent = new Intent(SplashActivity.this, SearchActivity.class);
 
         //for use later, this is how to pass data between activities
-        //Stolen from:
-        //https://stackoverflow.com/questions/2091465/how-do-i-pass-data-between-activities-in-android-application#7325248
         //intent.putExtra("sName","Ursus arctos");
 
         startActivity(intent);
