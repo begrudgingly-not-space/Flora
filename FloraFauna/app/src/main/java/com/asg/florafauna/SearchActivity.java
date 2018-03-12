@@ -53,6 +53,7 @@ public class SearchActivity extends AppCompatActivity {
     private LocationManager locationManager;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
     private int searchType = 0;
+    public static final String INTENT_EXTRA_SPECIES_NAME = "speciesName";
 
 
     private int offset = 0;
@@ -190,7 +191,7 @@ public class SearchActivity extends AppCompatActivity {
 
                         try {
                             searchType = 2;
-                            JSONArray speciesArray = response.getJSONArray("data");
+                            final JSONArray speciesArray = response.getJSONArray("data");
 
                             for(int i = 0; i < speciesArray.length(); i++) {
                                 String currentScientificName = speciesArray.getJSONObject(i).getString("name");
@@ -214,7 +215,9 @@ public class SearchActivity extends AppCompatActivity {
                             {
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                                 {
+                                    String speciesName = speciesListView.getItemAtPosition(position).toString();
                                     Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
+                                    intent.putExtra(INTENT_EXTRA_SPECIES_NAME, speciesName);
                                     startActivity(intent);
                                 }
                             });
