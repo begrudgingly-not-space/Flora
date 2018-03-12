@@ -25,7 +25,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
         String speciesName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
 
-        if (speciesName != null || !speciesName.equals("") || !speciesName.equals(" ")) {
+        if (speciesName != null) {
             sName = speciesName;
         }
         else {
