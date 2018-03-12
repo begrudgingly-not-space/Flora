@@ -31,6 +31,10 @@
             android:label="Settings"
             android:screenOrientation="sensorPortrait">
         </activity>
+        <activity android:name=".SpeciesInfoActivity"
+            android:label="SpeciesInfo"
+            android:screenOrientation="sensorPortrait">
+        </activity>
     </application>
 
 </manifest>

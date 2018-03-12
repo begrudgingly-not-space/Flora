@@ -1,5 +1,6 @@
 package com.asg.florafauna;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -43,7 +44,34 @@ public class SpeciesInfoActivity extends AppCompatActivity
         TextView SNgetText = findViewById(R.id.ScientificName);
         SNgetText.setText(String.valueOf(test.getScientificName()));
 
+        TextView CNgetText = findViewById(R.id.CommonName);
+        CNgetText.setText(String.valueOf(test.getCommonName()));
+
+        TextView DgetText = findViewById(R.id.Description);
+        DgetText.setText(String.valueOf(test.getDescription()));
+
+        TextView ILgetText = findViewById(R.id.ImageLink);
+        ILgetText.setText(String.valueOf(test.getImageLink()));
+
+        TextView ELgetText = findViewById(R.id.EoLLink);
+        ELgetText.setText(String.valueOf(test.getEolLink()));
+
         //action bar creation copied form HelpActivity.java
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_help);
+
+    }
+    //opens settings
+    public void openSettings(View view){
+        Intent intent = new Intent(SpeciesInfoActivity.this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    public void openSearch(View view){
+        Intent intent = new Intent(SpeciesInfoActivity.this, SearchActivity.class);
+        startActivity(intent);
+    }
+
+    public void goBack(View view){
+        finish();
     }
 }
