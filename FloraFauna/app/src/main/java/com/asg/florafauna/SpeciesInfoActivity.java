@@ -19,27 +19,29 @@ public class SpeciesInfoActivity extends AppCompatActivity
         setContentView(R.layout.activity_speciesinfo);
 
         //default variables to take values from the results menu from the search/history
-        String name;
+        String sName;
         String link;
 
         //pull values passed by previous page
+        //stolen from:
+        //https://stackoverflow.com/questions/2091465/how-do-i-pass-data-between-activities-in-android-application#7325248
         Bundle extras = getIntent().getExtras();
         if (extras != null)
         {
-            name=extras.getString("link");
-            //link=extras.getString("name");
+            //link=extras.getString("link");
+            sName=extras.getString("sName");
         }
         else //default values for testing before pages are linked properly
         {
-            name="Ursus arctos";
+            sName="Ursus arctos";
             //link="http://eol.org/pages/326447/overview";
         }
 
         //create object for the animal selected
-        SpeciesInfo test = new SpeciesInfo(name);
+        SpeciesInfo test = new SpeciesInfo(sName);
 
         //copied from stackoverflow to set the text in the ScientificName section to what i want
-        //(the scientific name from the object created)
+        //stolen from:
         //https://stackoverflow.com/questions/5821051/how-to-display-the-value-of-a-variable-on-the-screen#5821117
         TextView SNgetText = findViewById(R.id.ScientificName);
         SNgetText.setText(String.valueOf(test.getScientificName()));
