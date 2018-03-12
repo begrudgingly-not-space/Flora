@@ -19,28 +19,32 @@ public class SpeciesInfoActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speciesinfo);
-        String name;
+        //default variables to take values from the results menu from the search/history
+        String sName;
+        String link;
 
         String speciesName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
 
         if (speciesName != null || !speciesName.equals("") || !speciesName.equals(" ")) {
-            name = speciesName;
+            sName = speciesName;
         }
         else {
-            name = "No species name";
+            sName = "No species name";
         }
 
         //Bundle extras = getIntent().getExtras();
 
         /*if (extras != null)
         {
-            name = extras.getString("name");
+            //link=extras.getString("link");
+            sName=extras.getString("sName");
         }
-        else
+        else //default values for testing before pages are linked properly
         {
-            name = "Gorilla Gorilla";
+            sName="Ursus arctos";
+            //link="http://eol.org/pages/326447/overview";
         }*/
-        SpeciesInfo test = new SpeciesInfo(name);
+        SpeciesInfo test = new SpeciesInfo(sName);
 
 
         TextView SNgetText = findViewById(R.id.ScientificName);
