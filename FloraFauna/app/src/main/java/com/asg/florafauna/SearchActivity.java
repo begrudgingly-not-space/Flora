@@ -86,8 +86,8 @@ public class SearchActivity extends AppCompatActivity {
 
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
-        searchRequest(this, searchInput);
-        //searchRequestWithSpecies(this, searchInput);
+        //searchRequest(this, searchInput);
+        searchRequestWithSpecies(this, searchInput);
         //searchRequestWithCounty(this, "Louisiana", "22015");
     }
 
@@ -289,6 +289,17 @@ public class SearchActivity extends AppCompatActivity {
                 catch(Exception exception)
                 {
                     Log.e("Couldn't grab JSON data", exception.getMessage());
+                    
+                    AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                    alertDialog.setTitle("Invalid Species Name");
+                    alertDialog.setMessage("Please enter a common or scientific name");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
                 }
             }
         }, new Response.ErrorListener()
