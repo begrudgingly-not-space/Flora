@@ -1,11 +1,18 @@
 package com.asg.florafauna;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
 import android.widget.EditText;
 import android.widget.RadioButton;
 
@@ -49,6 +57,9 @@ public class SearchActivity extends AppCompatActivity {
     private ListView speciesListView;
     private InputMethodManager imm;
     private ProgressDialog dialog;
+    private LocationManager locationManager;
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +67,59 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); // Enable hiding/showing keyboard
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED/* && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED*/) {
+        // Register the listener with the Location Manager to receive location updates
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                // Dialog to explain why app wants permission
+            }
+            else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            }
+        }
+        else {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            // Define a listener that responds to location updates
+            LocationListener locationListener = new LocationListener() {
+                public void onLocationChanged(Location location) {
+                    // Called when a new location is found by the network location provider.
+                    Toast.makeText(SearchActivity.this, Double.toString(location.getLatitude()) + Double.toString(location.getLongitude()), Toast.LENGTH_SHORT).show();
+                }
+
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+                }
+
+                public void onProviderEnabled(String provider) {
+                }
+
+                public void onProviderDisabled(String provider) {
+                }
+            };
+        }
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_search);
 
         searchEditText = findViewById(R.id.SearchEditText);
         speciesListView = findViewById(R.id.ListSpecies);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission granted
+                }
+                else {
+                    // Permission denied, What's Around Me functionality disabled
+                }
+            }
+        }
     }
 
     public void openHelp(View view){
@@ -215,7 +275,7 @@ public class SearchActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("onErrorResponse", error.getMessage());
+                Log.e("onErrorResponse", error.toString());
             }
         }
         );
@@ -279,7 +339,7 @@ public class SearchActivity extends AppCompatActivity {
                 }
                 catch(Exception exception)
                 {
-                    Log.e("Couldn't grab xml", exception.getMessage());
+                    Log.e("Couldn't grab xml", exception.toString());
                 }
             }
         }, new Response.ErrorListener()
@@ -287,7 +347,7 @@ public class SearchActivity extends AppCompatActivity {
                 @Override
                 public void onErrorResponse(VolleyError error)
                 {
-                    Log.e("Error: ", error.getMessage());
+                    Log.e("Error: ", error.toString());
                     dialog.dismiss();
                 }
             });
@@ -297,6 +357,8 @@ public class SearchActivity extends AppCompatActivity {
 
     public void whatsAroundMe(View view) {
         String polygon = "-111.31079356054,38.814339278134,-110.57470957617,39.215537729772";
+        dialog = ProgressDialog.show(this, "",
+                "Loading. Please wait...", true);
         whatsAroundMeRequest(this, polygon);
     }
 
@@ -312,6 +374,7 @@ public class SearchActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        dialog.dismiss();
                         ArrayList<String> scientificNamesArray = new ArrayList<String>();
 
                         try {
@@ -341,7 +404,18 @@ public class SearchActivity extends AppCompatActivity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("onErrorResponse", error.getMessage());
+                Log.e("onErrorResponse", error.toString());
+                dialog.dismiss();
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                alertDialog.setTitle("What's Around Me Error Description");
+                alertDialog.setMessage(error.toString());
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
             }
         }
         );
