@@ -146,8 +146,8 @@ public class SearchActivity extends AppCompatActivity {
 
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
-        searchRequest(this, searchInput);
-        //searchRequestWithSpecies(this, searchInput);
+        //searchRequest(this, searchInput);
+        searchRequestWithSpecies(this, searchInput);
         //searchRequestWithCounty(this, "Louisiana", "22015");
     }
 
@@ -298,8 +298,6 @@ public class SearchActivity extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
-        // set up a StringRequest object for catching XML
-        //StringRequest stringRequest = new StringRequest(Request.Method.GET, query, new Response.Listener<String>()
         JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null, new Response.Listener<JSONObject>()
         {
             @Override
