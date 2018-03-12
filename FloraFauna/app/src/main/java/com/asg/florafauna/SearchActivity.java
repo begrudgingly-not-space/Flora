@@ -174,21 +174,19 @@ public class SearchActivity extends AppCompatActivity {
 
         if(State.isChecked())
         {
-            //search by State
+            // Search by State
             searchRequestWithState(this, searchInput);
         }
         else if(Scientific.isChecked())
         {
-            //search by Species/common name
+            // Search by Species/common name
             searchRequestWithSpecies(this, searchInput);
         }
         else if(County.isChecked())
         {
-            //search by County
+            // Search by County
             searchRequestWithCounty(this, searchInput);
         }
-
-        //String searchOutput = makeWebCall(searchInput);
         }
 
     private void searchRequestWithState(final Context context, final String state) {
@@ -396,6 +394,7 @@ public class SearchActivity extends AppCompatActivity {
 
                 try
                 {
+                    searchType = 4;
                     Log.i("response", response.toString());
 
                     // grab all results from response and place into one JSONObject
@@ -544,6 +543,9 @@ public class SearchActivity extends AppCompatActivity {
         }
         else if (searchType == 3) {
             whatsAroundMeRequest(this, "-111.31079356054,38.814339278134,-110.57470957617,39.215537729772");
+        }
+        else if (searchType == 4) {
+            searchRequestWithSpecies(this, searchInput);
         }
 
     }
