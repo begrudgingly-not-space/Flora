@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.android.volley.Request;
@@ -48,6 +49,8 @@ import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import static com.asg.florafauna.CountyFinder.countyFinder;
+
 
 /**
  * Created by kkey on 2/1/2018.
@@ -61,6 +64,11 @@ public class SearchActivity extends AppCompatActivity {
     private ProgressDialog dialog;
     private LocationManager locationManager;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
+
+
+    private int offset = 0;
+
+    private ArrayList<String> scientificNamesArray = new ArrayList<String>();
 
 
     @Override
@@ -106,6 +114,20 @@ public class SearchActivity extends AppCompatActivity {
 
         searchEditText = findViewById(R.id.SearchEditText);
         speciesListView = findViewById(R.id.ListSpecies);
+
+        //setup for load more button
+        Button btnLoadMore = new Button(this);
+        btnLoadMore.setText("Load More");
+        speciesListView.addFooterView(btnLoadMore);
+
+        //listener for load more button
+        btnLoadMore.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                loadMore();
+            }
+        });
     }
 
     @Override
@@ -143,19 +165,25 @@ public class SearchActivity extends AppCompatActivity {
 
     public void search(View view) {
         String searchInput = searchEditText.getText().toString();
+        scientificNamesArray = new ArrayList<String>();
+        offset = 0;
 
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
+        searchRequestWithCounty(this, searchInput);
+        //searchRequestWithSpecies(this, searchInput);
         //searchRequest(this, searchInput);
-        searchRequestWithSpecies(this, searchInput);
-        //searchRequestWithCounty(this, "Louisiana", "22015");
-    }
+        }
 
     private void searchRequest(final Context context, final String state) {
         // stateInput capitalizes the state
         // Bison produces an error if you input a state in all lowercase letters
+        final int position = scientificNamesArray.size();
+
         String stateInput = state.substring(0, 1).toUpperCase() + state.substring(1);
-        final String url = "https://bison.usgs.gov/api/search.json?state=" + stateInput + "&start=0&count=500";
+        stateInput = stateInput.replaceAll(" ","%20");
+
+        final String url = "https://bison.usgs.gov/api/search.json?state=" + stateInput + "&start=" + offset + "&count=500";
         Log.d("url", url);
 
         // Initialize request queue
@@ -166,7 +194,7 @@ public class SearchActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         dialog.dismiss();
-                        ArrayList<String> scientificNamesArray = new ArrayList<String>();
+                        //ArrayList<String> scientificNamesArray = new ArrayList<String>();
 
                         try {
                             JSONArray speciesArray = response.getJSONArray("data");
@@ -185,6 +213,7 @@ public class SearchActivity extends AppCompatActivity {
 
                             speciesListView.setAdapter(adapter);
                             speciesListView.setVisibility(View.VISIBLE);
+                            speciesListView.setSelection(position);
 
                             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
@@ -224,8 +253,34 @@ public class SearchActivity extends AppCompatActivity {
         requestQueue.add(searchRequest);
     }
 
-    private void searchRequestWithCounty(final Context context, final String state, final String countyFips) {
-        final String url = "https://bison.usgs.gov/api/search.json?state=" + state + "&countyFips=" + countyFips + "&start=0&count=500";
+    private void searchRequestWithCounty(final Context context, final String searchInput) {
+        final int position = scientificNamesArray.size();
+
+        String searchTerms[];
+        String county = "";
+        String state = "";
+
+        if (searchInput.contains(",") && searchInput.length() >= 3) {
+            searchTerms = searchInput.split(",");
+
+            if (searchTerms.length == 2) {
+                county = searchTerms[0];
+                state = searchTerms[1];
+            }
+        }
+
+        if (state.length() >= 2) {
+            state = state.substring(1, 2).toUpperCase() + state.substring(2);
+        }
+
+        String countyFips = countyFinder(context, state, county);
+
+        Log.d("searchterms", county);
+        Log.d("searchterms", state);
+
+        state = state.replaceAll(" ", "%20");
+
+        final String url = "https://bison.usgs.gov/api/search.json?state=" + state + "&countyFips=" + countyFips + "&start=" + offset + "&count=500";
         Log.d("url", url);
 
         // Initialize request queue
@@ -235,7 +290,8 @@ public class SearchActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        ArrayList<String> scientificNamesArray = new ArrayList<String>();
+                        dialog.dismiss();
+                        //ArrayList<String> scientificNamesArray = new ArrayList<String>();
 
                         try {
                             JSONArray speciesArray = response.getJSONArray("data");
@@ -254,6 +310,7 @@ public class SearchActivity extends AppCompatActivity {
 
                             speciesListView.setAdapter(adapter);
                             speciesListView.setVisibility(View.VISIBLE);
+                            speciesListView.setSelection(position);
 
                             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
@@ -274,6 +331,17 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("onErrorResponse", error.toString());
+                dialog.dismiss();
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                alertDialog.setTitle("Invalid State");
+                alertDialog.setMessage("Please input the full name of a state.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
             }
         }
         );
@@ -367,8 +435,6 @@ public class SearchActivity extends AppCompatActivity {
                 {
                     Log.e("Error: ", error.toString());
                     dialog.dismiss();
-
-
                 }
             });
 
@@ -443,5 +509,10 @@ public class SearchActivity extends AppCompatActivity {
         // Adds request to queue which is then sent
         requestQueue.add(whatsAroundMeRequest);
     }
-
+    //changes offset and reruns search
+    public void loadMore(){
+        offset += 500;
+        String searchInput = searchEditText.getText().toString();
+        searchRequestWithCounty(this, searchInput);
+    }
 }
