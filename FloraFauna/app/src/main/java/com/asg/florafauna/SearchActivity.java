@@ -461,6 +461,7 @@ public class SearchActivity extends AppCompatActivity {
                         ArrayList<String> scientificNamesArray = new ArrayList<String>();
 
                         try {
+                            searchType = 3;
                             JSONArray speciesArray = response.getJSONArray("data");
 
                             for(int i = 0; i < speciesArray.length(); i++) {
@@ -517,6 +518,9 @@ public class SearchActivity extends AppCompatActivity {
         }
         else if (searchType == 2) {
             searchRequestWithState(this, searchInput);
+        }
+        else if (searchType == 3) {
+            whatsAroundMeRequest(this, "-111.31079356054,38.814339278134,-110.57470957617,39.215537729772");
         }
 
     }
