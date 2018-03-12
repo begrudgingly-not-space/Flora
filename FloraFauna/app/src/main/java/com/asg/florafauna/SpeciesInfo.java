@@ -85,4 +85,8 @@ public class SpeciesInfo
     {
         return commonName;
     }
+    public String getDescription(){return description;}
+    public String getImageLink(){return imageLink;}
+    public String getEolLink(){return eolLink;}
+
 }
