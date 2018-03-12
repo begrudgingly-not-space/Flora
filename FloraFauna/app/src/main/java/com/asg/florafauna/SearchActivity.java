@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -148,7 +149,6 @@ public class SearchActivity extends AppCompatActivity {
         searchRequest(this, searchInput);
         //searchRequestWithSpecies(this, searchInput);
         //searchRequestWithCounty(this, "Louisiana", "22015");
-        //String searchOutput = makeWebCall(searchInput);
     }
 
     private void searchRequest(final Context context, final String state) {
@@ -187,6 +187,15 @@ public class SearchActivity extends AppCompatActivity {
                             speciesListView.setVisibility(View.VISIBLE);
 
                             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                            speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                            {
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                                {
+                                    Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
+                                    startActivity(intent);
+                                }
+                            });
                         }
                         catch (JSONException error) {
                             Log.e("searchResponseException", error.toString());
@@ -247,6 +256,15 @@ public class SearchActivity extends AppCompatActivity {
                             speciesListView.setVisibility(View.VISIBLE);
 
                             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                            speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                            {
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                                {
+                                    Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
+                                    startActivity(intent);
+                                }
+                            });
                         }
                         catch (JSONException error) {
                             Log.e("searchResponseException", error.toString());
@@ -266,47 +284,47 @@ public class SearchActivity extends AppCompatActivity {
 
     private void searchRequestWithSpecies(final Context context, final String speciesName)
     {
+        Log.i("species input", speciesName);
+        // test for invalid input
+
         // base address for searching for a species
-        String baseAddress = "https://www.itis.gov/ITISWebService/services/ITISService/searchForAnyMatch?srchKey=";
+        String baseAddress = "https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchForAnyMatch?srchKey=";
         // url for searching
         String formattedName = speciesName.replaceAll(" ", "%20");
         final String query = baseAddress + formattedName;
+        final SpeciesSearchHelper helper = new SpeciesSearchHelper();
 
         Log.i("final url:", query);
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
         // set up a StringRequest object for catching XML
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, query, new Response.Listener<String>()
+        //StringRequest stringRequest = new StringRequest(Request.Method.GET, query, new Response.Listener<String>()
+        JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null, new Response.Listener<JSONObject>()
         {
             @Override
-            public void onResponse(String response)
+            public void onResponse(JSONObject response)
             {
                 // closes the loading, please wait dialog
                 dialog.dismiss();
 
                 try
                 {
-                    Log.i("response: ", response);
+                    Log.i("response", response.toString());
 
-                    // create a DocumentBuilderFactory to grab a DocumentBuilder
-                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                    factory.setNamespaceAware(true);
-                    DocumentBuilder builder = factory.newDocumentBuilder();
+                    // grab all results from response and place into one JSONObject
+                    JSONObject results = response.getJSONArray("anyMatchList").getJSONObject(0);
+                    String scientificName = results.getString("sciName");
+                    Log.i("scientific name", scientificName);
 
-                    // create a Document from the DocumentBuilder to access a parser, then
-                    // parse the results to access the XML data
-                    Document doc = builder.parse(new InputSource(new StringReader(response)));
+                    // get common name from JSONArrays
+                    JSONArray commonNames = results.getJSONObject("commonNameList").getJSONArray("commonNames");
+                    String commonName = commonNames.getJSONObject(0).getString("commonName");
+                    Log.i("common name", commonName);
 
-                    // grab the common names from the data -- get the first (most relevant)
-                    NodeList commonNameList = doc.getElementsByTagName("ax23:commonName");
-                    String commonName = commonNameList.item(0).getTextContent();
-                    NodeList scientificNameList = doc.getElementsByTagName("ax23:sciName");
-                    String scientificName = scientificNameList.item(0).getTextContent();
-
-                    // concatenate the common name and scientific name to display both
-                    String speciesArr[] = {commonName + ", " + scientificName};
-                    Log.i("species name: ", speciesArr[0]);
+                    // put names in array for later use
+                    commonName = helper.capitalizeName(commonName);
+                    String[] speciesArr = {commonName + ", " + scientificName};
 
                     // throw species name in ListView and display
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesArr);
@@ -316,10 +334,21 @@ public class SearchActivity extends AppCompatActivity {
                     // hide the keyboard
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
+                    // on clicking species name listview, user should be sent to species info page
+                    speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                    {
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                        {
+                            Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
+
                 }
                 catch(Exception exception)
                 {
-                    Log.e("Couldn't grab xml", exception.toString());
+                    Log.e("Couldn't grab JSON data", exception.toString());
                 }
             }
         }, new Response.ErrorListener()
@@ -332,7 +361,7 @@ public class SearchActivity extends AppCompatActivity {
                 }
             });
 
-        requestQueue.add(stringRequest);
+        requestQueue.add(searchRequest);
     }
 
     public void whatsAroundMe(View view) {
