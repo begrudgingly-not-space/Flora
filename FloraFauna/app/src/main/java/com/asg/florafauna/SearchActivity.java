@@ -373,7 +373,7 @@ public class SearchActivity extends AppCompatActivity {
     private void searchRequestWithSpecies(final Context context, final String speciesName)
     {
         Log.i("species input", speciesName);
-        // test for invalid input
+
 
         // base address for searching for a species
         String baseAddress = "https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchForAnyMatch?srchKey=";
@@ -391,6 +391,10 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public void onResponse(JSONObject response)
             {
+                String scientificName = null;
+                String commonName = null;
+                boolean match = false;
+
                 // closes the loading, please wait dialog
                 dialog.dismiss();
 
@@ -399,19 +403,67 @@ public class SearchActivity extends AppCompatActivity {
                     searchType = 4;
                     Log.i("response", response.toString());
 
-                    // grab all results from response and place into one JSONObject
-                    JSONObject results = response.getJSONArray("anyMatchList").getJSONObject(0);
-                    String scientificName = results.getString("sciName");
-                    Log.i("scientific name", scientificName);
+                    // all of the possible results from the search
+                    JSONArray arr = response.getJSONArray("anyMatchList");
+                    if(arr == null)
+                    {
+                        throw new Exception("No results");
+                    }
 
-                    // get common name from JSONArrays
-                    JSONArray commonNames = results.getJSONObject("commonNameList").getJSONArray("commonNames");
-                    String commonName = commonNames.getJSONObject(0).getString("commonName");
-                    Log.i("common name", commonName);
+                    // go through each index
+                    for(int i = 0; i < arr.length(); i++)
+                    {
+                        JSONObject results = arr.getJSONObject(i);
+                        JSONArray commonNames = results.getJSONObject("commonNameList").getJSONArray("commonNames");
 
-                    // put names in array for later use
+                        // if the resulting scientific name is not two words long, then incorrect results
+                        // could be a genus, family, or no results at all
+                        String[] sciName = results.getString("sciName").split(" ");
+                        if(sciName.length == 2)
+                        {
+                            scientificName = results.getString("sciName");
+                        }
+
+                        Log.i("scientific name", scientificName);
+                        int j = 0;
+                        while(!match && j < commonNames.length())
+                        {
+                            // each species result may have multiple common names for one or many languages
+                            // go through all of the common names and find the English common name
+                            JSONObject comm = commonNames.getJSONObject(j);
+                            String[] commName = comm.getString("commonName").split(" ");
+                            Log.i("current common name", comm.getString("commonName"));
+
+                            if(comm.getString("language").equalsIgnoreCase("English"))
+                            {
+                                // a common name can't be one word, scientific name must be two words
+                                // and one of the names should match what the user entered
+                                if((commName.length >= 2 && sciName.length == 2) && (speciesName.equalsIgnoreCase(results.getString("sciName")) || speciesName.equalsIgnoreCase(comm.getString("commonName"))))
+                                {
+                                    match = true;
+                                    commonName = comm.getString("commonName");
+                                }
+                            }
+
+                            Log.i("Common Name", commonName);
+                            Log.i("Scientific Name", scientificName);
+                            j++;
+                        }
+                        if(match)
+                        {
+                            break;
+                        }
+                    }
+
+                    // if no results for at least one of the names, throw an exception
+                    if(commonName == null || scientificName == null)
+                    {
+                        throw new Exception("No species results");
+                    }
+
                     commonName = helper.capitalizeName(commonName);
                     String[] speciesArr = {commonName + ", " + scientificName};
+                    Log.i("Names", speciesArr[0]);
 
                     // throw species name in ListView and display
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesArr);
@@ -437,7 +489,7 @@ public class SearchActivity extends AppCompatActivity {
                 }
                 catch(Exception exception)
                 {
-                    Log.e("Couldn't grab JSON data", exception.getMessage());
+                    Log.e("Couldn't grab JSON data", exception.toString());
 
                     AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
                     alertDialog.setTitle("Invalid Species Name");
