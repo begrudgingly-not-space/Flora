@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/mint">
 
     <Switch
         android:id="@+id/Image_switch"
@@ -21,12 +22,12 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="24dp"
         android:text="@string/Images"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textStyle="bold" />
 
     <Button
         android:id="@+id/button3"
-        style="@style/Widget.AppCompat.Button.Colored"
+        android:theme="@style/Button.Dark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/button4"
@@ -42,12 +43,12 @@
         android:layout_alignBottom="@+id/button3"
         android:layout_alignStart="@+id/textView"
         android:text="@string/clear_search_history"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textStyle="bold" />
 
     <Button
         android:id="@+id/button4"
-        style="@style/Widget.AppCompat.Button.Colored"
+        android:theme="@style/Button.Dark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/miles"
@@ -63,7 +64,7 @@
         android:layout_alignBottom="@+id/button4"
         android:layout_alignStart="@+id/textView2"
         android:text="@string/clear_cached_data"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textStyle="bold" />
 
     <Spinner
@@ -84,7 +85,7 @@
         android:layout_alignStart="@+id/textView3"
         android:layout_alignTop="@+id/miles"
         android:text="Mileage"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textStyle="bold" />
 
 </RelativeLayout>

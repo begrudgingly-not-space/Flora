@@ -10,32 +10,22 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="@string/Help" />
-    <!--<TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="?"
-        android:textSize="25sp"
-        android:textColor="@color/white"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="10dp"
-        android:textStyle="bold"
-        android:onClick="openHelp"/>
-    -->
     <ImageView
+        android:id="@+id/SettingsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_settings_white"
         android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="50dp"
+        android:layout_toStartOf="@id/HomeButton"
         android:onClick="openSettings"/>
     <ImageView
+        android:id="@+id/HomeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_home_white"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
-        android:layout_margin="10dp"
+        android:layout_margin="5dp"
         android:onClick="openSearch"/>
     <ImageView
         android:layout_width="wrap_content"

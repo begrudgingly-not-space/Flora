@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=" Scientific Name"
+            android:text=" Scientific Name/Common Name"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -33,6 +33,7 @@
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:textColor="@color/white"
+            android:text="Species description"
             android:layout_marginBottom="20dp"
             android:background="@drawable/rounded_green_box"/>
 
