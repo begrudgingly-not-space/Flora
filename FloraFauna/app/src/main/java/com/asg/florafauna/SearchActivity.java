@@ -195,7 +195,7 @@ public class SearchActivity extends AppCompatActivity {
         final int position = scientificNamesArray.size();
         String stateInput = "";
 
-        if (state.length() > 1) {
+        if (state.length() > 0) {
             stateInput = state.substring(0, 1).toUpperCase() + state.substring(1);
             stateInput = stateInput.replaceAll(" ", "%20");
         }
