@@ -405,10 +405,6 @@ public class SearchActivity extends AppCompatActivity {
 
                     // all of the possible results from the search
                     JSONArray arr = response.getJSONArray("anyMatchList");
-                    if(arr == null)
-                    {
-                        throw new Exception("No results");
-                    }
 
                     // go through each index
                     for(int i = 0; i < arr.length(); i++)
@@ -424,7 +420,6 @@ public class SearchActivity extends AppCompatActivity {
                             scientificName = results.getString("sciName");
                         }
 
-                        Log.i("scientific name", scientificName);
                         int j = 0;
                         while(!match && j < commonNames.length())
                         {
@@ -432,7 +427,6 @@ public class SearchActivity extends AppCompatActivity {
                             // go through all of the common names and find the English common name
                             JSONObject comm = commonNames.getJSONObject(j);
                             String[] commName = comm.getString("commonName").split(" ");
-                            Log.i("current common name", comm.getString("commonName"));
 
                             if(comm.getString("language").equalsIgnoreCase("English"))
                             {
@@ -440,13 +434,12 @@ public class SearchActivity extends AppCompatActivity {
                                 // and one of the names should match what the user entered
                                 if((commName.length >= 2 && sciName.length == 2) && (speciesName.equalsIgnoreCase(results.getString("sciName")) || speciesName.equalsIgnoreCase(comm.getString("commonName"))))
                                 {
+                                    Log.i("Match", "MATCH!");
                                     match = true;
                                     commonName = comm.getString("commonName");
                                 }
                             }
 
-                            Log.i("Common Name", commonName);
-                            Log.i("Scientific Name", scientificName);
                             j++;
                         }
                         if(match)
