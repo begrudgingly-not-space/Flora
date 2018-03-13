@@ -6,35 +6,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
-
 /**
  * Created by steven on 3/2/18.
  */
 
 public class SpeciesInfoActivity extends AppCompatActivity
 {
-
+    //copied from HelpActivity.java, no clue how this works
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speciesinfo);
+
         //default variables to take values from the results menu from the search/history
         String sName;
         String link;
 
-        String speciesName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
-
-        if (speciesName != null) {
-            sName = speciesName;
-        }
-        else {
-            sName = "No species name";
-        }
-
-        //Bundle extras = getIntent().getExtras();
-
-        /*if (extras != null)
+        //pull values passed by previous page
+        //stolen from:
+        //https://stackoverflow.com/questions/2091465/how-do-i-pass-data-between-activities-in-android-application#7325248
+        Bundle extras = getIntent().getExtras();
+        if (extras != null)
         {
             //link=extras.getString("link");
             sName=extras.getString("sName");
@@ -43,22 +35,34 @@ public class SpeciesInfoActivity extends AppCompatActivity
         {
             sName="Ursus arctos";
             //link="http://eol.org/pages/326447/overview";
-        }*/
+        }
+
+        //create object for the animal selected
         SpeciesInfo test = new SpeciesInfo(sName);
 
-
+        //copied from stackoverflow to set the text in the ScientificName section to what i want
+        //stolen from:
+        //https://stackoverflow.com/questions/5821051/how-to-display-the-value-of-a-variable-on-the-screen#5821117
         TextView SNgetText = findViewById(R.id.ScientificName);
         SNgetText.setText(String.valueOf(test.getScientificName()));
 
-        FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
-    }
+        TextView CNgetText = findViewById(R.id.CommonName);
+        CNgetText.setText(String.valueOf(test.getCommonName()));
 
-    public void openHelp(View view){
-        Intent intent = new Intent(SpeciesInfoActivity.this, HelpActivity.class);
-        startActivity(intent);
-    }
+        TextView DgetText = findViewById(R.id.Description);
+        DgetText.setText(String.valueOf(test.getDescription()));
 
-    // opens settings
+        TextView ILgetText = findViewById(R.id.ImageLink);
+        ILgetText.setText(String.valueOf(test.getImageLink()));
+
+        TextView ELgetText = findViewById(R.id.EoLLink);
+        ELgetText.setText(String.valueOf(test.getEolLink()));
+
+        //action bar creation copied form HelpActivity.java
+        FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_help);
+
+    }
+    //opens settings
     public void openSettings(View view){
         Intent intent = new Intent(SpeciesInfoActivity.this, SettingsActivity.class);
         startActivity(intent);
@@ -70,7 +74,6 @@ public class SpeciesInfoActivity extends AppCompatActivity
     }
 
     public void goBack(View view){
-        /* closes the activity */
         finish();
     }
 }
