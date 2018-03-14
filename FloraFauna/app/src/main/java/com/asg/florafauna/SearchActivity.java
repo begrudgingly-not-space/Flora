@@ -153,6 +153,11 @@ public class SearchActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void openMapPage(View view) {
+        Intent intent = new Intent(SearchActivity.this, MapActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public void onBackPressed()
     {

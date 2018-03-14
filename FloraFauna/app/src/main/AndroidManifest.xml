@@ -33,6 +33,10 @@
             android:label="Settings"
             android:screenOrientation="sensorPortrait">
         </activity>
+        <activity android:name=".MapActivity"
+            android:label="Map Page"
+            android:screenOrientation="sensorPortrait">
+        </activity>
         <activity android:name=".SpeciesInfoActivity"
             android:label="SpeciesInfo"
             android:screenOrientation="sensorPortrait">
