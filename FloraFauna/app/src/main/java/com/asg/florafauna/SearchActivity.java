@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -34,14 +35,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import android.widget.EditText;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -54,7 +60,7 @@ import static com.asg.florafauna.CountyFinder.countyFinder;
 
 public class SearchActivity extends AppCompatActivity {
 
-    private EditText searchEditText;
+    private AutoCompleteTextView searchEditText;
     private ListView speciesListView;
     private InputMethodManager imm;
     private ProgressDialog dialog;
@@ -129,6 +135,31 @@ public class SearchActivity extends AppCompatActivity {
 
             }
         });
+
+        //testing history
+        ArrayList<String> history = new ArrayList<String>();
+        try {
+            FileInputStream fis = this.openFileInput("history");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader reader = new BufferedReader(isr);
+            String line;
+
+            while ((line = reader.readLine()) != null)
+            {
+                history.add(line);
+            }
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, history);
+        searchEditText.setThreshold(1);
+        searchEditText.setAdapter(adapter);
+
     }
 
     @Override
@@ -187,7 +218,7 @@ public class SearchActivity extends AppCompatActivity {
 
             //save history
             if(searchInput.length() != 0) {
-                saveHistory("1." + searchInput);
+                saveHistory(searchInput);
             }
         }
         else if(Scientific.isChecked())
@@ -197,7 +228,7 @@ public class SearchActivity extends AppCompatActivity {
 
             //save history
             if(searchInput.length() != 0) {
-                saveHistory("2." + searchInput);
+                saveHistory(searchInput);
             }
         }
         else if(County.isChecked())
@@ -207,9 +238,10 @@ public class SearchActivity extends AppCompatActivity {
 
             //save history
             if(searchInput.length() != 0) {
-                saveHistory("3." + searchInput);
+                saveHistory(searchInput);
             }
         }
+
     }
 
     private void searchRequestWithState(final Context context, final String state) {
@@ -592,7 +624,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     //Save history method
-    public void saveHistory(String data){
+    private void saveHistory(String data){
         try{
             FileOutputStream fOut = openFileOutput("history", MODE_APPEND);
             OutputStreamWriter osw = new OutputStreamWriter(fOut);

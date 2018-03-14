@@ -29,7 +29,7 @@
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/SearchEditText"
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
