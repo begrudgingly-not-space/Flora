@@ -205,9 +205,12 @@ public class SearchActivity extends AppCompatActivity {
         // stateInput capitalizes the state
         // Bison produces an error if you input a state in all lowercase letters
         final int position = scientificNamesArray.size();
+        String stateInput = "";
 
-        String stateInput = state.substring(0, 1).toUpperCase() + state.substring(1);
-        stateInput = stateInput.replaceAll(" ","%20");
+        if (state.length() > 0) {
+            stateInput = state.substring(0, 1).toUpperCase() + state.substring(1);
+            stateInput = stateInput.replaceAll(" ", "%20");
+        }
 
         final String url = "https://bison.usgs.gov/api/search.json?state=" + stateInput + "&start=" + offset + "&count=500";
         Log.d("url", url);
