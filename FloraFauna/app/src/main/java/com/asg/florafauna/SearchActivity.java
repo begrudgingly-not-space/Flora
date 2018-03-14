@@ -34,6 +34,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import android.widget.EditText;
@@ -167,27 +172,34 @@ public class SearchActivity extends AppCompatActivity {
 
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
+
+
         //create links to radio buttons
         RadioButton Scientific = findViewById(R.id.SpeciesButton);
         RadioButton County = findViewById(R.id.CountyButton);
         RadioButton State = findViewById(R.id.StateButton);
 
+        //Checks which button (search type) is checked
         if(State.isChecked())
         {
             // Search by State
             searchRequestWithState(this, searchInput);
+            saveHistory("1."+searchInput);
         }
         else if(Scientific.isChecked())
         {
             // Search by Species/common name
             searchRequestWithSpecies(this, searchInput);
+            saveHistory("2."+searchInput);
+
         }
         else if(County.isChecked())
         {
             // Search by County
             searchRequestWithCounty(this, searchInput);
+            saveHistory("3."+searchInput);
         }
-        }
+    }
 
     private void searchRequestWithState(final Context context, final String state) {
         // stateInput capitalizes the state
@@ -563,5 +575,27 @@ public class SearchActivity extends AppCompatActivity {
             searchRequestWithSpecies(this, searchInput);
         }
 
+    }
+
+    //Save history method
+    public void saveHistory(String data){
+        try{
+            FileOutputStream fOut = openFileOutput("history", MODE_APPEND);
+            OutputStreamWriter osw = new OutputStreamWriter(fOut);
+            osw.append(data);
+            osw.append("\n");
+            osw.flush();
+            osw.close();
+            fOut.close();
+
+            //testing
+            //Toast.makeText(getApplicationContext(), getFilesDir().toString(), Toast.LENGTH_LONG).show();
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            Log.e("Exception", "Failed to save history: " + e.toString());
+        }
     }
 }
