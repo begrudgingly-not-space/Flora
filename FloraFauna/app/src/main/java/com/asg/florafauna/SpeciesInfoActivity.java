@@ -33,7 +33,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
             sName = "No species name";
             // link = "http://eol.org/pages/326447/overview";
         }
-        
+
         //create object for the animal selected
         SpeciesInfo test = new SpeciesInfo(sName);
 
@@ -64,6 +64,11 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
     public void openSearch(View view){
         Intent intent = new Intent(SpeciesInfoActivity.this, SearchActivity.class);
+        startActivity(intent);
+    }
+
+    public void openHelp(View view) {
+        Intent intent =  new Intent(SpeciesInfoActivity.this, HelpActivity.class);
         startActivity(intent);
     }
 
