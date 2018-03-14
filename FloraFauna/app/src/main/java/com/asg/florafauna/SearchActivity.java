@@ -184,20 +184,31 @@ public class SearchActivity extends AppCompatActivity {
         {
             // Search by State
             searchRequestWithState(this, searchInput);
-            saveHistory("1."+searchInput);
+
+            //save history
+            if(searchInput.length() != 0) {
+                saveHistory("1." + searchInput);
+            }
         }
         else if(Scientific.isChecked())
         {
             // Search by Species/common name
             searchRequestWithSpecies(this, searchInput);
-            saveHistory("2."+searchInput);
 
+            //save history
+            if(searchInput.length() != 0) {
+                saveHistory("2." + searchInput);
+            }
         }
         else if(County.isChecked())
         {
             // Search by County
             searchRequestWithCounty(this, searchInput);
-            saveHistory("3."+searchInput);
+
+            //save history
+            if(searchInput.length() != 0) {
+                saveHistory("3." + searchInput);
+            }
         }
     }
 
