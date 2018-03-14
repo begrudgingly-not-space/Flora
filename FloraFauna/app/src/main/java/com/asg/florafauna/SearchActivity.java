@@ -451,7 +451,7 @@ public class SearchActivity extends AppCompatActivity {
                     // if no results for at least one of the names, throw an exception
                     if(commonName == null || scientificName == null)
                     {
-                        throw new Exception("No species results");
+                        throw new Exception("No species results: Null name");
                     }
 
                     commonName = helper.capitalizeName(commonName);
@@ -485,7 +485,7 @@ public class SearchActivity extends AppCompatActivity {
                     Log.e("Couldn't grab JSON data", exception.toString());
 
                     AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                    alertDialog.setTitle("Invalid Species Name");
+                    alertDialog.setTitle("Unknown Species Name");
                     alertDialog.setMessage("Please enter a common or scientific name");
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                             new DialogInterface.OnClickListener() {
