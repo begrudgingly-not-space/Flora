@@ -73,6 +73,7 @@ public class SearchActivity extends AppCompatActivity {
     private int offset = 0;
 
     private ArrayList<String> scientificNamesArray = new ArrayList<String>();
+    private ArrayList<String> history = new ArrayList<String>();
 
 
     @Override
@@ -135,9 +136,8 @@ public class SearchActivity extends AppCompatActivity {
 
             }
         });
-
+/*
         //testing history
-        ArrayList<String> history = new ArrayList<String>();
         try {
             FileInputStream fis = this.openFileInput("history");
             InputStreamReader isr = new InputStreamReader(fis);
@@ -155,7 +155,8 @@ public class SearchActivity extends AppCompatActivity {
         catch (IOException e){
             e.printStackTrace();
         }
-
+*/
+        setHistory();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, history);
         searchEditText.setThreshold(1);
         searchEditText.setAdapter(adapter);
@@ -216,31 +217,28 @@ public class SearchActivity extends AppCompatActivity {
             // Search by State
             searchRequestWithState(this, searchInput);
 
-            //save history
-            if(searchInput.length() != 0) {
-                saveHistory(searchInput);
-            }
         }
         else if(Scientific.isChecked())
         {
             // Search by Species/common name
             searchRequestWithSpecies(this, searchInput);
 
-            //save history
-            if(searchInput.length() != 0) {
-                saveHistory(searchInput);
-            }
         }
         else if(County.isChecked())
         {
             // Search by County
             searchRequestWithCounty(this, searchInput);
 
-            //save history
-            if(searchInput.length() != 0) {
-                saveHistory(searchInput);
-            }
         }
+        //Save history to file
+        if(searchInput.length() != 0) {
+            saveHistory(searchInput);
+        }
+        //read search history
+        setHistory();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, history);
+        searchEditText.setThreshold(1);
+        searchEditText.setAdapter(adapter);
 
     }
 
@@ -642,6 +640,30 @@ public class SearchActivity extends AppCompatActivity {
         }
         catch (IOException e){
             Log.e("Exception", "Failed to save history: " + e.toString());
+        }
+    }
+
+    private void setHistory(){
+        //testing history
+        try {
+            FileInputStream fis = this.openFileInput("history");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader reader = new BufferedReader(isr);
+            String line;
+
+            while ((line = reader.readLine()) != null)
+            {
+                history.add(line);
+            }
+            reader.close();
+            isr.close();
+            fis.close();
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
         }
     }
 }
