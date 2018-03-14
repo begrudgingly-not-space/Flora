@@ -136,29 +136,10 @@ public class SearchActivity extends AppCompatActivity {
 
             }
         });
-/*
-        //testing history
-        try {
-            FileInputStream fis = this.openFileInput("history");
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader reader = new BufferedReader(isr);
-            String line;
 
-            while ((line = reader.readLine()) != null)
-            {
-                history.add(line);
-            }
-        }
-        catch (FileNotFoundException e){
-            e.printStackTrace();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-*/
         setHistory();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, history);
-        searchEditText.setThreshold(1);
+        searchEditText.setThreshold(0);
         searchEditText.setAdapter(adapter);
 
     }
@@ -237,7 +218,7 @@ public class SearchActivity extends AppCompatActivity {
         //read search history
         setHistory();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, history);
-        searchEditText.setThreshold(1);
+        searchEditText.setThreshold(0);
         searchEditText.setAdapter(adapter);
 
     }
