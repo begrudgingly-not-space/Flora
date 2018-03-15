@@ -17,4 +17,11 @@
         <item>5</item>
         <item>10</item>
     </string-array>
+
+    <string-array name="map_search_options">
+        <item>Common name by state</item>
+        <item>Common name by county</item>
+        <item>Scientific name by state</item>
+        <item>Scientific name by county</item>
+    </string-array>
 </resources>
