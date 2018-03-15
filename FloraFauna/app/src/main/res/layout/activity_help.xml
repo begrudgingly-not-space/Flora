@@ -31,13 +31,7 @@
                 android:paddingBottom="4dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
-                android:text="The search page allows you to search for species
-by typing the common name or scientific name of
-the species into the search bar. You can also
-search for species by state and county/parish by
-typing this information into the search bar. After
-performing a search, you can filter results by
-location, taxonomy, habitat, and date."
+                android:text="The search page allows you to search for species by typing the common name or scientific name of the species into the search bar. You can also search for species by state and county/parish by typing this information into the search bar. The radio buttons allow you to select your search method. After performing a search, you can filter results by location, taxonomy, habitat, and date."
                 android:textColor="@color/white"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/rounded_green_box"/>
@@ -58,7 +52,7 @@ location, taxonomy, habitat, and date."
                 android:paddingBottom="4dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
-                android:text="By clicking the What's Around Me button, you can view the different species that are near your location on a map."
+                android:text="By clicking &quot;What's Around Me?&quot;, you can view information about different species that are near your location."
                 android:textColor="@color/white"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/rounded_green_box"/>
@@ -121,7 +115,7 @@ location, taxonomy, habitat, and date."
                 android:paddingBottom="4dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
-                android:text="You can upload a image of an unknown species and the application will determine the scientific and common name of the species."
+                android:text="You can upload an image of an unknown species and the application will determine the scientific and common name of the species."
                 android:textColor="@color/white"
                 android:layout_marginBottom="20dp"
                 android:background="@drawable/rounded_green_box"/>
