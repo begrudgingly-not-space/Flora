@@ -27,13 +27,14 @@
 
     <Button
         android:id="@+id/button3"
-        android:theme="@style/Button.Dark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/button4"
         android:layout_below="@+id/Image_switch"
         android:layout_marginTop="28dp"
-        android:text="@string/Clear" />
+        android:onClick="clearHistory"
+        android:text="@string/Clear"
+        android:theme="@style/Button.Dark" />
 
     <TextView
         android:id="@+id/textView2"

@@ -137,11 +137,8 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
 
+        //sets the history and sets dropdown list
         setHistory();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, history);
-        searchEditText.setThreshold(0);
-        searchEditText.setAdapter(adapter);
-
     }
 
     @Override
@@ -217,9 +214,9 @@ public class SearchActivity extends AppCompatActivity {
         }
         //read search history
         setHistory();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, history);
-        searchEditText.setThreshold(0);
-        searchEditText.setAdapter(adapter);
+      //  ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, history);
+        //searchEditText.setThreshold(0);
+        //searchEditText.setAdapter(adapter);
 
     }
 
@@ -624,8 +621,8 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    private void setHistory(){
-        //testing history
+    public void setHistory(){
+        history.clear();
         try {
             FileInputStream fis = this.openFileInput("history");
             InputStreamReader isr = new InputStreamReader(fis);
@@ -646,5 +643,10 @@ public class SearchActivity extends AppCompatActivity {
         catch (IOException e){
             e.printStackTrace();
         }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, history);
+        searchEditText.setThreshold(0);
+        searchEditText.setAdapter(adapter);
     }
+
 }
