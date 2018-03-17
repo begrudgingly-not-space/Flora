@@ -41,6 +41,7 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import static com.asg.florafauna.CountyFinder.countyFinder;
+import static com.asg.florafauna.StateFinder.stateFinder;
 
 
 /**
@@ -294,8 +295,12 @@ public class SearchActivity extends AppCompatActivity {
             }
         }
 
-        if (state.length() >= 2) {
+        if (state.length() > 3) {
             state = state.substring(1, 2).toUpperCase() + state.substring(2);
+        }
+        else if (state.length() == 3) {
+            state = state.substring(1,3).toUpperCase();
+            state = stateFinder(context, state);
         }
 
         String countyFips = countyFinder(context, state, county);
