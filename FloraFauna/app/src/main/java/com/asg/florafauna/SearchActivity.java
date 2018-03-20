@@ -157,6 +157,18 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
+    //Testing
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK){
+            Intent refresh = new Intent(this, SearchActivity.class);
+            startActivity(refresh);
+            this.finish();
+        }
+    }
+    //Testing
+
     public void openHelp(View view){
         Intent intent = new Intent(SearchActivity.this, HelpActivity.class);
         startActivity(intent);
@@ -165,7 +177,7 @@ public class SearchActivity extends AppCompatActivity {
     // opens settings
     public void openSettings(View view){
         Intent intent = new Intent(SearchActivity.this, SettingsActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
     }
 
     @Override
@@ -214,10 +226,6 @@ public class SearchActivity extends AppCompatActivity {
         }
         //read search history
         setHistory();
-      //  ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, history);
-        //searchEditText.setThreshold(0);
-        //searchEditText.setAdapter(adapter);
-
     }
 
     private void searchRequestWithState(final Context context, final String state) {
@@ -609,9 +617,6 @@ public class SearchActivity extends AppCompatActivity {
             osw.flush();
             osw.close();
             fOut.close();
-
-            //testing
-            //Toast.makeText(getApplicationContext(), getFilesDir().toString(), Toast.LENGTH_LONG).show();
         }
         catch (FileNotFoundException e){
             e.printStackTrace();
@@ -620,7 +625,7 @@ public class SearchActivity extends AppCompatActivity {
             Log.e("Exception", "Failed to save history: " + e.toString());
         }
     }
-
+    //sets the history for a dropdown
     public void setHistory(){
         history.clear();
         try {
