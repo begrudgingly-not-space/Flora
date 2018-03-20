@@ -20,6 +20,12 @@ public class SettingsActivity extends AppCompatActivity {
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_settings);
     }
 
+    @Override
+    public void onBackPressed()
+    {
+        // Disables going back by manually pressing the back button
+    }
+
     public void openHelp(View view){
         Intent intent = new Intent(SettingsActivity.this, HelpActivity.class);
         startActivity(intent);
