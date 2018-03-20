@@ -7,11 +7,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -34,7 +37,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Security;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -47,14 +53,15 @@ import static com.asg.florafauna.CountyFinder.countyFinder;
  * Created by kkey on 2/1/2018.
  */
 
-public class SearchActivity extends AppCompatActivity {
-
+public class SearchActivity extends AppCompatActivity implements LocationListener {
+    private static final String TAG = "SearchActivity";
     private EditText searchEditText;
     private ListView speciesListView;
     private InputMethodManager imm;
     private ProgressDialog dialog;
-    private LocationManager locationManager;
-    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
+    private double latitude;
+    private double longitude;
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION = 0;
     private int searchType = 0;
     public static final String INTENT_EXTRA_SPECIES_NAME = "speciesName";
 
@@ -70,39 +77,13 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); // Enable hiding/showing keyboard
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED/* && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED*/) {
-        // Register the listener with the Location Manager to receive location updates
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Dialog to explain why app wants permission
-            }
-            else {
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-            }
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION);
         }
-        else {
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            // Define a listener that responds to location updates
-            LocationListener locationListener = new LocationListener() {
-                public void onLocationChanged(Location location) {
-                    // Called when a new location is found by the network location provider.
-                    Toast.makeText(SearchActivity.this, Double.toString(location.getLatitude()) + Double.toString(location.getLongitude()), Toast.LENGTH_SHORT).show();
-                }
-
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-                }
-
-                public void onProviderEnabled(String provider) {
-                }
-
-                public void onProviderDisabled(String provider) {
-                }
-            };
-        }
+        getLocation();
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_search);
 
         searchEditText = findViewById(R.id.SearchEditText);
@@ -126,10 +107,42 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
 
+    public void getLocation() {
+        try {
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5, this);
+        }
+        catch (SecurityException e) {
+            Log.e("LocationSecurityExc", e.toString());
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+        Log.d (TAG, "Latitude = " + latitude + "\n Longitude = " + longitude);
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Toast.makeText(SearchActivity.this, "Please Enable GPS and Internet", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+            case MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -469,9 +482,25 @@ public class SearchActivity extends AppCompatActivity {
 
     public void whatsAroundMe(View view) {
         String polygon = "-111.31079356054,38.814339278134,-110.57470957617,39.215537729772";
-        dialog = ProgressDialog.show(this, "",
-                "Loading. Please wait...", true);
-        whatsAroundMeRequest(this, polygon);
+        // Using 20 points difference of min and max latitude and longitude
+        if (latitude != 0 && longitude != 0) {
+            String minLat = Double.toString(latitude - 20);
+            String minLong = Double.toString(longitude - 20);
+            String maxLat = Double.toString(latitude + 20);
+            String maxLong = Double.toString(longitude + 20);
+            String polygon2 = minLat + "," + minLong + "," + maxLat + "," + maxLong;
+            Log.d(TAG, polygon2);
+            dialog = ProgressDialog.show(this, "",
+                    "Loading. Please wait...", true);
+            whatsAroundMeRequest(this, polygon2);
+        }
+        else {
+            // Error message
+            Log.e(TAG, "Location not found");
+        }
+
+
+
     }
 
     private void whatsAroundMeRequest(final Context context, final String polygon)
