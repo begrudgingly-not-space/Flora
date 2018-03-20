@@ -9,6 +9,28 @@ import android.text.TextUtils;
 
 public class SpeciesSearchHelper
 {
+
+    protected int getNameLength(String name)
+    {
+        int nameLength;
+
+        // remove trailing whitespace
+        name = name.trim();
+
+        if(name.isEmpty())
+        {
+            return 0;
+        }
+        else
+        {
+            // this should ensure that multiple spaces together in a string are ignored
+            nameLength = name.split("\\s+").length;
+        }
+
+        return nameLength;
+
+    }
+
     protected String capitalizeName(String name)
     {
         String capitalizedName;
