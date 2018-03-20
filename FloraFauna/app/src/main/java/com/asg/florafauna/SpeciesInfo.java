@@ -13,12 +13,14 @@ public class SpeciesInfo
     String eolLink;
     String description;
     String imageLink;
+    String done;
 
     //initializer for when only passed name(Search results from bison)
     public SpeciesInfo(String name)
     {
         this.scientificName=name;
         setFromEOL(name);
+        this.done="done";
     }
     //initializer for when passed eol link, skips first search
     //unused for now
