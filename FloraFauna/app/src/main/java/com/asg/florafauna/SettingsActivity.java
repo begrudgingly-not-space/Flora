@@ -24,6 +24,8 @@ public class SettingsActivity extends AppCompatActivity {
     public void onBackPressed()
     {
         // Disables going back by manually pressing the back button
+        setResult(RESULT_OK, null);
+        finish();
     }
 
     public void openHelp(View view){
