@@ -34,12 +34,34 @@
 <button id="zoom-out">Zoom out</button>
 <button id="zoom-in">Zoom in</button>
 <script>
+
+      var point = [-91.69000244140625, 31.219999313];
+     // var coord = new ol.Coordinate([31.219999313,-91.69000244140625]);
+     // var coord = ol.proj.toLonLat(point);
+      var coord = ol.proj.transform(point, 'EPSG:4326', 'EPSG:3857')
+
+      var vectorSource = new ol.source.Vector({
+            //create empty vector
+      });
+
+      var feature = new ol.Feature({
+            geometry: new ol.geom.Point(coord)
+      });
+
+      vectorSource.addFeature(feature);
+
+      var vectorLayer = new ol.layer.Vector({
+            source: vectorSource
+      });
+
+      var layers = [
+        new ol.layer.Tile({
+          source: new ol.source.OSM()
+        })
+      ];
+
       var map = new ol.Map({
-        layers: [
-          new ol.layer.Tile({
-            source: new ol.source.OSM()
-          })
-        ],
+        layers: layers,
         target: 'map',
         controls: ol.control.defaults({
           attributionOptions: {
@@ -47,10 +69,12 @@
           }
         }),
         view: new ol.View({
-          center: [0, 0],
+          center: [-10997148, 4569099],
           zoom: 2
         })
       });
+      map.addLayer(vectorLayer);
+
 
       document.getElementById('zoom-out').onclick = function() {
         var view = map.getView();
