@@ -33,12 +33,21 @@
 <div id="map" class="map" tabindex="0"></div>
 <button id="zoom-out">Zoom out</button>
 <button id="zoom-in">Zoom in</button>
-<script>
+<script type="text/javascript">
 
+/*
       var point = [[-91.69000244140625, 31.219999313],
                    [-90.00507354736328, 30.337696075439453],
                    [-93.58332824707031, 32.58332824707031]
       ];
+*/
+      var points = Android.getValue();
+      points = points.split(" ");
+
+      var point = [];
+      for(var i = 0; i < points.length / 2; i += 1){
+         point[i] = [Number(points[i * 2]), Number(points[i * 2 + 1])];
+      }
 
      // var coord = new ol.Coordinate([31.219999313,-91.69000244140625]);
      // var coord = ol.proj.toLonLat(point);
@@ -112,6 +121,7 @@
         var zoom = view.getZoom();
         view.setZoom(zoom + 1);
       };
+
     </script>
 </body>
 </html>

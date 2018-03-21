@@ -1,14 +1,23 @@
 package com.asg.florafauna;
 
+import android.content.Context;
 import android.content.Intent;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ScrollView;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 
 /**
@@ -16,6 +25,11 @@ import android.widget.ScrollView;
  */
 
 public class MapActivity extends AppCompatActivity{
+
+    WebView myWebView;
+    String points = "-91.69000244140625 31.219999313 -90.00507354736328 30.337696075439453 -93.58332824707031 32.58332824707031 -89.84539794921875 30.270082473754883";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +39,14 @@ public class MapActivity extends AppCompatActivity{
 
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_map);
 
-        final WebView myWebView = (WebView) findViewById(R.id.webview);
+        myWebView = (WebView) findViewById(R.id.webview);
 
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
 
+
         myWebView.loadUrl("file:///android_asset/map.html");
+        myWebView.addJavascriptInterface(new WebAppInterface(this), "Android");
 
         myWebView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -47,6 +63,23 @@ public class MapActivity extends AppCompatActivity{
                 return myWebView.onTouchEvent(event);
             }
         });
+
+    }
+
+    public class WebAppInterface {
+        Context mContext;
+
+
+        /** Instantiate the interface and set the context */
+        WebAppInterface(Context c) {
+            mContext = c;
+        }
+
+        /** Get the value */
+        @JavascriptInterface
+        public String getValue() {
+            return points;
+        }
     }
 
     public void openHelp(View view){
