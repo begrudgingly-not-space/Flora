@@ -101,4 +101,9 @@ public class MapActivity extends AppCompatActivity{
         finish();
     }
 
+    public void loadAdditionalPoint(View view){
+        points = points + " -93.70411682128906 32.44822692871094";
+        myWebView.reload();
+    }
+
 }
