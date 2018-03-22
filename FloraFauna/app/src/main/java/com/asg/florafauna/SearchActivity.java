@@ -529,8 +529,9 @@ public class SearchActivity extends AppCompatActivity {
     private void searchPartialName(final Context context, final String speciesName)
     {
         Log.i("partial", "partial search");
-
-        // base address for searching for a species
+        final SpeciesSearchHelper helper = new SpeciesSearchHelper();
+        // base address for searching for a species/genus
+        // this will grab any name that contains the text searched by user
         String baseAddress = "https://www.itis.gov/ITISWebService/jsonservice/ITISService/getITISTerms?srchKey=";
 
         // ensure no trailing whitespace for web call
@@ -552,8 +553,34 @@ public class SearchActivity extends AppCompatActivity {
                 try
                 {
                     searchType = 4;
-
                     Log.i("response", response.toString());
+
+                    // get the list
+                    JSONArray arr = response.getJSONArray("itisTerms");
+                    JSONArray commonNames = null;
+                    /* the web call will produce all kinds of results, including the genus in
+                     addition to specific species names
+                     to ensure we only get species names, the resulting scientific name
+                     must be two or more words in length
+                    */
+                    for(int i = 0; i < arr.length(); i++)
+                    {
+                        JSONObject results = arr.getJSONObject(i);
+                        if(helper.getNameLength(results.getString("scientificName")) > 1)
+                        {
+                            scientificName = results.getString("scientificName");
+                            commonNames = results.getJSONArray("commonNames");
+                            if(commonNames != null)
+                            {
+                                commonName = commonNames.getString(0);
+                            }
+
+                        }
+
+                        Log.i("common name", commonName);
+                        Log.i("scientific name", scientificName);
+
+                    }
 
                     // hide the keyboard
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
