@@ -375,6 +375,21 @@ public class SearchActivity extends AppCompatActivity {
 
     private void searchRequestWithSpecies(final Context context, final String speciesName)
     {
+        final SpeciesSearchHelper helper = new SpeciesSearchHelper();
+        int length = helper.getNameLength(speciesName);
+
+        // just a space entered
+        if(length < 1)
+        {
+            // dialog -- please enter a species name
+        }
+        else if(length == 1)
+        {
+            // throw species name to partial search
+            searchPartialName(this, speciesName);
+            return;
+        }
+
         Log.i("species input", speciesName);
 
 
@@ -383,7 +398,6 @@ public class SearchActivity extends AppCompatActivity {
         // url for searching
         String formattedName = speciesName.replaceAll(" ", "%20");
         final String query = baseAddress + formattedName;
-        final SpeciesSearchHelper helper = new SpeciesSearchHelper();
 
         Log.i("final url:", query);
 
@@ -510,6 +524,82 @@ public class SearchActivity extends AppCompatActivity {
             });
 
         requestQueue.add(searchRequest);
+    }
+
+    private void searchPartialName(final Context context, final String speciesName)
+    {
+        Log.i("partial", "partial search");
+
+        // base address for searching for a species
+        String baseAddress = "https://www.itis.gov/ITISWebService/jsonservice/ITISService/getITISTerms?srchKey=";
+
+        // ensure no trailing whitespace for web call
+        final String query = baseAddress + speciesName.trim();
+        Log.i("final url:", query);
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null, new Response.Listener<JSONObject>()
+        {
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                // closes the loading, please wait dialog
+                dialog.dismiss();
+
+                String scientificName = null;
+                String commonName = null;
+
+                try
+                {
+                    searchType = 4;
+
+                    Log.i("response", response.toString());
+
+                    // hide the keyboard
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                    // on clicking species name listview, user should be sent to species info page
+                    speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                    {
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                        {
+                            String speciesName = speciesListView.getItemAtPosition(position).toString();
+                            Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
+                            intent.putExtra(INTENT_EXTRA_SPECIES_NAME, speciesName);
+                            startActivity(intent);
+                        }
+                    });
+
+
+                }
+                catch(Exception exception)
+                {
+                    Log.e("Couldn't grab JSON data", exception.toString());
+
+                    AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                    alertDialog.setTitle("Unknown Species Name");
+                    alertDialog.setMessage("Please enter a common or scientific name");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+            }
+        }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                Log.e("Error: ", error.toString());
+                dialog.dismiss();
+            }
+        });
+
+        requestQueue.add(searchRequest);
+
     }
 
     public void whatsAroundMe(View view) {
