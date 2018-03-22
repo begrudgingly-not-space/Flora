@@ -533,6 +533,7 @@ public class SearchActivity extends AppCompatActivity {
         // base address for searching for a species/genus
         // this will grab any name that contains the text searched by user
         String baseAddress = "https://www.itis.gov/ITISWebService/jsonservice/ITISService/getITISTerms?srchKey=";
+        final ArrayList<String> speciesList = new ArrayList<>();
 
         // ensure no trailing whitespace for web call
         final String query = baseAddress + speciesName.trim();
@@ -558,6 +559,7 @@ public class SearchActivity extends AppCompatActivity {
                     // get the list
                     JSONArray arr = response.getJSONArray("itisTerms");
                     JSONArray commonNames = null;
+                    String[] speciesArr = new String[arr.length()];
                     /* the web call will produce all kinds of results, including the genus in
                      addition to specific species names
                      to ensure we only get species names, the resulting scientific name
@@ -575,12 +577,24 @@ public class SearchActivity extends AppCompatActivity {
                                 commonName = commonNames.getString(0);
                             }
 
+                            // get rid of null names
+                            if(!commonName.equalsIgnoreCase("null") && !scientificName.equalsIgnoreCase("null"))
+                            {
+                                commonName = helper.capitalizeName(commonName);
+                                speciesList.add(commonName + ", " + scientificName);
+                            }
+
                         }
 
                         Log.i("common name", commonName);
                         Log.i("scientific name", scientificName);
 
                     }
+
+                    // throw all names in ListView and display
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesList);
+                    speciesListView.setAdapter(adapter);
+                    speciesListView.setVisibility(View.VISIBLE);
 
                     // hide the keyboard
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
