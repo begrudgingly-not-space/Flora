@@ -59,6 +59,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private ListView speciesListView;
     private InputMethodManager imm;
     private ProgressDialog dialog;
+    private String locationPolygon;
     private double latitude;
     private double longitude;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION = 0;
@@ -481,22 +482,31 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     }
 
     public void whatsAroundMe(View view) {
-        String polygon = "-111.31079356054,38.814339278134,-110.57470957617,39.215537729772";
         // Using 20 points difference of min and max latitude and longitude
         if (latitude != 0 && longitude != 0) {
             String minLat = Double.toString(latitude - 20);
             String minLong = Double.toString(longitude - 20);
             String maxLat = Double.toString(latitude + 20);
             String maxLong = Double.toString(longitude + 20);
-            String polygon2 = minLat + "," + minLong + "," + maxLat + "," + maxLong;
-            Log.d(TAG, polygon2);
+            locationPolygon = minLat + "," + minLong + "," + maxLat + "," + maxLong;
+            Log.d(TAG, locationPolygon);
             dialog = ProgressDialog.show(this, "",
                     "Loading. Please wait...", true);
-            whatsAroundMeRequest(this, polygon2);
+            whatsAroundMeRequest(this, locationPolygon);
         }
         else {
             // Error message
             Log.e(TAG, "Location not found");
+            AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+            alertDialog.setTitle("Location not found");
+            alertDialog.setMessage("The application may not be able to locate you.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
         }
 
 
@@ -589,7 +599,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             searchRequestWithState(this, searchInput);
         }
         else if (searchType == 3) {
-            whatsAroundMeRequest(this, "-111.31079356054,38.814339278134,-110.57470957617,39.215537729772");
+            whatsAroundMeRequest(this, locationPolygon);
         }
         else if (searchType == 4) {
             searchRequestWithSpecies(this, searchInput);
