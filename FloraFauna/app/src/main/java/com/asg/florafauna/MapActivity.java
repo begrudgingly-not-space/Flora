@@ -1,6 +1,9 @@
 package com.asg.florafauna;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import android.os.Bundle;
@@ -12,9 +15,19 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ScrollView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -78,7 +91,7 @@ public class MapActivity extends AppCompatActivity{
         /** Get the value */
         @JavascriptInterface
         public String getValue() {
-            return points;
+            return bisonpoints;
         }
     }
 
@@ -105,5 +118,62 @@ public class MapActivity extends AppCompatActivity{
         points = points + " -93.70411682128906 32.44822692871094";
         myWebView.reload();
     }
+
+    String bisonpoints = "";
+    public void searchBison(View view){
+        bisonpoints = "";
+        getPointsFromBison(this);
+    }
+
+    public void getPointsFromBison(Context context){
+        String url = "https://bison.usgs.gov/api/search.json?species=Mimus%20polyglottos&type=scientific_name&state=Louisiana&countyFips=22015&start=0&count=500";
+
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+        JsonObjectRequest pointsFromBison = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+
+                        try {
+
+                            final JSONArray speciesArray = response.getJSONArray("data");
+
+                            for(int i = 0; i < speciesArray.length(); i++) {
+                                String latitude = speciesArray.getJSONObject(i).getString("decimalLatitude");
+                                String longitude = speciesArray.getJSONObject(i).getString("decimalLongitude");
+                                bisonpoints = bisonpoints + longitude + " " + latitude + " ";
+                                Log.d("latitude", bisonpoints.length() + "a");
+                            }
+
+                            Log.d("latitude", bisonpoints.length() + "a");
+                            bisonpoints = bisonpoints.substring(0, bisonpoints.length() - 1);
+                            myWebView.reload();
+
+                        }
+                        catch (JSONException error) {
+                            Log.e("searchResponseException", error.toString());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("onErrorResponse", error.toString());
+
+            }
+        }
+        );
+
+        // Adds request to queue which is then sent
+        requestQueue.add(pointsFromBison);
+
+        //bisonpoints = bisonpoints.substring(0, bisonpoints.length() - 1);
+        //Log.d("bisonpoints", bisonpoints.length() + "a");
+
+        //myWebView.reload();
+    }
+
 
 }
