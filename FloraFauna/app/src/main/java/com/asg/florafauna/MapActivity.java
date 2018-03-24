@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -48,11 +49,14 @@ public class MapActivity extends AppCompatActivity{
     String points = "-91.69000244140625 31.219999313 -90.00507354736328 30.337696075439453 -93.58332824707031 32.58332824707031 -89.84539794921875 30.270082473754883";
     private EditText speciesInput;
     private EditText locationInput;
+    private ProgressDialog dialog;
+    private InputMethodManager imm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         final ScrollView sv = (ScrollView) findViewById(R.id.scrollview);
 
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_map);
@@ -130,6 +134,9 @@ public class MapActivity extends AppCompatActivity{
         bisonpoints = "";
         //getPointsFromBison(this);
 
+        dialog = ProgressDialog.show(this, "",
+                "Loading. Please wait...", true);
+
         String species = speciesInput.getText().toString();
         String location = locationInput.getText().toString();
 
@@ -184,7 +191,7 @@ public class MapActivity extends AppCompatActivity{
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
+                        dialog.dismiss();
 
                         try {
 
@@ -198,8 +205,12 @@ public class MapActivity extends AppCompatActivity{
                             }
 
                             Log.d("latitude", bisonpoints.length() + "a");
-                            bisonpoints = bisonpoints.substring(0, bisonpoints.length() - 1);
+                            if (bisonpoints.length() > 0) {
+                                bisonpoints = bisonpoints.substring(0, bisonpoints.length() - 1);
+                            }
                             myWebView.reload();
+
+                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
                         }
                         catch (JSONException error) {
@@ -210,6 +221,17 @@ public class MapActivity extends AppCompatActivity{
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("onErrorResponse", error.toString());
+                dialog.dismiss();
+                AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
+                alertDialog.setTitle("Invalid State or Species");
+                alertDialog.setMessage("Please input the full name of a species in the first box and a state in the other box.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
 
             }
         }
@@ -260,7 +282,7 @@ public class MapActivity extends AppCompatActivity{
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
+                        dialog.dismiss();
 
                         try {
 
@@ -274,8 +296,12 @@ public class MapActivity extends AppCompatActivity{
                             }
 
                             Log.d("latitude", bisonpoints.length() + "a");
-                            bisonpoints = bisonpoints.substring(0, bisonpoints.length() - 1);
+                            if(bisonpoints.length() > 0) {
+                                bisonpoints = bisonpoints.substring(0, bisonpoints.length() - 1);
+                            }
                             myWebView.reload();
+
+                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
                         }
                         catch (JSONException error) {
@@ -286,6 +312,17 @@ public class MapActivity extends AppCompatActivity{
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("onErrorResponse", error.toString());
+                dialog.dismiss();
+                AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
+                alertDialog.setTitle("Invalid County or Species");
+                alertDialog.setMessage("Please input the full name of a species in the first box and a county, state in the other box.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
 
             }
         }
