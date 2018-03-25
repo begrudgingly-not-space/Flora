@@ -3,15 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/whiteGrey">
-
     <LinearLayout
         android:id="@+id/Images"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:layout_margin="10dp">
+        android:orientation="vertical"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -19,22 +17,7 @@
             android:textColor="@color/darkGreen"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_weight="10"/>
-        <Switch
-            android:id="@+id/ImageSwitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:switchMinWidth="60dp"/>
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/ClearSearchHistory"
-        android:layout_below="@id/Images"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:layout_margin="10dp">
+            android:layout_margin="10dp"/>
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
@@ -43,24 +26,7 @@
             android:textColor="@color/darkGreen"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_weight="10"/>
-        <Button
-            android:id="@+id/button3"
-            android:theme="@style/Button.Dark"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/Clear" />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/ClearCachedData"
-        android:layout_below="@id/ClearSearchHistory"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:layout_margin="10dp">
+            android:layout_margin="10dp"/>
         <TextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
@@ -69,25 +35,7 @@
             android:textColor="@color/darkGreen"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_weight="10"/>
-        <Button
-            android:id="@+id/button4"
-            android:theme="@style/Button.Dark"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/Clear" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/Mileage"
-        android:layout_below="@id/ClearCachedData"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        android:layout_margin="10dp">
+            android:layout_margin="10dp"/>
         <TextView
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
@@ -96,15 +44,42 @@
             android:textColor="@color/darkGreen"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_weight="11"/>
+            android:layout_margin="10dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ClearSearchHistory"
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginEnd="20dp">
+        <Switch
+        android:id="@+id/ImageSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:switchMinWidth="60dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="13dp"
+            android:layout_marginBottom="10dp"/>
+        <Button
+            android:id="@+id/button3"
+            android:theme="@style/Button.Dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/Clear" />
+        <Button
+            android:id="@+id/button4"
+            android:theme="@style/Button.Dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Clear"/>
         <Spinner
             android:id="@+id/miles"
-            android:layout_width="70dp"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:entries="@array/millage"
-            android:prompt="@string/miles"
-            android:layout_weight="0.5"/>
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="3dp"/>
     </LinearLayout>
-
-
 </RelativeLayout>

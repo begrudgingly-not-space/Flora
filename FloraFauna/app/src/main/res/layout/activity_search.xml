@@ -28,7 +28,7 @@
             <ImageView
                 android:layout_width="15dp"
                 android:layout_height="15dp"
-                android:src="@drawable/vector_search_icon"
+                android:src="@drawable/search"
                 android:layout_gravity="center_vertical"
                 android:layout_margin="15dp"
                 android:onClick="search"/>
