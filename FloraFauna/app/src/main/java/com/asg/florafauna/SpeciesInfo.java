@@ -59,10 +59,10 @@ public class SpeciesInfo
             @Override
             public void onResponse(JSONObject response)
             {
+                description="3";
                 try
                 {
                     description="0";
-                    Log.i("response", response.toString());
                     JSONObject results = response.getJSONArray("results").getJSONObject(0);
                     Log.i("response",results.getString("link").toString());
                     eolLink = results.getString("link").toString();
@@ -70,7 +70,9 @@ public class SpeciesInfo
                 }
                 catch(Exception e)
                 {
+                    Log.e("Error: ", e.toString());
                     dispError=e.toString();
+                    description="1";
                 }
             }
         }, new Response.ErrorListener()
@@ -85,7 +87,7 @@ public class SpeciesInfo
             }
         });
         requestQueue.add(searchRequest);
-
+        //description="4";
 
     }
     /*private void setFromEOL(String name)
