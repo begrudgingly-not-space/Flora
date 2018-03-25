@@ -46,7 +46,7 @@ public class SpeciesInfo
     }*/
 
     //pull relevant info from the search page and from the eol information page
-
+    //all the description="*" lines are for tracking where I am getting to in the program
     private void setFromEOL(final Context context, String name)
     {
         String query=eolQuery(name);
@@ -63,10 +63,11 @@ public class SpeciesInfo
                 try
                 {
                     description="0";
+
+                    //this has been tested, gives the propper data that I am looking for
                     JSONObject results = response.getJSONArray("results").getJSONObject(0);
                     Log.i("response",results.getString("link").toString());
                     eolLink = results.getString("link").toString();
-
                 }
                 catch(Exception e)
                 {
@@ -83,7 +84,6 @@ public class SpeciesInfo
                 Log.e("Error: ", error.toString());
                 dispError=error.toString();
                 description="1";
-                //dialog.dismiss();
             }
         });
         requestQueue.add(searchRequest);
