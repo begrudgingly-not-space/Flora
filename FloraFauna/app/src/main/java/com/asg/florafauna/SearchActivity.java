@@ -17,7 +17,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -44,6 +46,7 @@ import java.util.Locale;
 
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import static com.asg.florafauna.CountyFinder.countyFinder;
@@ -104,6 +107,15 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     loadMore(searchType);
                 }
 
+            }
+        });
+
+        searchEditText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    search();
+                }
+                return false;
             }
         });
     }
@@ -174,7 +186,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     }
 
     //SEARCH FUNCTIONS
-    public void search(View view) {
+    public void search() {
         String searchInput = searchEditText.getText().toString();
         scientificNamesArray = new ArrayList<String>();
         offset = 0;

@@ -3,7 +3,7 @@
     android:id="@+id/scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/mint">
+    android:background="@color/whiteGrey">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:background="@drawable/rounded_lime_box"/>
+            android:background="@drawable/rounded_dark_green_box"/>
         <TextView
             android:id="@+id/ScientificName"
             android:layout_width="match_parent"
@@ -44,7 +44,7 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:background="@drawable/rounded_lime_box"/>
+            android:background="@drawable/rounded_dark_green_box"/>
         <TextView
             android:id="@+id/CommonName"
             android:layout_width="match_parent"
@@ -65,7 +65,7 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:background="@drawable/rounded_lime_box"/>
+            android:background="@drawable/rounded_dark_green_box"/>
         <TextView
             android:id="@+id/Description"
             android:layout_width="match_parent"
@@ -86,7 +86,7 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:background="@drawable/rounded_lime_box"/>
+            android:background="@drawable/rounded_dark_green_box"/>
         <TextView
             android:id="@+id/ImageLink"
             android:layout_width="match_parent"
@@ -107,7 +107,7 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:background="@drawable/rounded_lime_box"/>
+            android:background="@drawable/rounded_dark_green_box"/>
         <TextView
             android:id="@+id/EoLLink"
             android:layout_width="match_parent"

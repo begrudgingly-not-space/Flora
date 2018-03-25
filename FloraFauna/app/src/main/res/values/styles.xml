@@ -3,8 +3,8 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/bluegreen</item>
-        <item name="colorPrimaryDark">@color/bluegreen</item>
+        <item name="colorPrimary">@color/darkGreen</item>
+        <item name="colorPrimaryDark">@color/darkGreen</item>
         <item name="colorAccent">@color/mint</item>
     </style>
 
@@ -22,6 +22,12 @@
     <style name="Button.Dark" parent="Base.Widget.AppCompat.Button.Colored">
         <item name="android:colorButtonNormal">?attr/colorPrimary</item>
         <item name="android:textColor">@color/white</item>
+    </style>
+
+    <style name="HorizontalLineStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/black</item>
     </style>
 
 </resources>

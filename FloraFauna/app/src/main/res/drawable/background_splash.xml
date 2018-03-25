@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:drawable="@drawable/rounded_lime_box"/>
+        android:drawable="@color/darkGreen"/>
 
     <item>
         <bitmap

@@ -2,119 +2,101 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/mint">
-
+    android:background="@color/whiteGrey">
     <RelativeLayout
         android:id="@+id/SearchFilter"
-        android:layout_width="330dp"
-        android:layout_height="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:background="@color/darkbg"
+        android:background="@color/darkGreen"
         android:orientation="vertical">
-
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/Search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_centerHorizontal="true"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Search: "
-                android:textColor="@color/white"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
             <EditText
                 android:id="@+id/SearchEditText"
-                android:layout_width="220dp"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@drawable/rounded_search_box"
                 android:inputType="textNoSuggestions"
-                android:paddingStart="3dp"
+                android:hint="Search"
+                android:paddingStart="25dp"
+                android:layout_margin="10dp"
                 android:textColor="@color/black"
                 android:textSize="15sp" />
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/magnifying_glass_icon"
-                android:layout_marginStart="6dp"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/vector_search_icon"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="15dp"
                 android:onClick="search"/>
-        </LinearLayout>
+        </FrameLayout>
         <RadioGroup
-            android:id="@+id/SearchType"
+            android:id="@+id/RadioButtons"
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:layout_below="@id/Search"
             android:layout_centerHorizontal="true"
+            android:gravity="center"
             android:checkedButton="@+id/SpeciesButton"
             android:orientation="horizontal">
-
             <RadioButton
                 android:id="@+id/SpeciesButton"
-                android:layout_width="134dp"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:text="Scientific/Common Name"
-                android:textColor="@color/white"
-                android:textSize="12sp" />
-
+                android:textColor="@color/whiteGrey"
+                android:textSize="14sp" />
             <RadioButton
                 android:id="@+id/CountyButton"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:text="County, State"
-                android:textColor="@color/white"
-                android:textSize="12sp" />
-
+                android:textColor="@color/whiteGrey"
+                android:textSize="14sp" />
             <RadioButton
                 android:id="@+id/StateButton"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:text="State"
-                android:textColor="@color/white"
-                android:textSize="12sp" />
+                android:textColor="@color/whiteGrey"
+                android:textSize="14sp" />
         </RadioGroup>
-
-        <Spinner
+        <!--<Spinner
             android:id="@+id/planets_spinner"
             android:layout_width="100dp"
             android:layout_height="20dp"
-            android:layout_below="@id/SearchType"
+            android:layout_margin="10dp"
+            android:layout_below="@id/RadioButtons"
             android:layout_centerHorizontal="true"
-            android:background="@color/white"/>
+            android:background="@color/white"/>-->
+        <TextView
+            android:id="@+id/WhatsAroundMeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="What's Around Me?"
+            android:textColor="@color/whiteGrey"
+            android:textStyle="bold"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="10dp"
+            android:layout_below="@id/RadioButtons"
+            android:onClick="whatsAroundMe"/>
     </RelativeLayout>
-
-
-    <TextView
-        android:id="@+id/WhatsAroundMeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="What's Around Me?"
-        android:textColor="@color/white"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/SearchFilter"
-        android:onClick="whatsAroundMe"/>
-
     <ListView
         android:id="@+id/ListSpecies"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:layout_below="@+id/WhatsAroundMeButton"
+        android:background="@color/whiteGrey"
+        android:layout_below="@id/SearchFilter"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
         android:visibility="invisible">
     </ListView>
 </RelativeLayout>

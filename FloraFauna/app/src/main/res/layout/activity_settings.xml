@@ -2,90 +2,109 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/mint">
+    android:background="@color/whiteGrey">
 
-    <Switch
-        android:id="@+id/Image_switch"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/Images"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView"
-        android:layout_alignBottom="@+id/textView"
-        android:layout_alignStart="@+id/button3"
-        android:layout_marginStart="12dp"
-        android:switchMinWidth="60dp" />
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_margin="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Images"
+            android:textColor="@color/darkGreen"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_weight="10"/>
+        <Switch
+            android:id="@+id/ImageSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:switchMinWidth="60dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ClearSearchHistory"
+        android:layout_below="@id/Images"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_margin="10dp">
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/clear_search_history"
+            android:textColor="@color/darkGreen"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_weight="10"/>
+        <Button
+            android:id="@+id/button3"
+            android:theme="@style/Button.Dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/Clear" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ClearCachedData"
+        android:layout_below="@id/ClearSearchHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_margin="10dp">
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/clear_cached_data"
+            android:textColor="@color/darkGreen"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_weight="10"/>
+        <Button
+            android:id="@+id/button4"
+            android:theme="@style/Button.Dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/Clear" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="24dp"
-        android:text="@string/Images"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/button3"
-        android:theme="@style/Button.Dark"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/Mileage"
+        android:layout_below="@id/ClearCachedData"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/button4"
-        android:layout_below="@+id/Image_switch"
-        android:layout_marginTop="28dp"
-        android:text="@string/Clear" />
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:layout_margin="10dp">
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mileage"
+            android:textColor="@color/darkGreen"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_weight="11"/>
+        <Spinner
+            android:id="@+id/miles"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:entries="@array/millage"
+            android:prompt="@string/miles"
+            android:layout_weight="0.5"/>
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button3"
-        android:layout_alignBottom="@+id/button3"
-        android:layout_alignStart="@+id/textView"
-        android:text="@string/clear_search_history"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
-
-    <Button
-        android:id="@+id/button4"
-        android:theme="@style/Button.Dark"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/miles"
-        android:layout_below="@+id/button3"
-        android:layout_marginTop="31dp"
-        android:text="@string/Clear" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/button4"
-        android:layout_alignBottom="@+id/button4"
-        android:layout_alignStart="@+id/textView2"
-        android:text="@string/clear_cached_data"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
-
-    <Spinner
-        android:id="@+id/miles"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/button4"
-        android:layout_marginEnd="51dp"
-        android:layout_marginTop="27dp"
-        android:entries="@array/millage"
-        android:prompt="@string/miles" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/textView3"
-        android:layout_alignTop="@+id/miles"
-        android:text="Mileage"
-        android:textColor="@color/white"
-        android:textStyle="bold" />
 
 </RelativeLayout>
