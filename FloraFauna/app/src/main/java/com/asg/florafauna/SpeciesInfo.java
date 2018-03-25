@@ -50,8 +50,9 @@ public class SpeciesInfo
     private void setFromEOL(final Context context, String name)
     {
         String query=eolQuery(name);
+        Log.i("query",query);
         //RequestQueue requestQueue = Volley.newRequestQueue(context);
-        description="2";
+        description="\nIn setFromEOL";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
         JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null, new Response.Listener<JSONObject>()
@@ -59,21 +60,23 @@ public class SpeciesInfo
             @Override
             public void onResponse(JSONObject response)
             {
-                description="3";
+                description+="\nin onResponse";
                 try
                 {
-                    description="0";
+                    description+="\nin onResponse try block";
 
-                    //this has been tested, gives the propper data that I am looking for
+                    //this has been tested, gives the data that I am looking for
                     JSONObject results = response.getJSONArray("results").getJSONObject(0);
-                    Log.i("response",results.getString("link").toString());
-                    eolLink = results.getString("link").toString();
+                    Log.i("linkResponse",results.getString("link"));
+                    eolLink = results.getString("link");
+
+                    //the log updates, but not every time?
                 }
                 catch(Exception e)
                 {
                     Log.e("Error: ", e.toString());
                     dispError=e.toString();
-                    description="1";
+                    description+="\nin onResponse catch block";
                 }
             }
         }, new Response.ErrorListener()
@@ -83,11 +86,11 @@ public class SpeciesInfo
             {
                 Log.e("Error: ", error.toString());
                 dispError=error.toString();
-                description="1";
+                description+="\nin onErrorResponse";
             }
         });
         requestQueue.add(searchRequest);
-        //description="4";
+        //description="finished with searchRequest";
 
     }
     /*private void setFromEOL(String name)

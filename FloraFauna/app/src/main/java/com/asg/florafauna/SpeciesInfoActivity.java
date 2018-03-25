@@ -30,6 +30,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
         String speciesName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
 
+        //ask about format for incoming species name, why does it have comma?(looks like it is passing both species and common right now)
         if (speciesName != null) {
             sName = speciesName;
             // link = extras.getString("link");
