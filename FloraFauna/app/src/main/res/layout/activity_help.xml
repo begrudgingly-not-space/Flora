@@ -5,7 +5,7 @@
         android:layout_height="match_parent"
         android:background="@color/whiteGrey">
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView
@@ -21,10 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:paddingTop="2dp"
-            android:paddingBottom="4dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:padding="8dp"
             android:text="The search page allows you to search for species
 by typing the common name or scientific name of
 the species into the search bar. You can also
@@ -46,10 +43,7 @@ location, taxonomy, habitat, and date."
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:paddingTop="2dp"
-            android:paddingBottom="4dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:padding="8dp"
             android:text="By clicking the What's Around Me button, you can view the different species that are near your location on a map."
             android:textColor="@color/darkGreen"/>
 
@@ -66,10 +60,7 @@ location, taxonomy, habitat, and date."
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:paddingTop="2dp"
-            android:paddingBottom="4dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:padding="8dp"
             android:text="The map page allows you to view the occurrences of a species by typing the common name or scientific name of the species into a search bar. You can view the occurrences of a species in a state, county/parish, or a certain radius from your position."
             android:textColor="@color/darkGreen"/>
         <TextView
@@ -85,10 +76,7 @@ location, taxonomy, habitat, and date."
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:paddingTop="2dp"
-            android:paddingBottom="4dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:padding="8dp"
             android:text="The personal recordings page allows you to record your own sighting of a species. You can record the location that you saw the species as well as an image and/or sound recording of the sighting. This feature is helpful if you would like to remember where you say a species for future reference."
             android:textColor="@color/darkGreen"/>
         <TextView
@@ -104,10 +92,7 @@ location, taxonomy, habitat, and date."
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:paddingTop="2dp"
-            android:paddingBottom="4dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:padding="8dp"
             android:text="You can upload a image of an unknown species and the application will determine the scientific and common name of the species."
             android:textColor="@color/darkGreen"/>
     </LinearLayout>
