@@ -4,6 +4,20 @@ package com.asg.florafauna;
  * Created by steven on 2/8/18.
  */
 
+import android.content.Context;
+import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.jsoup.*;
 
 public class SpeciesInfo
@@ -14,12 +28,13 @@ public class SpeciesInfo
     String description;
     String imageLink;
     String done;
+    String outputError;
 
     //initializer for when only passed name(Search results from bison)
-    public SpeciesInfo(String name)
+    public SpeciesInfo(final Context context, String name)
     {
         this.scientificName=name;
-        setFromEOL(name);
+        setFromEOL(context, name);
         this.done="done";
     }
     //initializer for when passed eol link, skips first search
@@ -32,7 +47,59 @@ public class SpeciesInfo
     }*/
 
     //pull relevant info from the search page and from the eol information page
-    private void setFromEOL(String name)
+
+    private void setFromEOL(final Context context, String name)
+    {
+        String query=eolQuery(name);
+        //RequestQueue requestQueue = Volley.newRequestQueue(context);
+        description="2";
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+        JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null, new Response.Listener<JSONObject>()
+        {
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                try
+                {
+                    description="1";
+                    Log.i("response", response.toString());
+
+                    // grab all results from response and place into one JSONObject
+                    JSONArray results=response.getJSONArray("results");
+                    commonName=results.toString();
+                    /*JSONObject results = response.getJSONArray("results").getJSONObject(0);
+                    commonName=results.toString();*/
+                    //commonName = results.getString("id");
+                    //Log.i("scientific name", scientificName);
+
+
+
+
+                    // hide the keyboard
+                    //imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                }
+                catch(Exception e)
+                {
+                    imageLink=e.toString();
+                }
+            }
+        }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                Log.e("Error: ", error.toString());
+                eolLink=error.toString();
+                description="3";
+                //dialog.dismiss();
+            }
+        });
+        requestQueue.add(searchRequest);
+
+
+    }
+    /*private void setFromEOL(String name)
     {
         try
         {
@@ -58,8 +125,9 @@ public class SpeciesInfo
         catch(Exception e)
         {
             System.out.println(e.toString());
+            error=e.toString();
         }
-    }
+    }*/
 
     //format query to search for an animal(exact name) on eol
     private String eolQuery(String name)
@@ -90,5 +158,6 @@ public class SpeciesInfo
     public String getDescription(){return description;}
     public String getImageLink(){return imageLink;}
     public String getEolLink(){return eolLink;}
-
+    public String getError(){return outputError;}
+    public String getDone(){return done;}
 }

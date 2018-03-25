@@ -30,18 +30,20 @@ public class SpeciesInfoActivity extends AppCompatActivity
             // link = extras.getString("link");
         }
         else {
-            sName = "No species name";
+            //sName="No Species Information Found"
+            sName = "Ursus Arctos";
             // link = "http://eol.org/pages/326447/overview";
         }
 
         //create object for the animal selected
-        SpeciesInfo test = new SpeciesInfo(sName);
+        SpeciesInfo test = new SpeciesInfo(this,sName);
 
         TextView SNgetText = findViewById(R.id.ScientificName);
         SNgetText.setText(String.valueOf(test.getScientificName()));
 
         TextView CNgetText = findViewById(R.id.CommonName);
         CNgetText.setText(String.valueOf(test.getCommonName()));
+
 
         TextView DgetText = findViewById(R.id.Description);
         DgetText.setText(String.valueOf(test.getDescription()));
