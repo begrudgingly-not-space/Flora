@@ -120,6 +120,14 @@
             android:textColor="@color/white"
             android:layout_marginBottom="20dp"
             android:background="@drawable/rounded_green_box"/>
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="0dp"
+            android:gravity="bottom|center_horizontal"
+            android:paddingBottom="0dp" />
     </LinearLayout>
 </ScrollView>
 

@@ -28,14 +28,13 @@ public class SpeciesInfo
     String description;
     String imageLink;
     String done;
-    String outputError;
+    String dispError;
 
     //initializer for when only passed name(Search results from bison)
     public SpeciesInfo(final Context context, String name)
     {
         this.scientificName=name;
         setFromEOL(context, name);
-        this.done="done";
     }
     //initializer for when passed eol link, skips first search
     //unused for now
@@ -62,26 +61,16 @@ public class SpeciesInfo
             {
                 try
                 {
-                    description="1";
+                    description="0";
                     Log.i("response", response.toString());
+                    JSONObject results = response.getJSONArray("results").getJSONObject(0);
+                    Log.i("response",results.getString("link").toString());
+                    eolLink = results.getString("link").toString();
 
-                    // grab all results from response and place into one JSONObject
-                    JSONArray results=response.getJSONArray("results");
-                    commonName=results.toString();
-                    /*JSONObject results = response.getJSONArray("results").getJSONObject(0);
-                    commonName=results.toString();*/
-                    //commonName = results.getString("id");
-                    //Log.i("scientific name", scientificName);
-
-
-
-
-                    // hide the keyboard
-                    //imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
                 }
                 catch(Exception e)
                 {
-                    imageLink=e.toString();
+                    dispError=e.toString();
                 }
             }
         }, new Response.ErrorListener()
@@ -90,8 +79,8 @@ public class SpeciesInfo
             public void onErrorResponse(VolleyError error)
             {
                 Log.e("Error: ", error.toString());
-                eolLink=error.toString();
-                description="3";
+                dispError=error.toString();
+                description="1";
                 //dialog.dismiss();
             }
         });
@@ -158,6 +147,6 @@ public class SpeciesInfo
     public String getDescription(){return description;}
     public String getImageLink(){return imageLink;}
     public String getEolLink(){return eolLink;}
-    public String getError(){return outputError;}
+    public String getError(){return dispError;}
     public String getDone(){return done;}
 }
