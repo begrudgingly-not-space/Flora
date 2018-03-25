@@ -4,13 +4,13 @@
 
     <item
         android:id="@+id/action_home"
-        android:icon="@drawable/ic_home"
+        android:icon="@drawable/ic_home_white"
         android:title="@string/Home"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_help"
-        android:icon="@drawable/ic_help_action"
+        android:icon="@drawable/ic_help_action_white"
         android:title="@string/Help"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
 </menu>
