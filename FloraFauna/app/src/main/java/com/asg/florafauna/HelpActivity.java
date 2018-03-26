@@ -42,6 +42,10 @@ public class HelpActivity extends AppCompatActivity {
                 Intent settings_intent = new Intent(HelpActivity.this, SettingsActivity.class);
                 startActivity(settings_intent);
                 return true;
+            case R.id.action_map:
+                Intent intent = new Intent(HelpActivity.this, MapActivity.class);
+                startActivity(intent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

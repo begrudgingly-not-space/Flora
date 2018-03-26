@@ -12,5 +12,9 @@
         android:icon="@drawable/ic_help_action_white"
         android:title="@string/Help"
         app:showAsAction="ifRoom" />
-
+    <item
+        android:id="@+id/action_map"
+        android:icon="@drawable/ic_map_action_white"
+        android:title="@string/Map"
+        app:showAsAction="ifRoom" />
 </menu>

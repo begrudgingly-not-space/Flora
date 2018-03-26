@@ -12,5 +12,10 @@
         android:icon="@drawable/ic_settings_white"
         android:title="@string/Settings"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_map"
+        android:icon="@drawable/ic_map_action_white"
+        android:title="@string/Map"
+        app:showAsAction="ifRoom" />
 
 </menu>

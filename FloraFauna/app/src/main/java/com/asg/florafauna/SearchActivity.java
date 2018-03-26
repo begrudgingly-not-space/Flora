@@ -183,6 +183,10 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 Intent help_intent = new Intent(SearchActivity.this, HelpActivity.class);
                 startActivity(help_intent);
                 return true;
+            case R.id.action_map:
+                Intent intent = new Intent(SearchActivity.this, MapActivity.class);
+                startActivity(intent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

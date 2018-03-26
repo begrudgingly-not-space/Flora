@@ -82,6 +82,10 @@ public class SpeciesInfoActivity extends AppCompatActivity
                 Intent help_intent = new Intent(SpeciesInfoActivity.this, HelpActivity.class);
                 startActivity(help_intent);
                 return true;
+            case R.id.action_map:
+                Intent intent = new Intent(SpeciesInfoActivity.this, MapActivity.class);
+                startActivity(intent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
