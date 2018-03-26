@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.io.File;
 
@@ -51,12 +53,11 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed()
     {
-        // Disables going back by manually pressing the back button
         setResult(RESULT_OK, null);
         finish();
     }
 
-    public void openHelp(View view){
+    /*public void openHelp(View view){
         Intent intent = new Intent(SettingsActivity.this, HelpActivity.class);
         startActivity(intent);
     }
@@ -64,20 +65,20 @@ public class SettingsActivity extends AppCompatActivity {
     public void openSearch(View view){
         Intent intent = new Intent(SettingsActivity.this, SearchActivity.class);
         startActivity(intent);
-    }
+    }*/
 
     public void goBack(View view){
         /* closes the activity */
         setResult(RESULT_OK, null);
         finish();
-
     }
 
     public void clearHistory(View view){
         File dir = getFilesDir();
         File file = new File(dir, "history");
         file.delete();
-
+        Log.d("Clear History", "History cleared.");
+        Toast.makeText(this,"Clear History", Toast.LENGTH_SHORT).show();
     }
 
 }

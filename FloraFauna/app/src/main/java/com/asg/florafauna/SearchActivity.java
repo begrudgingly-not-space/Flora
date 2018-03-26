@@ -223,8 +223,8 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             }
         }
     }
-    //Testing
-    /*@Override
+    
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==RESULT_OK){
@@ -232,7 +232,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             startActivity(refresh);
             this.finish();
         }
-    }*/
+    }
 /**
     public void openHelp(View view){
         Intent intent = new Intent(SearchActivity.this, HelpActivity.class);
