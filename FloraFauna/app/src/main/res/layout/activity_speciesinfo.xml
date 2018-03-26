@@ -93,5 +93,12 @@
             android:padding="8dp"
             android:text="No Encyclopedia of Life link found."
             android:textColor="@color/darkGreen"/>
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:gravity="bottom|center_horizontal"
+            android:paddingBottom="0dp" />
     </LinearLayout>
 </ScrollView>

@@ -4,6 +4,20 @@ package com.asg.florafauna;
  * Created by steven on 2/8/18.
  */
 
+import android.content.Context;
+import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.jsoup.*;
 
 public class SpeciesInfo
@@ -13,12 +27,14 @@ public class SpeciesInfo
     String eolLink;
     String description;
     String imageLink;
+    String done;
+    String dispError;
 
     //initializer for when only passed name(Search results from bison)
-    public SpeciesInfo(String name)
+    public SpeciesInfo(final Context context, String name)
     {
         this.scientificName=name;
-        setFromEOL(name);
+        setFromEOL(context, name);
     }
     //initializer for when passed eol link, skips first search
     //unused for now
@@ -30,7 +46,54 @@ public class SpeciesInfo
     }*/
 
     //pull relevant info from the search page and from the eol information page
-    private void setFromEOL(String name)
+    //all the description="*" lines are for tracking where I am getting to in the program
+    private void setFromEOL(final Context context, String name)
+    {
+        String query=eolQuery(name);
+        Log.i("query",query);
+        //RequestQueue requestQueue = Volley.newRequestQueue(context);
+        description="\nIn setFromEOL";
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+        JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null,
+                new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                description = description.concat("in onResponse");
+                try
+                {
+                    description+="\nin onResponse try block";
+
+                    //this has been tested, gives the data that I am looking for
+                    JSONObject results = response.getJSONArray("results").getJSONObject(0);
+                    Log.i("linkResponse",results.getString("link"));
+                    eolLink = results.getString("link");
+
+                    //the log updates, but not every time?
+                }
+                catch(Exception e)
+                {
+                    Log.e("Error: ", e.toString());
+                    dispError=e.toString();
+                    description+="\nin onResponse catch block";
+                }
+            }
+        }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                Log.e("Error: ", error.toString());
+                dispError=error.toString();
+                description+="\nin onErrorResponse";
+            }
+        });
+        requestQueue.add(searchRequest);
+        //description="finished with searchRequest";
+
+    }
+    /*private void setFromEOL(String name)
     {
         try
         {
@@ -56,8 +119,9 @@ public class SpeciesInfo
         catch(Exception e)
         {
             System.out.println(e.toString());
+            error=e.toString();
         }
-    }
+    }*/
 
     //format query to search for an animal(exact name) on eol
     private String eolQuery(String name)
@@ -88,5 +152,6 @@ public class SpeciesInfo
     public String getDescription(){return description;}
     public String getImageLink(){return imageLink;}
     public String getEolLink(){return eolLink;}
-
+    public String getError(){return dispError;}
+    public String getDone(){return done;}
 }
