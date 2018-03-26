@@ -2,6 +2,7 @@ package com.asg.florafauna;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,14 +19,18 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -159,6 +164,30 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.search_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent settings_intent = new Intent(SearchActivity.this, SettingsActivity.class);
+                startActivity(settings_intent);
+                return true;
+            case R.id.action_help:
+                Intent help_intent = new Intent(SearchActivity.this, HelpActivity.class);
+                startActivity(help_intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION: {
@@ -173,7 +202,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             }
         }
     }
-
+/**
     public void openHelp(View view){
         Intent intent = new Intent(SearchActivity.this, HelpActivity.class);
         startActivity(intent);
@@ -184,7 +213,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         Intent intent = new Intent(SearchActivity.this, SettingsActivity.class);
         startActivity(intent);
     }
-
+**/
     @Override
     public void onBackPressed()
     {
