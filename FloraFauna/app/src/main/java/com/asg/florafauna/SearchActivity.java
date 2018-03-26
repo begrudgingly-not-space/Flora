@@ -463,15 +463,29 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     private void searchRequestWithSpecies(final Context context, final String speciesName)
     {
+        final SpeciesSearchHelper helper = new SpeciesSearchHelper();
+        int length = helper.getNameLength(speciesName);
+
+        // just a space entered
+        if(length < 1)
+        {
+            // dialog -- please enter a species name
+        }
+        else if(length == 1)
+        {
+            // throw species name to partial search
+            searchPartialName(this, speciesName);
+            return;
+        }
+
         Log.i("species input", speciesName);
-        // test for invalid input
+
 
         // base address for searching for a species
         String baseAddress = "https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchForAnyMatch?srchKey=";
         // url for searching
         String formattedName = speciesName.replaceAll(" ", "%20");
         final String query = baseAddress + formattedName;
-        final SpeciesSearchHelper helper = new SpeciesSearchHelper();
 
         Log.i("final url", query);
 
@@ -482,6 +496,10 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             @Override
             public void onResponse(JSONObject response)
             {
+                String scientificName = null;
+                String commonName = null;
+                boolean match = false;
+
                 // closes the loading, please wait dialog
                 dialog.dismiss();
 
@@ -490,19 +508,60 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     searchType = 4;
                     Log.i("response", response.toString());
 
-                    // grab all results from response and place into one JSONObject
-                    JSONObject results = response.getJSONArray("anyMatchList").getJSONObject(0);
-                    String scientificName = results.getString("sciName");
-                    Log.i("scientific name", scientificName);
+                    // all of the possible results from the search
+                    JSONArray arr = response.getJSONArray("anyMatchList");
 
-                    // get common name from JSONArrays
-                    JSONArray commonNames = results.getJSONObject("commonNameList").getJSONArray("commonNames");
-                    String commonName = commonNames.getJSONObject(0).getString("commonName");
-                    Log.i("common name", commonName);
+                    // go through each index
+                    for(int i = 0; i < arr.length(); i++)
+                    {
+                        JSONObject results = arr.getJSONObject(i);
+                        JSONArray commonNames = results.getJSONObject("commonNameList").getJSONArray("commonNames");
 
-                    // put names in array for later use
+                        // if the resulting scientific name is not two words long, then incorrect results
+                        // could be a genus, family, or no results at all
+                        String[] sciName = results.getString("sciName").split(" ");
+                        if(sciName.length == 2)
+                        {
+                            scientificName = results.getString("sciName");
+                        }
+
+                        int j = 0;
+                        while(!match && j < commonNames.length())
+                        {
+                            // each species result may have multiple common names for one or many languages
+                            // go through all of the common names and find the English common name
+                            JSONObject comm = commonNames.getJSONObject(j);
+                            String[] commName = comm.getString("commonName").split(" ");
+
+                            if(comm.getString("language").equalsIgnoreCase("English"))
+                            {
+                                // a common name can't be one word, scientific name must be two words
+                                // and one of the names should match what the user entered
+                                if((commName.length >= 2 && sciName.length == 2) && (speciesName.equalsIgnoreCase(results.getString("sciName")) || speciesName.equalsIgnoreCase(comm.getString("commonName"))))
+                                {
+                                    Log.i("Match", "MATCH!");
+                                    match = true;
+                                    commonName = comm.getString("commonName");
+                                }
+                            }
+
+                            j++;
+                        }
+                        if(match)
+                        {
+                            break;
+                        }
+                    }
+
+                    // if no results for at least one of the names, throw an exception
+                    if(commonName == null || scientificName == null)
+                    {
+                        throw new Exception("No species results: Null name");
+                    }
+
                     commonName = helper.capitalizeName(commonName);
                     String[] speciesArr = {commonName + ", " + scientificName};
+                    Log.i("Names", speciesArr[0]);
 
                     // throw species name in ListView and display
                     adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesArr);
@@ -528,10 +587,10 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 }
                 catch(Exception exception)
                 {
-                    Log.e("Couldn't grab JSON data", exception.getMessage());
+                    Log.e("Couldn't grab JSON data", exception.toString());
 
                     AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                    alertDialog.setTitle("Invalid Species Name");
+                    alertDialog.setTitle("Unknown Species Name");
                     alertDialog.setMessage("Please enter a common or scientific name");
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                             new DialogInterface.OnClickListener() {
@@ -553,6 +612,123 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             });
 
         requestQueue.add(searchRequest);
+    }
+
+    private void searchPartialName(final Context context, final String speciesName)
+    {
+        Log.i("partial", "partial search");
+        final SpeciesSearchHelper helper = new SpeciesSearchHelper();
+        // base address for searching for a species/genus
+        // this will grab any name that contains the text searched by user
+        String baseAddress = "https://www.itis.gov/ITISWebService/jsonservice/ITISService/getITISTerms?srchKey=";
+        final ArrayList<String> speciesList = new ArrayList<>();
+
+        // ensure no trailing whitespace for web call
+        final String query = baseAddress + speciesName.trim();
+        Log.i("final url:", query);
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null, new Response.Listener<JSONObject>()
+        {
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                // closes the loading, please wait dialog
+                dialog.dismiss();
+
+                String scientificName = null;
+                String commonName = null;
+
+                try
+                {
+                    searchType = 4;
+                    Log.i("response", response.toString());
+
+                    // get the list
+                    JSONArray arr = response.getJSONArray("itisTerms");
+                    JSONArray commonNames = null;
+                    String[] speciesArr = new String[arr.length()];
+                    /* the web call will produce all kinds of results, including the genus in
+                     addition to specific species names
+                     to ensure we only get species names, the resulting scientific name
+                     must be two or more words in length
+                    */
+                    for(int i = 0; i < arr.length(); i++)
+                    {
+                        JSONObject results = arr.getJSONObject(i);
+                        if(helper.getNameLength(results.getString("scientificName")) > 1)
+                        {
+                            scientificName = results.getString("scientificName");
+                            commonNames = results.getJSONArray("commonNames");
+                            if(commonNames.length() > 0)
+                            {
+                                commonName = commonNames.getString(0);
+                            }
+
+                            // get rid of null names
+                            if(!commonName.equalsIgnoreCase("null") && !scientificName.equalsIgnoreCase("null"))
+                            {
+                                commonName = helper.capitalizeName(commonName);
+                                speciesList.add(commonName + ", " + scientificName);
+                            }
+
+                        }
+
+                        Log.i("common name", commonName);
+                        Log.i("scientific name", scientificName);
+
+                    }
+
+                    // throw all names in ListView and display
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesList);
+                    speciesListView.setAdapter(adapter);
+                    speciesListView.setVisibility(View.VISIBLE);
+
+                    // hide the keyboard
+                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                    // on clicking species name listview, user should be sent to species info page
+                    speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                    {
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                        {
+                            String speciesName = speciesListView.getItemAtPosition(position).toString();
+                            Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
+                            intent.putExtra(INTENT_EXTRA_SPECIES_NAME, speciesName);
+                            startActivity(intent);
+                        }
+                    });
+
+
+                }
+                catch(Exception exception)
+                {
+                    Log.e("Couldn't grab JSON data", exception.toString());
+
+                    AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                    alertDialog.setTitle("Unknown Species Name");
+                    alertDialog.setMessage("Please enter a common or scientific name");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+            }
+        }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                Log.e("Error: ", error.toString());
+                dialog.dismiss();
+            }
+        });
+
+        requestQueue.add(searchRequest);
+
     }
 
     public void whatsAroundMe(View view) {
