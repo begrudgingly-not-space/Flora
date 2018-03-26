@@ -24,6 +24,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.android.volley.Request;
@@ -58,7 +59,7 @@ import static com.asg.florafauna.CountyFinder.countyFinder;
 
 public class SearchActivity extends AppCompatActivity implements LocationListener {
     private static final String TAG = "SearchActivity";
-    private EditText searchEditText;
+    private EditText searchEditText, filterEditText;
     private ListView speciesListView;
     private InputMethodManager imm;
     private ProgressDialog dialog;
@@ -68,11 +69,12 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION = 0;
     private int searchType = 0;
     public static final String INTENT_EXTRA_SPECIES_NAME = "speciesName";
-
-
     private int offset = 0;
+    private ArrayList<String> scientificNamesArray, filteredArrayList = new ArrayList<String>();
+    private ArrayAdapter<String> adapter;
+    private LinearLayout filter;
 
-    private ArrayList<String> scientificNamesArray = new ArrayList<String>();
+
 
 
     @Override
@@ -91,7 +93,9 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_search);
 
         searchEditText = findViewById(R.id.SearchEditText);
+        filterEditText = findViewById(R.id.FilterEditText);
         speciesListView = findViewById(R.id.ListSpecies);
+        filter = findViewById(R.id.Filter);
 
         //setup for load more button
         Button btnLoadMore = new Button(this);
@@ -114,6 +118,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
                     search();
+                    filter.setVisibility(View.VISIBLE);
                 }
                 return false;
             }
@@ -213,7 +218,20 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             // Search by County
             searchRequestWithCounty(this, searchInput);
         }
+    }
+
+    public void filterByGenus(View view) {
+        for (int i = 0; i < scientificNamesArray.size(); i++) {
+            String scientificName = scientificNamesArray.get(i);
+            String genus = scientificName.substring(0, scientificName.indexOf(" "));
+            if (genus.equals(filterEditText.getText().toString())) {
+                filteredArrayList.add(scientificNamesArray.get(i));
+                adapter = new ArrayAdapter<>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
+                speciesListView.setAdapter(adapter);
+            }
+            Log.d("Genus", genus);
         }
+    }
 
     private void searchRequestWithState(final Context context, final String state) {
         // stateInput capitalizes the state
@@ -253,7 +271,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                             Log.d("searchResponse", scientificNamesArray.toString());
 
-                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, scientificNamesArray);
+                            adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, scientificNamesArray);
 
                             speciesListView.setAdapter(adapter);
                             speciesListView.setVisibility(View.VISIBLE);
@@ -353,7 +371,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                             Log.d("searchRespWithCounty", scientificNamesArray.toString());
 
-                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, scientificNamesArray);
+                            adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, scientificNamesArray);
 
                             speciesListView.setAdapter(adapter);
                             speciesListView.setVisibility(View.VISIBLE);
@@ -411,7 +429,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         final String query = baseAddress + formattedName;
         final SpeciesSearchHelper helper = new SpeciesSearchHelper();
 
-        Log.i("final url:", query);
+        Log.i("final url", query);
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
@@ -443,7 +461,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     String[] speciesArr = {commonName + ", " + scientificName};
 
                     // throw species name in ListView and display
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesArr);
+                    adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesArr);
                     speciesListView.setAdapter(adapter);
                     speciesListView.setVisibility(View.VISIBLE);
 
@@ -554,7 +572,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                             Log.d("whatsAroundMeResponse", scientificNamesArray.toString());
 
-                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, scientificNamesArray);
+                            adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, scientificNamesArray);
 
                             speciesListView.setAdapter(adapter);
                             speciesListView.setVisibility(View.VISIBLE);

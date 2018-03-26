@@ -89,6 +89,35 @@
             android:layout_marginBottom="10dp"
             android:layout_below="@id/RadioButtons"
             android:onClick="whatsAroundMe"/>
+        <LinearLayout
+            android:id="@+id/Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/WhatsAroundMeButton"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone">
+            <EditText
+                android:id="@+id/FilterEditText"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_search_box"
+                android:layout_marginEnd="10dp"
+                android:paddingStart="5dp"
+                android:textSize="15sp"
+                android:hint="Genus"/>
+            <TextView
+                android:id="@+id/FilterButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Filter"
+                android:textColor="@color/whiteGrey"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp"
+                android:onClick="filterByGenus"/>
+        </LinearLayout>
+
     </RelativeLayout>
     <ListView
         android:id="@+id/ListSpecies"
