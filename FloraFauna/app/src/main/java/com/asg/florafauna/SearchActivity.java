@@ -467,11 +467,11 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         int length = helper.getNameLength(speciesName);
 
         // just a space entered
-        if(length < 1)
+        if (length < 1)
         {
             // dialog -- please enter a species name
         }
-        else if(length == 1)
+        else if (length == 1)
         {
             // throw species name to partial search
             searchPartialName(this, speciesName);
@@ -547,7 +547,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                             j++;
                         }
-                        if(match)
+                        if (match)
                         {
                             break;
                         }

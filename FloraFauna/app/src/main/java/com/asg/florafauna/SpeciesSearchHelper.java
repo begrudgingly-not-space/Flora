@@ -7,10 +7,10 @@ import android.text.TextUtils;
  * Created by shelby on 2/7/18.
  */
 
-public class SpeciesSearchHelper
+class SpeciesSearchHelper
 {
 
-    protected int getNameLength(String name)
+    int getNameLength(String name)
     {
         int nameLength;
 
@@ -31,7 +31,7 @@ public class SpeciesSearchHelper
 
     }
 
-    protected String capitalizeName(String name)
+    String capitalizeName(String name)
     {
         String capitalizedName;
         String arr[] = name.split(" ");
