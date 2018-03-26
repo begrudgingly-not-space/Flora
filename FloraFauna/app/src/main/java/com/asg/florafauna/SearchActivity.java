@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -46,11 +47,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.security.Security;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import android.widget.EditText;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,7 +76,8 @@ import static com.asg.florafauna.StateFinder.stateFinder;
 
 public class SearchActivity extends AppCompatActivity implements LocationListener {
     private static final String TAG = "SearchActivity";
-    private EditText searchEditText, filterEditText;
+    private EditText filterEditText;
+    private AutoCompleteTextView searchEditText;
     private ListView speciesListView;
     private InputMethodManager imm;
     private ProgressDialog dialog;
@@ -79,6 +91,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private ArrayList<String> scientificNamesArray, filteredArrayList = new ArrayList<String>();
     private ArrayAdapter<String> adapter;
     private LinearLayout filter;
+    private ArrayList<String> history = new ArrayList<String>();
 
 
 
@@ -130,6 +143,9 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 return false;
             }
         });
+
+        //sets the history and sets dropdown list
+        setHistory();
     }
 
     public void getLocation() {
@@ -177,7 +193,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         switch (item.getItemId()) {
             case R.id.action_settings:
                 Intent settings_intent = new Intent(SearchActivity.this, SettingsActivity.class);
-                startActivity(settings_intent);
+                startActivityForResult(settings_intent, 1);
                 return true;
             case R.id.action_help:
                 Intent help_intent = new Intent(SearchActivity.this, HelpActivity.class);
@@ -207,6 +223,16 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             }
         }
     }
+    //Testing
+    /*@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK){
+            Intent refresh = new Intent(this, SearchActivity.class);
+            startActivity(refresh);
+            this.finish();
+        }
+    }*/
 /**
     public void openHelp(View view){
         Intent intent = new Intent(SearchActivity.this, HelpActivity.class);
@@ -216,7 +242,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     // opens settings
     public void openSettings(View view){
         Intent intent = new Intent(SearchActivity.this, SettingsActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
     }
      public void openMapPage(View view) {
          Intent intent = new Intent(SearchActivity.this, MapActivity.class);
@@ -242,6 +268,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         RadioButton County = findViewById(R.id.CountyButton);
         RadioButton State = findViewById(R.id.StateButton);
 
+        //Checks which button (search type) is checked
         if(State.isChecked())
         {
             // Search by State
@@ -257,6 +284,12 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             // Search by County
             searchRequestWithCounty(this, searchInput);
         }
+        //Save history to file
+        if(searchInput.length() != 0) {
+            saveHistory(searchInput);
+        }
+        //read search history
+        setHistory();
     }
 
     public void filterByGenus(View view) {
@@ -873,4 +906,52 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         }
 
     }
+
+    //Save history method
+    private void saveHistory(String data){
+        try{
+            FileOutputStream fOut = openFileOutput("history", MODE_APPEND);
+            OutputStreamWriter osw = new OutputStreamWriter(fOut);
+            osw.append(data);
+            osw.append("\n");
+            osw.flush();
+            osw.close();
+            fOut.close();
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            Log.e("Exception", "Failed to save history: " + e.toString());
+        }
+    }
+    //sets the history for a dropdown
+    public void setHistory(){
+        history.clear();
+        try {
+            FileInputStream fis = this.openFileInput("history");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader reader = new BufferedReader(isr);
+            String line;
+
+            while ((line = reader.readLine()) != null)
+            {
+                history.add(line);
+            }
+            reader.close();
+            isr.close();
+            fis.close();
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, history);
+        searchEditText.setThreshold(0);
+        searchEditText.setAdapter(adapter);
+    }
+
 }
