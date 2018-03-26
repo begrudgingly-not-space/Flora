@@ -231,6 +231,19 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             }
             Log.d("Genus", genus);
         }
+
+        if (filteredArrayList.isEmpty()) {
+            AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+            alertDialog.setTitle("No matches found.");
+            alertDialog.setMessage("Please check the spelling of your entry.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+        }
     }
 
     private void searchRequestWithState(final Context context, final String state) {

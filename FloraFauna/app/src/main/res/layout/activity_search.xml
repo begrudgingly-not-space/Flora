@@ -24,7 +24,8 @@
                 android:paddingStart="25dp"
                 android:layout_margin="10dp"
                 android:textColor="@color/black"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:imeOptions="actionDone"/>
             <ImageView
                 android:layout_width="15dp"
                 android:layout_height="15dp"
