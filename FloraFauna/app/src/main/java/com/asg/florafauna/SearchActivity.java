@@ -118,6 +118,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
                     search();
+                    filterEditText.setText("");
                     filter.setVisibility(View.VISIBLE);
                 }
                 return false;
@@ -221,6 +222,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     }
 
     public void filterByGenus(View view) {
+        filteredArrayList.clear();
         for (int i = 0; i < scientificNamesArray.size(); i++) {
             String scientificName = scientificNamesArray.get(i);
             String genus = scientificName.substring(0, scientificName.indexOf(" "));
