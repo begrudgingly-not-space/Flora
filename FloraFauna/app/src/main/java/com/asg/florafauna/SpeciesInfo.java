@@ -55,12 +55,12 @@ public class SpeciesInfo
         description="\nIn setFromEOL";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
-        JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null, new Response.Listener<JSONObject>()
-        {
+        JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null,
+                new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response)
             {
-                description+="\nin onResponse";
+                description = description.concat("in onResponse");
                 try
                 {
                     description+="\nin onResponse try block";
