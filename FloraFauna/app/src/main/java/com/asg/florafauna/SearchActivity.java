@@ -572,7 +572,7 @@ public class SearchActivity extends AppCompatActivity {
                         {
                             scientificName = results.getString("scientificName");
                             commonNames = results.getJSONArray("commonNames");
-                            if(commonNames != null)
+                            if(commonNames.length() > 0)
                             {
                                 commonName = commonNames.getString(0);
                             }
