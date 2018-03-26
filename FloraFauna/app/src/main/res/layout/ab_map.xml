@@ -2,17 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkGreen">
+    android:background="@color/bluegreen">
     <TextView
-        android:textColor="@color/whiteGrey"
-        android:textSize="25sp"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="30dp"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:layout_centerInParent="true"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="@string/app_name" />
-    <!--<ImageView
+        android:text="@string/Map" />
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_help_action_white"
@@ -25,15 +23,23 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_settings_white"
         android:layout_centerVertical="true"
-        android:layout_toStartOf="@id/MapButton"
+        android:layout_toStartOf="@id/HomeButton"
         android:onClick="openSettings"/>
     <ImageView
-        android:id="@+id/MapButton"
+        android:id="@+id/HomeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_map_action_white"
+        android:src="@drawable/ic_home_white"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="5dp"
-        android:onClick="openMapPage"/>-->
+        android:layout_margin="5dp"
+        android:onClick="openSearch"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_back_white"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="10dp"
+        android:onClick="goBack"/>
 </RelativeLayout>

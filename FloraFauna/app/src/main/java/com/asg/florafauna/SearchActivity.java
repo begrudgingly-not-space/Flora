@@ -56,6 +56,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import static com.asg.florafauna.CountyFinder.countyFinder;
+import static com.asg.florafauna.StateFinder.stateFinder;
 
 
 /**
@@ -213,6 +214,10 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         Intent intent = new Intent(SearchActivity.this, SettingsActivity.class);
         startActivity(intent);
     }
+     public void openMapPage(View view) {
+         Intent intent = new Intent(SearchActivity.this, MapActivity.class);
+         startActivity(intent);
+     }
 **/
     @Override
     public void onBackPressed()
@@ -283,9 +288,13 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         final int position = scientificNamesArray.size();
         String stateInput = "";
 
-        if (state.length() > 0) {
+        if (state.length() > 2) {
             stateInput = state.substring(0, 1).toUpperCase() + state.substring(1);
             stateInput = stateInput.replaceAll(" ", "%20");
+        }
+        else if (state.length() == 2) {
+            stateInput = state.substring(0,2).toUpperCase();
+            stateInput = stateFinder(context, stateInput);
         }
 
         final String url = "https://bison.usgs.gov/api/search.json?state=" + stateInput + "&start=" + offset + "&count=500";
@@ -377,8 +386,12 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             }
         }
 
-        if (state.length() >= 2) {
+        if (state.length() > 3) {
             state = state.substring(1, 2).toUpperCase() + state.substring(2);
+        }
+        else if (state.length() == 3) {
+            state = state.substring(1,3).toUpperCase();
+            state = stateFinder(context, state);
         }
 
         String countyFips = countyFinder(context, state, county);

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Accessible Map</title>
+    <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+    <style>
+      a.skiplink {
+        position: absolute;
+        clip: rect(1px, 1px, 1px, 1px);
+        padding: 0;
+        border: 0;
+        height: 1px;
+        width: 1px;
+        overflow: hidden;
+      }
+      a.skiplink:focus {
+        clip: auto;
+        height: auto;
+        width: auto;
+        background-color: #fff;
+        padding: 0.3em;
+      }
+      #map:focus {
+        outline: #4A74A8 solid 0.15em;
+      }
+    </style>
+</head>
+<body>
+<a class="skiplink" href="#map">Go to map</a>
+<div id="map" class="map" tabindex="0"></div>
+<button id="zoom-out">Zoom out</button>
+<button id="zoom-in">Zoom in</button>
+<script type="text/javascript">
+
+/*
+      var point = [[-91.69000244140625, 31.219999313],
+                   [-90.00507354736328, 30.337696075439453],
+                   [-93.58332824707031, 32.58332824707031]
+      ];
+*/
+      var points = Android.getValue();
+      console.log(points);
+      points = points.split(" ");
+
+      var point = [];
+      for(var i = 0; i < points.length / 2; i += 1){
+         point[i] = [Number(points[i * 2]), Number(points[i * 2 + 1])];
+      }
+
+     // var coord = new ol.Coordinate([31.219999313,-91.69000244140625]);
+     // var coord = ol.proj.toLonLat(point);
+     // var coord = ol.proj.transform(point, 'EPSG:4326', 'EPSG:3857');
+
+     var coord = [];
+
+     for(var i = 0; i < point.length; i += 1){
+        coord.push(ol.proj.transform(point[i], 'EPSG:4326', 'EPSG:3857'));
+     }
+
+/*
+      var vectorSource = new ol.source.Vector({
+            //create empty vector
+      });
+
+      var feature = new ol.Feature({
+            geometry: new ol.geom.Point(coord)
+      });
+
+      vectorSource.addFeature(feature);
+*/
+
+      var features = [];
+      var feature, geometry;
+
+      for (var i = 0; i < coord.length; i += 1) {
+         geometry = new ol.geom.Point(coord[i]);
+         feature = new ol.Feature(geometry);
+         features[i] = feature;
+      }
+
+      var vectorSource = new ol.source.Vector({
+         features: features
+      });
+
+      var vectorLayer = new ol.layer.Vector({
+         source: vectorSource
+      });
+
+      var layers = [
+         new ol.layer.Tile({
+           source: new ol.source.OSM()
+         })
+      ];
+
+      var map = new ol.Map({
+        layers: layers,
+        target: 'map',
+        controls: ol.control.defaults({
+          attributionOptions: {
+            collapsible: false
+          }
+        }),
+        view: new ol.View({
+          center: [-10997148, 4569099],
+          zoom: 2
+        })
+      });
+      map.addLayer(vectorLayer);
+
+
+      document.getElementById('zoom-out').onclick = function() {
+        var view = map.getView();
+        var zoom = view.getZoom();
+        view.setZoom(zoom - 1);
+      };
+
+      document.getElementById('zoom-in').onclick = function() {
+        var view = map.getView();
+        var zoom = view.getZoom();
+        view.setZoom(zoom + 1);
+      };
+
+    </script>
+</body>
+</html>
