@@ -223,7 +223,8 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             }
         }
     }
-    
+
+    // Method to make sure search history is cleared
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
