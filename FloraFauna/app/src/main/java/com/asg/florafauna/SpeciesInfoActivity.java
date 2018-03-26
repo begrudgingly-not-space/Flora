@@ -57,8 +57,9 @@ public class SpeciesInfoActivity extends AppCompatActivity
         //create object for the animal selected
         //SpeciesInfo species = new SpeciesInfo(this,sName);
 
-
-        TextView SNgetText = findViewById(R.id.ScientificName);
+        // Currently search page sends scientific name and common name in some cases
+        TextView scientificName = findViewById(R.id.ScientificName);
+        scientificName.setText(sName);
         //SNgetText.setText(String.valueOf(species.getScientificName()));
 
         TextView CNgetText = findViewById(R.id.CommonName);
@@ -170,7 +171,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         String query=eolQuery(name);
         Log.i("query",query);
 
-        description.setText("\nIn setFromEOL");
+        description.setText("In setFromEOL");
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
         JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null,

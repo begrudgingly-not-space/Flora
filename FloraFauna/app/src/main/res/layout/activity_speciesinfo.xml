@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:padding="8dp"
-            android:text="No scienctific name found."
+            android:text="No scientific name found."
             android:textColor="@color/darkGreen"/>
         <TextView
             android:layout_width="match_parent"
