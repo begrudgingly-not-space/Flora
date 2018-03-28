@@ -723,10 +723,10 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                                 speciesList.add(commonName + ", " + scientificName);
                             }
 
+                            Log.i("common name", commonName);
+                            Log.i("scientific name", scientificName);
                         }
 
-                        Log.i("common name", commonName);
-                        Log.i("scientific name", scientificName);
 
                     }
 
