@@ -34,7 +34,7 @@ class SpeciesSearchHelper
     String capitalizeName(String name)
     {
         String capitalizedName;
-        String arr[] = name.split(" ");
+        String arr[] = name.split("\\s+");
         for(int i = 0; i < arr.length; i++)
         {
             arr[i] = arr[i].substring(0, 1).toUpperCase() + arr[i].substring(1);
