@@ -55,6 +55,10 @@ public class MapActivity extends AppCompatActivity{
     private ProgressDialog dialog;
     private InputMethodManager imm;
 
+    private double mapLongitude = -96.9583498;   
+    private double mapLatitude = 40.7507204;
+    private double mapZoom = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,6 +109,21 @@ public class MapActivity extends AppCompatActivity{
         @JavascriptInterface
         public String getValue() {
             return bisonpoints;
+        }
+
+        @JavascriptInterface
+        public double getMapLongitude() {
+            return mapLongitude;
+        }
+
+        @JavascriptInterface
+        public double getMapLatitude() {
+            return mapLatitude;
+        }
+
+        @JavascriptInterface
+        public double getMapZoom() {
+            return mapZoom;
         }
     }
 
