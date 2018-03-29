@@ -109,6 +109,31 @@ public class MapActivity extends AppCompatActivity{
         stateLocations.put("Connecticut", new double[] {-72.755371, 41.597782, 5});
         stateLocations.put("Delaware", new double[] {-75.507141, 39.318523, 5});
         stateLocations.put("Florida", new double[] {-81.686783, 27.766279, 4});
+        stateLocations.put("Georgia", new double[] {-83.643074, 33.040619, 5});
+        stateLocations.put("Hawaii", new double[] {-157.498337, 21.094318, 5});
+        stateLocations.put("Idaho", new double[] {-114.478828, 44.240459, 4});
+        stateLocations.put("Illinois", new double[] {-88.986137, 40.349457, 5});
+        stateLocations.put("Indiana", new double[] {-86.258278, 39.849426, 5});
+        stateLocations.put("Iowa", new double[] {-93.210526, 42.011539, 5});
+        stateLocations.put("Kansas", new double[] {-96.726486, 38.526600, 5});
+        stateLocations.put("Kentucky", new double[] {-84.670067, 37.668140, 5});
+        stateLocations.put("Maine", new double[] {-69.381927, 44.693947, 5});
+        stateLocations.put("Maryland", new double[] {-76.802101, 39.063946, 5});
+        stateLocations.put("Massachusetts", new double[] {-71.530106, 42.230171, 5});
+        stateLocations.put("Michigan", new double[] {-84.536095, 43.326618, 5});
+        stateLocations.put("Minnesota", new double[] {-93.900192, 45.694454, 5});
+        stateLocations.put("Mississippi", new double[] {-89.678696, 32.741646, 5});
+        stateLocations.put("Missouri", new double[] {-92.288368, 38.456085, 5});
+        stateLocations.put("Montana", new double[] {-110.454353, 46.921925, 5});
+        stateLocations.put("Nebraska", new double[] {-98.268082, 41.125370, 5});
+        stateLocations.put("Nevada", new double[] {-117.055374, 38.313515, 5});
+        stateLocations.put("New Hampshire", new double[] {-71.563896, 43.452492, 5});
+        stateLocations.put("Maryland", new double[] {-76.802101, 39.063946, 5});
+        stateLocations.put("Maryland", new double[] {-76.802101, 39.063946, 5});
+        stateLocations.put("Maryland", new double[] {-76.802101, 39.063946, 5});
+        stateLocations.put("Maryland", new double[] {-76.802101, 39.063946, 5});
+        stateLocations.put("Maryland", new double[] {-76.802101, 39.063946, 5});
+
 
     }
 
@@ -242,7 +267,13 @@ public class MapActivity extends AppCompatActivity{
 
         if (location.length() > 2) {
             state = location.substring(0, 1).toUpperCase() + location.substring(1);
-            state = state.replaceAll(" ", "%20");
+
+            if (state.contains(" ")){
+                String[] stateParts = state.split(" ");
+                stateParts[1] = stateParts[1].substring(0,1).toUpperCase() + stateParts[1].substring(1);
+                state = stateParts[0] + " " + stateParts[1];
+            }
+
         }
         else if (location.length() == 2) {
             state = location.substring(0,2).toUpperCase();
@@ -256,6 +287,7 @@ public class MapActivity extends AppCompatActivity{
             mapZoom = mapValues[2];
         }
 
+        state = state.replaceAll(" ", "%20");
         species = species.replaceAll(" ", "%20");
 
         String url = "https://bison.usgs.gov/api/search.json?species=" + species + "&type=" + searchType + "&state=" + state + "&start=0&count=500";
@@ -332,14 +364,22 @@ public class MapActivity extends AppCompatActivity{
             if (searchTerms.length == 2) {
                 county = searchTerms[0];
                 state = searchTerms[1];
+                state = state.substring(1, state.length());
             }
         }
 
-        if (state.length() > 3) {
-            state = state.substring(1, 2).toUpperCase() + state.substring(2);
+        if (state.length() > 2) {
+            state = state.substring(0, 1).toUpperCase() + state.substring(1);
+
+            if (state.contains(" ")){
+                String[] stateParts = state.split(" ");
+                stateParts[1] = stateParts[1].substring(0,1).toUpperCase() + stateParts[1].substring(1);
+                state = stateParts[0] + " " + stateParts[1];
+            }
+
         }
-        else if (state.length() == 3) {
-            state = state.substring(1,3).toUpperCase();
+        else if (state.length() == 2) {
+            state = state.substring(0,2).toUpperCase();
             state = stateFinder(context, state);
         }
 

@@ -328,12 +328,20 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
         if (state.length() > 2) {
             stateInput = state.substring(0, 1).toUpperCase() + state.substring(1);
-            stateInput = stateInput.replaceAll(" ", "%20");
+
+            if (stateInput.contains(" ")){
+                String[] stateParts = stateInput.split(" ");
+                stateParts[1] = stateParts[1].substring(0,1).toUpperCase() + stateParts[1].substring(1);
+                stateInput = stateParts[0] + " " + stateParts[1];
+            }
+
         }
         else if (state.length() == 2) {
             stateInput = state.substring(0,2).toUpperCase();
             stateInput = stateFinder(context, stateInput);
         }
+
+        stateInput = stateInput.replaceAll(" ", "%20");
 
         final String url = "https://bison.usgs.gov/api/search.json?state=" + stateInput + "&start=" + offset + "&count=500";
         Log.d("url", url);
@@ -428,14 +436,22 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             if (searchTerms.length == 2) {
                 county = searchTerms[0];
                 state = searchTerms[1];
+                state = state.substring(1, state.length());
             }
         }
 
-        if (state.length() > 3) {
-            state = state.substring(1, 2).toUpperCase() + state.substring(2);
+        if (state.length() > 2) {
+            state = state.substring(0, 1).toUpperCase() + state.substring(1);
+
+            if (state.contains(" ")){
+                String[] stateParts = state.split(" ");
+                stateParts[1] = stateParts[1].substring(0,1).toUpperCase() + stateParts[1].substring(1);
+                state = stateParts[0] + " " + stateParts[1];
+            }
+
         }
-        else if (state.length() == 3) {
-            state = state.substring(1,3).toUpperCase();
+        else if (state.length() == 2) {
+            state = state.substring(0,2).toUpperCase();
             state = stateFinder(context, state);
         }
 
