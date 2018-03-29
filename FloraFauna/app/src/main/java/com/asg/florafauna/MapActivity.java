@@ -37,6 +37,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.asg.florafauna.CountyFinder.countyFinder;
 import static com.asg.florafauna.StateFinder.stateFinder;
@@ -55,9 +57,12 @@ public class MapActivity extends AppCompatActivity{
     private ProgressDialog dialog;
     private InputMethodManager imm;
 
-    private double mapLongitude = -96.9583498;   
+    private double mapLongitude = -96.9583498;
     private double mapLatitude = 40.7507204;
     private double mapZoom = 2;
+
+    private Map<String, double[]> stateLocations = new HashMap<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +98,17 @@ public class MapActivity extends AppCompatActivity{
 
         speciesInput = findViewById(R.id.SearchEditText);
         locationInput = findViewById(R.id.SearchEditTextRegion);
+
+        stateLocations.put("Louisiana", new double[] { -92.600726, 31.314196, 5});
+        stateLocations.put("Alabama", new double[] {-86.791130, 32.806671, 5});
+        stateLocations.put("Alaska", new double[] {-152.404419, 61.370716, 2});
+        stateLocations.put("Arizona", new double[] {-111.431221, 33.729759, 5});
+        stateLocations.put("Arkansas", new double[] {-92.373123, 34.969704, 5});
+        stateLocations.put("California", new double[] {-119.681564, 36.116203, 4});
+        stateLocations.put("Colorado", new double[] {-105.311104, 39.059811, 5});
+        stateLocations.put("Connecticut", new double[] {-72.755371, 41.597782, 5});
+        stateLocations.put("Delaware", new double[] {-75.507141, 39.318523, 5});
+        stateLocations.put("Florida", new double[] {-81.686783, 27.766279, 4});
 
     }
 
@@ -182,6 +198,9 @@ public class MapActivity extends AppCompatActivity{
     public void sightingsSearch(View view){
         bisonpoints = "";
         //getPointsFromBison(this);
+        mapLongitude = -96.9583498;
+        mapLatitude = 40.7507204;
+        mapZoom = 2;
 
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
@@ -228,6 +247,13 @@ public class MapActivity extends AppCompatActivity{
         else if (location.length() == 2) {
             state = location.substring(0,2).toUpperCase();
             state = stateFinder(context, state);
+        }
+
+        double[] mapValues = stateLocations.get(state);
+        if (mapValues != null){
+            mapLongitude = mapValues[0];
+            mapLatitude = mapValues[1];
+            mapZoom = mapValues[2];
         }
 
         species = species.replaceAll(" ", "%20");
