@@ -400,6 +400,13 @@ public class MapActivity extends AppCompatActivity{
 
         String countyFips = countyFinder(context, state, county);
 
+        double[] mapValues = stateLocations.get(state);
+        if (mapValues != null){
+            mapLongitude = mapValues[0];
+            mapLatitude = mapValues[1];
+            mapZoom = mapValues[2];
+        }
+
         species = species.replaceAll(" ", "%20");
 
         state = state.replaceAll(" ", "%20");
