@@ -120,20 +120,35 @@ public class MapActivity extends AppCompatActivity{
         stateLocations.put("Maine", new double[] {-69.381927, 44.693947, 5});
         stateLocations.put("Maryland", new double[] {-76.802101, 39.063946, 5});
         stateLocations.put("Massachusetts", new double[] {-71.530106, 42.230171, 5});
-        stateLocations.put("Michigan", new double[] {-84.536095, 43.326618, 5});
-        stateLocations.put("Minnesota", new double[] {-93.900192, 45.694454, 5});
+        stateLocations.put("Michigan", new double[] {-84.536095, 43.326618, 4});
+        stateLocations.put("Minnesota", new double[] {-93.900192, 45.694454, 4});
         stateLocations.put("Mississippi", new double[] {-89.678696, 32.741646, 5});
         stateLocations.put("Missouri", new double[] {-92.288368, 38.456085, 5});
-        stateLocations.put("Montana", new double[] {-110.454353, 46.921925, 5});
+        stateLocations.put("Montana", new double[] {-110.454353, 46.921925, 4});
         stateLocations.put("Nebraska", new double[] {-98.268082, 41.125370, 5});
-        stateLocations.put("Nevada", new double[] {-117.055374, 38.313515, 5});
+        stateLocations.put("Nevada", new double[] {-117.055374, 38.313515, 4});
         stateLocations.put("New Hampshire", new double[] {-71.563896, 43.452492, 5});
-        stateLocations.put("Maryland", new double[] {-76.802101, 39.063946, 5});
-        stateLocations.put("Maryland", new double[] {-76.802101, 39.063946, 5});
-        stateLocations.put("Maryland", new double[] {-76.802101, 39.063946, 5});
-        stateLocations.put("Maryland", new double[] {-76.802101, 39.063946, 5});
-        stateLocations.put("Maryland", new double[] {-76.802101, 39.063946, 5});
-
+        stateLocations.put("New Jersey", new double[] {-74.521011, 40.298904, 5});
+        stateLocations.put("New Mexico", new double[] {-106.248482, 34.840515, 4});
+        stateLocations.put("New York", new double[] {-74.948051, 42.165726, 4});
+        stateLocations.put("North Carolina", new double[] {-79.806419, 35.630066, 5});
+        stateLocations.put("North Dakota", new double[] {-99.784012, 47.528912, 5});
+        stateLocations.put("Ohio", new double[] {-82.764915, 40.388783, 5});
+        stateLocations.put("Oklahoma", new double[] {-96.928917, 35.565342, 5});
+        stateLocations.put("Oregon", new double[] {-122.070938, 44.572021, 4});
+        stateLocations.put("Pennsylvania", new double[] {-77.209755, 40.590752, 5});
+        stateLocations.put("Rhode Island", new double[] {-71.511780, 41.680893, 6});
+        stateLocations.put("South Carolina", new double[] {-80.945007, 33.856892, 5});
+        stateLocations.put("South Dakota", new double[] {-99.438828, 44.299782, 5});
+        stateLocations.put("Tennessee", new double[] {-86.692345, 35.747845, 5});
+        stateLocations.put("Texas", new double[] {-97.563461, 31.054487, 4});
+        stateLocations.put("Utah", new double[] {-111.862434, 40.150032, 5});
+        stateLocations.put("Vermont", new double[] {-72.710686, 44.045876, 5});
+        stateLocations.put("Virginia", new double[] {-78.169968, 37.769337, 5});
+        stateLocations.put("Washington", new double[] {-121.490494, 47.400902, 5});
+        stateLocations.put("West Virginia", new double[] {-80.954453, 38.491226, 5});
+        stateLocations.put("Wisconsin", new double[] {-89.616508, 44.268543, 4});
+        stateLocations.put("Wyoming", new double[] {-107.302490, 42.755966, 5});
 
     }
 
