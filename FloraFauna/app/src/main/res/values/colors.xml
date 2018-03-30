@@ -13,6 +13,7 @@
 
     <!--New colors-->
     <color name="darkGreen">#0C3F2B</color>
+    <color name="lighterDarkGreen">#15704C</color>
     <color name="whiteGrey">#DFE1E0</color>
     <color name="translucentWhite">#D9FFFFFF</color>
 </resources>

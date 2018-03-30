@@ -5,11 +5,13 @@
 
     <!-- Specify a color for the background -->
     <solid
-        android:color="@color/lightbg"/>
+        android:color="@color/lighterDarkGreen"/>
 
     <!-- Specify the margins that all content inside the drawable must adhere to -->
 
     <corners
-        android:bottomLeftRadius="3dp"
-        android:bottomRightRadius="3dp" />
+        android:bottomLeftRadius="7dp"
+        android:bottomRightRadius="7dp"
+        android:topLeftRadius="7dp"
+        android:topRightRadius="7dp"/>
 </shape>
