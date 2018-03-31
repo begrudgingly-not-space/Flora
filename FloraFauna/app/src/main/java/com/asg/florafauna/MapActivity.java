@@ -54,6 +54,7 @@ public class MapActivity extends AppCompatActivity{
     String points = "-91.69000244140625 31.219999313 -90.00507354736328 30.337696075439453 -93.58332824707031 32.58332824707031 -89.84539794921875 30.270082473754883";
     private EditText speciesInput;
     private EditText locationInput;
+    private Spinner spinner;
     private ProgressDialog dialog;
     private InputMethodManager imm;
 
@@ -98,6 +99,36 @@ public class MapActivity extends AppCompatActivity{
 
         speciesInput = findViewById(R.id.SearchEditText);
         locationInput = findViewById(R.id.SearchEditTextRegion);
+        spinner = findViewById(R.id.search_selection);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                String selectedItem = parent.getItemAtPosition(position).toString();
+                if(selectedItem.equals("Common name by state"))
+                {
+                    speciesInput.setHint("Common Name");
+                    locationInput.setHint("State");
+                }
+                else if (selectedItem.equals("Common name by county")){
+                    speciesInput.setHint("Common Name");
+                    locationInput.setHint("County, State");
+                }
+                else if (selectedItem.equals("Scientific name by state")){
+                    speciesInput.setHint("Scientific Name");
+                    locationInput.setHint("State");
+                }
+                else if (selectedItem.equals("Scientific name by county")){
+                    speciesInput.setHint("Scientific Name");
+                    locationInput.setHint("County, State");
+                }
+            } // to close the onItemSelected
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+
+            }
+        });
 
         stateLocations.put("Louisiana", new double[] { -92.600726, 31.314196, 5});
         stateLocations.put("Alabama", new double[] {-86.791130, 32.806671, 5});
@@ -248,7 +279,7 @@ public class MapActivity extends AppCompatActivity{
         String species = speciesInput.getText().toString();
         String location = locationInput.getText().toString();
 
-        Spinner spinner = findViewById(R.id.search_selection);
+        //Spinner spinner = findViewById(R.id.search_selection);
         String selection = spinner.getSelectedItem().toString();
         Log.d("spinner", selection);
 
