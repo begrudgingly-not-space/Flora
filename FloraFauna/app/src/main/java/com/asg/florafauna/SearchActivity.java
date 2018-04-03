@@ -297,8 +297,12 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         filteredArrayList.clear();
         for (int i = 0; i < scientificNamesArray.size(); i++) {
             String scientificName = scientificNamesArray.get(i);
-            String genus = scientificName.substring(0, scientificName.indexOf(" "));
-            if (genus.equals(filterEditText.getText().toString())) {
+            // this will either split the name or put the name in an
+            // array if there's only one word in the name
+            String[] partial = scientificName.split("\\s+");
+            String genus = partial[0];
+            Log.i("get", genus);
+            if (genus.equalsIgnoreCase(filterEditText.getText().toString())) {
                 filteredArrayList.add(scientificNamesArray.get(i));
                 adapter = new ArrayAdapter<>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
                 speciesListView.setAdapter(adapter);
