@@ -10,17 +10,24 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 
 public class SettingsActivity extends AppCompatActivity {
+    private String[] array = new String[1];
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,65 +37,58 @@ public class SettingsActivity extends AppCompatActivity {
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_settings);
 
 
-        // save mileage
+//SAVE THE SETTINGS TO FILE
         Spinner mileage = (Spinner) findViewById(R.id.miles);
-        mileage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                String text = parent.getItemAtPosition(pos).toString();
-
-                try{
-                    FileOutputStream fOut = openFileOutput("mileage", MODE_PRIVATE);
-                    OutputStreamWriter osw = new OutputStreamWriter(fOut);
-                    osw.write(text);
-                    osw.flush();
-                    osw.close();
-                    fOut.close();
-                }
-                catch (FileNotFoundException e){
-                    e.printStackTrace();
-                }
-                catch (IOException e){
-                    Log.e("Exception", "Failed to save history: " + e.toString());
-                }
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        // save style/theme
         Spinner theme = (Spinner) findViewById(R.id.Style);
-        theme.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                String text = parent.getItemAtPosition(pos).toString();
 
-                try{
-                    FileOutputStream fOut = openFileOutput("theme", MODE_PRIVATE);
-                    OutputStreamWriter osw = new OutputStreamWriter(fOut);
-                    osw.write(text);
-                    osw.flush();
-                    osw.close();
-                    fOut.close();
-                }
-                catch (FileNotFoundException e){
-                    e.printStackTrace();
-                }
-                catch (IOException e){
-                    Log.e("Exception", "Failed to save history: " + e.toString());
-                }
+        // sets the mileage spinner
+        try {
+            //opens the file to read its contents
+            FileInputStream fis = this.openFileInput("mileage");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader reader = new BufferedReader(isr);
 
-            }
+            array[0] = reader.readLine(); //adds the line to the temp array
+            reader.close();
+            isr.close();
+            fis.close();
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        //sets the mileage spinner
+        mileage.setSelection(((ArrayAdapter<String>)mileage.getAdapter()).getPosition(array[0]));
 
-            }
-        });
+        // sets the theme spinner
+        try {
+            //opens the file to read its contents
+            FileInputStream fis = this.openFileInput("theme");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader reader = new BufferedReader(isr);
+
+            array[0] = reader.readLine(); //adds the line to the temp array
+            reader.close();
+            isr.close();
+            fis.close();
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        //sets the mileage spinner
+        theme.setSelection(((ArrayAdapter<String>)theme.getAdapter()).getPosition(array[0]));
+
+        // method to save settings to file
+        saveSettings(mileage, theme);
+//SAVE THE SETTINGS TO FILE ^^
+
+
     }
 
 
@@ -152,26 +152,80 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
 
-    public void saveSettings(){
+    private int setSettings(Spinner spinner, String myString){
+        int index = 0;
 
-
-
-
-
-/*
-        try{
-            FileOutputStream fOut = openFileOutput("history", MODE_PRIVATE);
-            fOut.write(database);
-            fOut.flush();
-            fOut.close();
+        for (int i=0; i<spinner.getCount(); i++){
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)){
+                index = i;
+                break;
+            }
         }
-        catch (FileNotFoundException e){
-            e.printStackTrace();
-        }
-        catch (IOException e){
-            Log.e("Exception", "Failed to save history: " + e.toString());
-        }
-*/
+        return index;
+
+    }
+    private void saveSettings(Spinner mileage, Spinner theme){
+        // save mileage
+        mileage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                String text = parent.getItemAtPosition(pos).toString();
+
+                try{
+                    FileOutputStream fOut = openFileOutput("mileage", MODE_PRIVATE); // open file 'mileage' to write to it
+                    OutputStreamWriter osw = new OutputStreamWriter(fOut); // required to 'write'
+                    osw.write(text);
+                    //clean up
+                    osw.flush();
+                    osw.close();
+                    fOut.close();
+                }
+                catch (FileNotFoundException e){
+                    e.printStackTrace();
+                }
+                catch (IOException e){
+                    Log.e("Exception", "Failed to save history: " + e.toString());
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+
+
+        // save style/theme
+        theme.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                String text = parent.getItemAtPosition(pos).toString();
+
+                try{
+                    FileOutputStream fOut = openFileOutput("theme", MODE_PRIVATE); //open file 'theme'
+                    OutputStreamWriter osw = new OutputStreamWriter(fOut); // required to 'write' to file
+                    osw.write(text);
+                    //clean up
+                    osw.flush();
+                    osw.close();
+                    fOut.close();
+                }
+                catch (FileNotFoundException e){
+                    e.printStackTrace();
+                }
+                catch (IOException e){
+                    Log.e("Exception", "Failed to save history: " + e.toString());
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
 }
