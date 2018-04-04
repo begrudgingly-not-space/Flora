@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.asg.florafauna">
-    
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SplashActivity"
+        <activity
+            android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,26 +22,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SearchActivity"
+        <activity
+            android:name=".SearchActivity"
             android:label="Search Page"
-            android:screenOrientation="sensorPortrait">
-        </activity>
-        <activity android:name=".HelpActivity"
+            android:screenOrientation="sensorPortrait"></activity>
+        <activity
+            android:name=".HelpActivity"
             android:label="Help Page"
-            android:screenOrientation="sensorPortrait">
-        </activity>
-        <activity android:name=".SettingsActivity"
+            android:screenOrientation="sensorPortrait"></activity>
+        <activity
+            android:name=".SettingsActivity"
             android:label="Settings"
-            android:screenOrientation="sensorPortrait">
-        </activity>
-        <activity android:name=".MapActivity"
+            android:screenOrientation="sensorPortrait"></activity>
+        <activity
+            android:name=".MapActivity"
             android:label="Map Page"
-            android:screenOrientation="sensorPortrait">
-        </activity>
-        <activity android:name=".SpeciesInfoActivity"
+            android:screenOrientation="sensorPortrait"></activity>
+        <activity
+            android:name=".SpeciesInfoActivity"
             android:label="SpeciesInfo"
-            android:screenOrientation="sensorPortrait">
-        </activity>
+            android:screenOrientation="sensorPortrait"></activity>
+        <activity android:name=".PersonalRecordings"></activity>
     </application>
 
 </manifest>
