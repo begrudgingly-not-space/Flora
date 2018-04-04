@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -42,7 +43,10 @@
             android:name=".SpeciesInfoActivity"
             android:label="SpeciesInfo"
             android:screenOrientation="sensorPortrait"></activity>
-        <activity android:name=".PersonalRecordings"></activity>
+        <activity
+            android:name=".PersonalRecordings"
+            android:label="PersonalRecordings"
+            android:screenOrientation="sensorPortrait"></activity>
     </application>
 
 </manifest>
