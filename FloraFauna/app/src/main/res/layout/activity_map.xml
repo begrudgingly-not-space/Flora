@@ -29,7 +29,7 @@
     <RelativeLayout
         android:id="@+id/SearchBox"
         android:layout_width="match_parent"
-        android:layout_height="200dip"
+        android:layout_height="215dip"
         android:layout_centerHorizontal="true"
         android:background="@color/darkGreen"
         android:orientation="vertical">
@@ -67,6 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:background="@drawable/rounded_search_box"
+                android:paddingStart="10dp"
                 android:inputType="textNoSuggestions"
                 android:textColor="@color/black"
                 android:layout_marginBottom="15dp"
@@ -87,6 +88,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:background="@drawable/rounded_search_box"
+                android:paddingStart="10dp"
                 android:inputType="textNoSuggestions"
                 android:textColor="@color/black"
                 android:textSize="15sp" />
@@ -110,15 +112,15 @@
 
         <TextView
             android:id="@+id/textView6"
-            android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:layout_width="300dp"
+            android:layout_height="35dp"
             android:layout_centerHorizontal="true"
+            android:layout_below="@id/linearLayout"
             android:layout_gravity="center"
-            android:layout_marginBottom="12dp"
-            android:background="@color/black"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_black_box"
             android:gravity="center"
-            android:text="Go"
+            android:text="GO"
             android:onClick="sightingsSearch"
             android:textColor="@color/white"
             android:textSize="15sp"
