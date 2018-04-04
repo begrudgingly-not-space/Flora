@@ -92,6 +92,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private ArrayAdapter<String> adapter;
     private LinearLayout filter;
     private ArrayList<String> history = new ArrayList<String>();
+    final ArrayList<String> speciesList = new ArrayList<>();
 
 
 
@@ -295,19 +296,46 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     public void filterByGenus(View view) {
         filteredArrayList.clear();
-        for (int i = 0; i < scientificNamesArray.size(); i++) {
-            String scientificName = scientificNamesArray.get(i);
-            // this will either split the name or put the name in an
-            // array if there's only one word in the name
-            String[] partial = scientificName.split("\\s+");
-            String genus = partial[0];
-            Log.i("get", genus);
-            if (genus.equalsIgnoreCase(filterEditText.getText().toString())) {
-                filteredArrayList.add(scientificNamesArray.get(i));
-                adapter = new ArrayAdapter<>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
-                speciesListView.setAdapter(adapter);
+        Log.i("searchType", Integer.toString(searchType));
+        if(searchType != 4)
+        {
+            for (int i = 0; i < scientificNamesArray.size(); i++) {
+                String scientificName = scientificNamesArray.get(i);
+                // this will either split the name or put the name in an
+                // array if there's only one word in the name
+                String[] partial = scientificName.split("\\s+");
+                String genus = partial[0];
+                Log.i("get", genus);
+                if (genus.equalsIgnoreCase(filterEditText.getText().toString())) {
+                    filteredArrayList.add(scientificNamesArray.get(i));
+                    adapter = new ArrayAdapter<>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
+                    speciesListView.setAdapter(adapter);
+                }
+                Log.d("Genus", genus);
             }
-            Log.d("Genus", genus);
+        }
+        // partial name filter
+        else
+        {
+            for(int i = 0; i < speciesList.size(); i++)
+            {
+                // scientific name is after comma
+                // genus is first word of scientific name
+                String name = speciesList.get(i);
+                name = name.substring(name.indexOf(","));
+                name = name.replace(",", "");
+                name = name.trim();
+                Log.i("sciName", name);
+                String[] partial = name.split("\\s+");
+                String genus = partial[0];
+                Log.i("genus", genus);
+                if(genus.equalsIgnoreCase(filterEditText.getText().toString()))
+                {
+                    filteredArrayList.add(speciesList.get(i));
+                    adapter = new ArrayAdapter<>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
+                    speciesListView.setAdapter(adapter);
+                }
+            }
         }
 
         if (filteredArrayList.isEmpty()) {
@@ -676,7 +704,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         // base address for searching for a species/genus
         // this will grab any name that contains the text searched by user
         String baseAddress = "https://www.itis.gov/ITISWebService/jsonservice/ITISService/getITISTerms?srchKey=";
-        final ArrayList<String> speciesList = new ArrayList<>();
+
 
         // ensure no trailing whitespace for web call
         final String query = baseAddress + speciesName.trim();
