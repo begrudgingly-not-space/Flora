@@ -151,19 +151,6 @@ public class SettingsActivity extends AppCompatActivity {
         Toast.makeText(this,"Clear History", Toast.LENGTH_SHORT).show();
     }
 
-
-    private int setSettings(Spinner spinner, String myString){
-        int index = 0;
-
-        for (int i=0; i<spinner.getCount(); i++){
-            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)){
-                index = i;
-                break;
-            }
-        }
-        return index;
-
-    }
     private void saveSettings(Spinner mileage, Spinner theme){
         // save mileage
         mileage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

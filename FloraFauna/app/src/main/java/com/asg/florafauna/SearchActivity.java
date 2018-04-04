@@ -109,6 +109,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                         MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION);
         }
         getLocation();
+
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_search);
 
         searchEditText = findViewById(R.id.SearchEditText);
