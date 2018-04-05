@@ -14,19 +14,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 import android.os.AsyncTask;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-
 import org.json.JSONObject;
-
 import java.io.InputStream;
-
 import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
+import org.jsoup.*;
 
 /**
  * Created by steven on 3/2/18.
@@ -78,7 +75,6 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
         //from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
         //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(species.getImageLink());
-        setFromEOL(this, scientificName);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -172,7 +168,6 @@ public class SpeciesInfoActivity extends AppCompatActivity
         String query=eolQuery(name);
         Log.i("query",query);
 
-        //description.setText("In setFromEOL");
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
         JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null,
@@ -180,22 +175,37 @@ public class SpeciesInfoActivity extends AppCompatActivity
                     @Override
                     public void onResponse(JSONObject response)
                     {
-                        //description.append("\nin onResponse");
                         try
                         {
-                            //description.append("\nin onResponse try block");
 
                             //this has been tested, gives the data that I am looking for
                             JSONObject results = response.getJSONArray("results").getJSONObject(0);
-                            Log.i("linkResponse",results.getString("link"));
                             eolLink=results.getString("link");
+                            Log.i("EOLLink",eolLink);
 
-                            //the log updates, but not every time?
+
+                            //added from old object, needs to be cleaned up
+                            String page = Jsoup.connect(eolLink).timeout(10000).execute().parse().toString();
+                            int start = page.indexOf("</h4>",page.indexOf("<h4>Description"))+6;
+                            int stop = page.indexOf("\n", start);
+                            description = page.substring(start,stop);
+                            Log.i("Description",description);
+
+                            start = page.indexOf("<title>")+7;
+                            stop = page.indexOf("-",start);
+                            commonName = page.substring(start,stop);
+                            Log.i("CommonName",commonName);
+
+                            start = page.indexOf("<img alt");
+                            start = page.indexOf("src",start)+5;
+                            stop = page.indexOf("\"",start);
+                            imageLink = page.substring(start,stop);
+                            Log.i("ImageLink",imageLink);
+
                         }
                         catch(Exception e)
                         {
                             Log.e("Exception: ", e.toString());
-                            //description.append("\nin onResponse catch block");
                         }
                     }
                 }, new Response.ErrorListener()
@@ -204,11 +214,9 @@ public class SpeciesInfoActivity extends AppCompatActivity
             public void onErrorResponse(VolleyError error)
             {
                 Log.e("Error: ", error.toString());
-                //description.append("\nin onErrorResponse");
             }
         });
         requestQueue.add(searchRequest);
-        //description="finished with searchRequest";
 
     }
     /*private void setFromEOL(String name)
