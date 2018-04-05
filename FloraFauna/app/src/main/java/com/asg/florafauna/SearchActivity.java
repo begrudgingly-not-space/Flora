@@ -141,7 +141,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         latitude = location.getLatitude();
         longitude = location.getLongitude();
         Log.d (TAG, "Latitude = " + latitude + "\n Longitude = " + longitude);
-        setAOIBbox(latitude, longitude, 5);
     }
 
     @Override
@@ -748,16 +747,10 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     }
 
     public void whatsAroundMe(View view) {
-        // Using 20 points difference of min and max latitude and longitude
         if (latitude != 0 && longitude != 0) {
-            String minLat = Double.toString(latitude - 20);
-            String minLong = Double.toString(longitude - 20);
-            String maxLat = Double.toString(latitude + 20);
-            String maxLong = Double.toString(longitude + 20);
-            locationPolygon = minLat + "," + minLong + "," + maxLat + "," + maxLong;
+            locationPolygon = setAOIBbox(latitude, longitude, 5);
             Log.d(TAG, locationPolygon);
-            dialog = ProgressDialog.show(this, "",
-                    "Loading. Please wait...", true);
+            dialog = ProgressDialog.show(this, "","Loading. Please wait...", true);
             whatsAroundMeRequest(this, locationPolygon);
         }
         else {
@@ -776,8 +769,18 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         }
     }
 
-    private void setAOIBbox(double latitude, double longitude, double mileage) {
-        
+    private String setAOIBbox(double latitude, double longitude, double mileage) {
+        double milesPerDegreeOfLatitude = 69;
+        double milesPerDegreeOfLongitude = Math.cos(Math.toRadians(latitude)) * 69.172;
+        double degreesOfLatitudePerMile = 1/milesPerDegreeOfLatitude;
+        double degreesOfLongitudePerMile = 1/milesPerDegreeOfLongitude;
+        Log.i(TAG, degreesOfLatitudePerMile + " " + degreesOfLongitudePerMile);
+        String minLat = Double.toString(latitude - (degreesOfLatitudePerMile*mileage));
+        String minLong = Double.toString(longitude - (degreesOfLongitudePerMile*mileage));
+        String maxLat = Double.toString(latitude + (degreesOfLatitudePerMile*mileage));
+        String maxLong = Double.toString(longitude + (degreesOfLongitudePerMile*mileage));
+
+        return minLat + "," + minLong + "," + maxLat + "," + maxLong;
     }
 
     // What's Around Me? webcall
