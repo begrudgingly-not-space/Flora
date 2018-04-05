@@ -2,11 +2,14 @@ package com.asg.florafauna;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -34,28 +37,42 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Security;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import android.widget.EditText;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import static com.asg.florafauna.CountyFinder.countyFinder;
 import static com.asg.florafauna.StateFinder.stateFinder;
+
+
+/**
+ * Created by kkey on 2/1/2018.
+ */
 
 public class SearchActivity extends AppCompatActivity implements LocationListener {
     private static final String TAG = "SearchActivity";
@@ -108,6 +125,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 if (searchType != 0) {
                     loadMore(searchType);
                 }
+
             }
         });
 
@@ -212,6 +230,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             this.finish();
         }
     }
+
 
     @Override
     public void onBackPressed()
@@ -918,7 +937,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         catch (FileNotFoundException e){
             e.printStackTrace();
         }
-        catch (IOException e){
+        catch (IOException e) {
             e.printStackTrace();
         }
 
