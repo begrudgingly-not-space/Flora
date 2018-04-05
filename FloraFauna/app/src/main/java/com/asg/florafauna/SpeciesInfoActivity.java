@@ -34,51 +34,51 @@ import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
 
 public class SpeciesInfoActivity extends AppCompatActivity
 {
-    private TextView description, eolLink;
+    private String scientificName;
+    private String commonName;
+    private String description;
+    private String eolLink;
+    private String imageLink;
+
+    //private TextView description, eolLink;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speciesinfo);
         //default variables to take values from the results menu from the search/history
-        String sName;
-        String link;
 
-        String speciesName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
+        scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
 
-        if (speciesName != null) {
-            sName = speciesName;
-            // link = extras.getString("link");
+        if (scientificName == null) {
+            scientificName="No Species Name";
         }
-        else {
-            sName = "No species name";
-            // link = "http://eol.org/pages/326447/overview";
+        else
+        {
+            setFromEOL(this, scientificName);
         }
-
-        //create object for the animal selected
-        //SpeciesInfo species = new SpeciesInfo(this,sName);
 
         // Currently search page sends scientific name and common name in some cases
-        TextView scientificName = findViewById(R.id.ScientificName);
-        scientificName.setText(sName);
-        //SNgetText.setText(String.valueOf(species.getScientificName()));
+        TextView scientificNameTV = findViewById(R.id.ScientificName);
+        scientificNameTV.setText(scientificName);
+/*
+        TextView commonNameTV = findViewById(R.id.CommonName);
+        commonNameTV.setText(commonName);
 
-        TextView CNgetText = findViewById(R.id.CommonName);
-        //CNgetText.setText(String.valueOf(species.getCommonName()));
+        TextView descriptionTV = findViewById(R.id.Description);
+        descriptionTV.setText(description);
+*/
+        TextView eolLinkTV = findViewById(R.id.EoLLink);
+        eolLinkTV.setText(eolLink);
 
-        description = findViewById(R.id.Description);
 
-        TextView ILgetText = findViewById(R.id.ImageLink);
-        //ILgetText.setText(String.valueOf(species.getImageLink()));
 
-        eolLink = findViewById(R.id.EoLLink);
 
         //action bar creation copied form HelpActivity.java
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
 
-
         //from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
         //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(species.getImageLink());
-        setFromEOL(this, speciesName);
+        setFromEOL(this, scientificName);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -164,6 +164,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
             bmImage.setImageBitmap(result);
         }
     }
+
     //pull relevant info from the search page and from the eol information page
     //all the description="*" lines are for tracking where I am getting to in the program
     private void setFromEOL(final Context context, String name)
@@ -171,7 +172,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         String query=eolQuery(name);
         Log.i("query",query);
 
-        description.setText("In setFromEOL");
+        //description.setText("In setFromEOL");
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
         JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null,
@@ -179,22 +180,22 @@ public class SpeciesInfoActivity extends AppCompatActivity
                     @Override
                     public void onResponse(JSONObject response)
                     {
-                        description.append("\nin onResponse");
+                        //description.append("\nin onResponse");
                         try
                         {
-                            description.append("\nin onResponse try block");
+                            //description.append("\nin onResponse try block");
 
                             //this has been tested, gives the data that I am looking for
                             JSONObject results = response.getJSONArray("results").getJSONObject(0);
                             Log.i("linkResponse",results.getString("link"));
-                            eolLink.setText(results.getString("link"));
+                            eolLink=results.getString("link");
 
                             //the log updates, but not every time?
                         }
                         catch(Exception e)
                         {
-                            Log.e("Error: ", e.toString());
-                            description.append("\nin onResponse catch block");
+                            Log.e("Exception: ", e.toString());
+                            //description.append("\nin onResponse catch block");
                         }
                     }
                 }, new Response.ErrorListener()
@@ -203,7 +204,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
             public void onErrorResponse(VolleyError error)
             {
                 Log.e("Error: ", error.toString());
-                description.append("\nin onErrorResponse");
+                //description.append("\nin onErrorResponse");
             }
         });
         requestQueue.add(searchRequest);
