@@ -26,6 +26,8 @@ public class PersonalRecordings extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_recordings);
 
+        FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_recordings);
+
 
         selectedImage = (ImageView) findViewById(R.id.imageView1);
         Button openGallery = (Button) findViewById(R.id.upload);
@@ -49,7 +51,7 @@ public class PersonalRecordings extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.search_menu, menu);
+        inflater.inflate(R.menu.recordings_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -57,6 +59,10 @@ public class PersonalRecordings extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
+            case R.id.action_home:
+                Intent search_intent = new Intent(PersonalRecordings.this, SearchActivity.class);
+                startActivity(search_intent);
+                return true;
             case R.id.action_settings:
                 Intent settings_intent = new Intent(PersonalRecordings.this, SettingsActivity.class);
                 startActivityForResult(settings_intent, 1);
@@ -90,6 +96,12 @@ public class PersonalRecordings extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    public void goBack(View view){
+        /* closes the activity */
+        setResult(RESULT_OK, null);
+        finish();
     }
 
 }

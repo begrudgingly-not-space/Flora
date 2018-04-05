@@ -127,16 +127,6 @@ public class SettingsActivity extends AppCompatActivity {
         finish();
     }
 
-    /*public void openHelp(View view){
-        Intent intent = new Intent(SettingsActivity.this, HelpActivity.class);
-        startActivity(intent);
-    }
-
-    public void openSearch(View view){
-        Intent intent = new Intent(SettingsActivity.this, SearchActivity.class);
-        startActivity(intent);
-    }*/
-
     public void goBack(View view){
         /* closes the activity */
         setResult(RESULT_OK, null);
