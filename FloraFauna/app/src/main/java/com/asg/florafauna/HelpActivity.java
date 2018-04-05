@@ -46,6 +46,10 @@ public class HelpActivity extends AppCompatActivity {
                 Intent intent = new Intent(HelpActivity.this, MapActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.action_recording:
+                Intent recordings_intent = new Intent(HelpActivity.this, PersonalRecordings.class);
+                startActivity(recordings_intent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
