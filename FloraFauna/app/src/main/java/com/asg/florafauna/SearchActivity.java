@@ -149,6 +149,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         }
         catch (FileNotFoundException e) {
             e.printStackTrace();
+            mileageArray[0] = "1";
         }
         catch (IOException e) {
             e.printStackTrace();
