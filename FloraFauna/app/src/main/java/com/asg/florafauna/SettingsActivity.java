@@ -37,18 +37,18 @@ public class SettingsActivity extends AppCompatActivity {
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_settings);
 
 
-//SAVE THE SETTINGS TO FILE
+        // SAVE THE SETTINGS TO FILE
         Spinner mileage = (Spinner) findViewById(R.id.miles);
         Spinner theme = (Spinner) findViewById(R.id.Style);
 
-        // sets the mileage spinner
+        // Sets the mileage spinner
         try {
-            //opens the file to read its contents
+            // Opens the file to read its contents
             FileInputStream fis = this.openFileInput("mileage");
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader reader = new BufferedReader(isr);
 
-            array[0] = reader.readLine(); //adds the line to the temp array
+            array[0] = reader.readLine(); // Adds the line to the temp array
             reader.close();
             isr.close();
             fis.close();
@@ -60,10 +60,10 @@ public class SettingsActivity extends AppCompatActivity {
         catch (IOException e){
             e.printStackTrace();
         }
-        //sets the mileage spinner
+        // Sets the mileage spinner
         mileage.setSelection(((ArrayAdapter<String>)mileage.getAdapter()).getPosition(array[0]));
 
-        // sets the theme spinner
+        // Sets the theme spinner
         try {
             //opens the file to read its contents
             FileInputStream fis = this.openFileInput("theme");
@@ -84,11 +84,8 @@ public class SettingsActivity extends AppCompatActivity {
         //sets the mileage spinner
         theme.setSelection(((ArrayAdapter<String>)theme.getAdapter()).getPosition(array[0]));
 
-        // method to save settings to file
+        // Method to save settings to file
         saveSettings(mileage, theme);
-//SAVE THE SETTINGS TO FILE ^^
-
-
     }
 
 
