@@ -128,8 +128,12 @@ public class MapActivity extends AppCompatActivity{
                 startActivity(help_intent);
                 return true;
             case R.id.action_home:
-                Intent intent = new Intent(MapActivity.this, SearchActivity.class);
-                startActivity(intent);
+                Intent home_intent = new Intent(MapActivity.this, SearchActivity.class);
+                startActivity(home_intent);
+            case R.id.action_recording:
+                Intent recording_intent = new Intent(MapActivity.this, PersonalRecordings.class);
+                startActivity(recording_intent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

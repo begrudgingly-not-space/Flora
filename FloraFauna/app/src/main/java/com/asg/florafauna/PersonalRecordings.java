@@ -65,7 +65,7 @@ public class PersonalRecordings extends AppCompatActivity {
                 return true;
             case R.id.action_settings:
                 Intent settings_intent = new Intent(PersonalRecordings.this, SettingsActivity.class);
-                startActivityForResult(settings_intent, 1);
+                startActivity(settings_intent);
                 return true;
             case R.id.action_help:
                 Intent help_intent = new Intent(PersonalRecordings.this, HelpActivity.class);
