@@ -31,6 +31,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -146,6 +147,26 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
         //sets the history and sets dropdown list
         setHistory();
+
+        RadioGroup radioGroup = findViewById(R.id.RadioButtons);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton rb = findViewById(checkedId);
+                String selection = (String) rb.getText();
+
+                if (selection.equals("Scientific/Common Name")) {
+                    searchEditText.setHint("Scientific/Common Name");
+                }
+                else if (selection.equals("County, State")) {
+                    searchEditText.setHint("County, State");
+                }
+                else {
+                    searchEditText.setHint("State");
+                }
+            }
+        });
     }
 
     public void getLocation() {

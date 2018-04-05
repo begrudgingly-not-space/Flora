@@ -20,7 +20,7 @@
                 android:layout_height="30dp"
                 android:background="@drawable/rounded_search_box"
                 android:inputType="textNoSuggestions"
-                android:hint="Search"
+                android:hint="Scientific/Common Name"
                 android:paddingStart="25dp"
                 android:layout_margin="10dp"
                 android:textColor="@color/black"
