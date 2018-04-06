@@ -26,7 +26,7 @@ public class PersonalRecordings extends AppCompatActivity {
     private ImageView selectedImage;
     private Bitmap currentImage;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE= 0;
-    private final File f = new File(Environment.getExternalStorageDirectory().toString(), "/FloraFauna/Recordings");
+    private final File recordings = new File(Environment.getExternalStorageDirectory().toString(), "/FloraFauna/Recordings");
 
 
 
@@ -62,13 +62,15 @@ public class PersonalRecordings extends AppCompatActivity {
                     MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE);
         }
 
-
-        if (!f.exists()) {
-            if (!f.mkdirs()) {
+        //checks if the recordings dir exists
+        if (!recordings.exists()) {
+            //if directory creation fails, tell the user
+            if (!recordings.mkdirs()) {
                 Log.d("error", "failed to make dir");
                 Toast.makeText(this, "Failed to create directory", Toast.LENGTH_LONG).show();
             }
         }
+        //if the directory exists, make a log
         else {
             Log.d("error", "dir. already exists");
         }
