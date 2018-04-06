@@ -1,8 +1,14 @@
 package com.asg.florafauna;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,16 +19,20 @@ import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+import java.io.File;
 
 public class PersonalRecordings extends AppCompatActivity {
 
     private ImageView selectedImage;
     private Bitmap currentImage;
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE= 0;
+    private final File f = new File(Environment.getExternalStorageDirectory().toString(), "/FloraFauna/Recordings");
 
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_recordings);
 
@@ -43,7 +53,25 @@ public class PersonalRecordings extends AppCompatActivity {
         });
 
 
+        //Create dir for recordings
+        //request for permission to write to storage
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE);
+        }
+
+
+        if (!f.exists()) {
+            if (!f.mkdirs()) {
+                Log.d("error", "failed to make dir");
+                Toast.makeText(this, "Failed to create directory", Toast.LENGTH_LONG).show();
+            }
+        }
+        else {
+            Log.d("error", "dir. already exists");
+        }
 
     }
 
@@ -88,11 +116,28 @@ public class PersonalRecordings extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             Uri photoUri = data.getData();
             if (photoUri != null) {
+                //code to mess with images will be here
                 try {
                     currentImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
-                    selectedImage.setImageBitmap(currentImage);
+                    selectedImage.setImageBitmap(currentImage); //set the image view to the current image
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission granted
+                }
+                else {
+                    // Permission denied, Unable to create directory
                 }
             }
         }
