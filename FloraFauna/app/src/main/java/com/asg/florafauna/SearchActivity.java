@@ -76,7 +76,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private int searchType = 0;
     public static final String INTENT_EXTRA_SPECIES_NAME = "speciesName";
     private int offset = 0;
-    private ArrayList<String> scientificNamesArray, filteredArrayList = new ArrayList<String>();
+    private ArrayList<String> scientificNamesArray = new ArrayList<>(), filteredArrayList = new ArrayList<>();
     private ArrayAdapter<String> adapter;
     private LinearLayout filter;
     private ArrayList<String> history = new ArrayList<>();
@@ -341,7 +341,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     @Override
                     public void onResponse(JSONObject response) {
                         dialog.dismiss();
-                        //ArrayList<String> scientificNamesArray = new ArrayList<String>();
 
                         try {
                             searchType = 2;
@@ -445,7 +444,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     @Override
                     public void onResponse(JSONObject response) {
                         dialog.dismiss();
-                        //ArrayList<String> scientificNamesArray = new ArrayList<String>();
 
                         try {
                             searchType = 1;
@@ -804,22 +802,25 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private String setAOIBbox(double latitude, double longitude, double mileage) {
         double milesPerDegreeOfLatitude = 69;
         double milesPerDegreeOfLongitude = Math.cos(Math.toRadians(latitude)) * 69.172;
+
         double degreesOfLatitudePerMile = 1/milesPerDegreeOfLatitude;
         double degreesOfLongitudePerMile = 1/milesPerDegreeOfLongitude;
+
         Log.i(TAG, degreesOfLatitudePerMile + " " + degreesOfLongitudePerMile);
         String minLat = Double.toString(latitude - (degreesOfLatitudePerMile*mileage));
         String minLong = Double.toString(longitude - (degreesOfLongitudePerMile*mileage));
         String maxLat = Double.toString(latitude + (degreesOfLatitudePerMile*mileage));
         String maxLong = Double.toString(longitude + (degreesOfLongitudePerMile*mileage));
 
-        return minLat + "," + minLong + "," + maxLat + "," + maxLong;
+        return minLong + "," + minLat + "," + maxLong + "," + maxLat;
     }
 
     // What's Around Me? webcall
     private void whatsAroundMeRequest(final Context context, final String polygon)
     {
-        final String url = "https://bison.usgs.gov/api/search.json?aoibbox=" + polygon;
+        final String url = "https://bison.usgs.gov/api/search.json?aoibbox=" + polygon + "&start=" + offset + "&count=50";;
         Log.d("url", url);
+        final int position = scientificNamesArray.size();
 
         // Initialize request queue
         RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -829,7 +830,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     @Override
                     public void onResponse(JSONObject response) {
                         dialog.dismiss();
-                        ArrayList<String> scientificNamesArray = new ArrayList<String>();
 
                         try {
                             searchType = 3;
@@ -849,6 +849,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                             speciesListView.setAdapter(adapter);
                             speciesListView.setVisibility(View.VISIBLE);
+                            speciesListView.setSelection(position);
 
                             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
