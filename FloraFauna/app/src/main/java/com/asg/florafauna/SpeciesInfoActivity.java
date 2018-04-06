@@ -112,23 +112,6 @@ public class SpeciesInfoActivity extends AppCompatActivity
         }
     }
 
-
-    /*//opens settings
-    public void openSettings(View view){
-        Intent intent = new Intent(SpeciesInfoActivity.this, SettingsActivity.class);
-        startActivity(intent);
-    }
-
-    public void openSearch(View view){
-        Intent intent = new Intent(SpeciesInfoActivity.this, SearchActivity.class);
-        startActivity(intent);
-    }
-
-    public void openHelp(View view) {
-        Intent intent =  new Intent(SpeciesInfoActivity.this, HelpActivity.class);
-        startActivity(intent);
-    }*/
-
     public void goBack(View view){
         /* closes the activity */
         finish();
