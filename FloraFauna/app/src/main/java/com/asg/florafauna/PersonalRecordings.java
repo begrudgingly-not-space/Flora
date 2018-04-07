@@ -25,8 +25,9 @@ public class PersonalRecordings extends AppCompatActivity {
 
     private ImageView selectedImage;
     private Bitmap currentImage;
-    private static final int MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE= 0;
-    private final File recordings = new File(Environment.getExternalStorageDirectory().toString(), "/FloraFauna/Recordings");
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE = 0;
+    private String dirName = "FloraFauna/Recordings";
+    private final File recordings = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), dirName);
 
 
 
@@ -53,8 +54,8 @@ public class PersonalRecordings extends AppCompatActivity {
         });
 
 
-        //Create dir for recordings
-        //request for permission to write to storage
+        // Create dir for recordings
+        // request for permission to write to storage
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(this,
@@ -62,7 +63,7 @@ public class PersonalRecordings extends AppCompatActivity {
                     MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE);
         }
 
-        //checks if the recordings dir exists
+        // checks if the recordings dir exists
         if (!recordings.exists()) {
             //if directory creation fails, tell the user
             if (!recordings.mkdirs()) {
@@ -70,7 +71,7 @@ public class PersonalRecordings extends AppCompatActivity {
                 Toast.makeText(this, "Failed to create directory", Toast.LENGTH_LONG).show();
             }
         }
-        //if the directory exists, make a log
+        // if the directory exists, make a log
         else {
             Log.d("error", "dir. already exists");
         }
