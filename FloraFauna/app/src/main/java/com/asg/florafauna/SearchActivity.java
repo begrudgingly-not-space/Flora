@@ -476,6 +476,11 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             state = stateFinder(context, state);
         }
 
+        //capitalizes first char in county
+        if (county.length() > 0){
+            county = county.substring(0, 1).toUpperCase() + county.substring(1);
+        }
+
         String countyFips = countyFinder(context, state, county);
 
         Log.d("searchterms", county);
