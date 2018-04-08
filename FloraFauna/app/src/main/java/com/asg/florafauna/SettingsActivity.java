@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Set;
 
 public class SettingsActivity extends AppCompatActivity {
     private String[] array = new String[1];
@@ -95,26 +96,8 @@ public class SettingsActivity extends AppCompatActivity {
         //sets the mileage spinner
         mileage.setSelection(((ArrayAdapter<String>)mileage.getAdapter()).getPosition(array[0]));
 
-        // sets the theme spinner
-        try {
-            //opens the file to read its contents
-            FileInputStream fis = this.openFileInput("theme");
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader reader = new BufferedReader(isr);
-
-            array[0] = reader.readLine(); //adds the line to the temp array
-            reader.close();
-            isr.close();
-            fis.close();
-        }
-        catch (FileNotFoundException e){
-            e.printStackTrace();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
         //sets the mileage spinner
-        theme.setSelection(((ArrayAdapter<String>)theme.getAdapter()).getPosition(array[0]));
+        theme.setSelection(((ArrayAdapter<String>)theme.getAdapter()).getPosition(themeArray[0]));
 
 
         // method to save settings to file
@@ -237,6 +220,12 @@ public class SettingsActivity extends AppCompatActivity {
                 }
                 catch (IOException e){
                     Log.e("Exception", "Failed to save history: " + e.toString());
+                }
+
+                if (!text.equals(themeArray[0])){
+                    Intent refresh = new Intent(SettingsActivity.this, SettingsActivity.class);
+                    startActivity(refresh);
+                    finish();
                 }
 
 
