@@ -419,10 +419,16 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                             for(int i = 0; i < speciesArray.length(); i++) {
                                 String currentScientificName = speciesArray.getJSONObject(i).getString("name");
-                                // TODO: Add common name
+                                String currentCommonName = speciesArray.getJSONObject(i).getString("common_name");
+                                String fullName = currentScientificName;
 
-                                if (!speciesNamesArray.contains(currentScientificName)) {
-                                    speciesNamesArray.add(currentScientificName);
+                                if (!currentCommonName.equals("")) {
+                                    String[] nameArray = currentCommonName.split(",");
+                                    fullName = nameArray[0] + ", " + currentScientificName;
+                                }
+
+                                if (!speciesNamesArray.contains(fullName)) {
+                                    speciesNamesArray.add(fullName);
                                 }
                             }
 
@@ -518,20 +524,16 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                             for(int i = 0; i < speciesArray.length(); i++) {
                                 String currentScientificName = speciesArray.getJSONObject(i).getString("name");
-                                // TODO: Add common name
                                 String currentCommonName = speciesArray.getJSONObject(i).getString("common_name");
+                                String fullName = currentScientificName;
 
-                                if (!speciesNamesArray.contains(currentScientificName)) {
-                                    speciesNamesArray.add(currentScientificName);
-                                    String fullName = currentScientificName;
-                                    if (!currentCommonName.equals("")) {
-                                        String[] nameArray = currentCommonName.split(",");
-                                        fullName = nameArray[0] + ", " + currentScientificName;
-                                    }
+                                if (!currentCommonName.equals("")) {
+                                    String[] nameArray = currentCommonName.split(",");
+                                    fullName = nameArray[0] + ", " + currentScientificName;
+                                }
 
-                                    if (!speciesNamesArray.contains(fullName)) {
-                                        speciesNamesArray.add(fullName);
-                                    }
+                                if (!speciesNamesArray.contains(fullName)) {
+                                    speciesNamesArray.add(fullName);
                                 }
                             }
 
@@ -649,18 +651,15 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             for(int i = 0; i < speciesArray.length(); i++) {
                                 String currentScientificName = speciesArray.getJSONObject(i).getString("name");
                                 String currentCommonName = speciesArray.getJSONObject(i).getString("common_name");
+                                String fullName = currentScientificName;
 
-                                if (!speciesNamesArray.contains(currentScientificName)) {
-                                    speciesNamesArray.add(currentScientificName);
-                                    String fullName = currentScientificName;
-                                    if (!currentCommonName.equals("")) {
-                                        String[] nameArray = currentCommonName.split(",");
-                                        fullName = nameArray[0] + ", " + currentScientificName;
-                                    }
+                                if (!currentCommonName.equals("")) {
+                                    String[] nameArray = currentCommonName.split(",");
+                                    fullName = nameArray[0] + ", " + currentScientificName;
+                                }
 
-                                    if (!speciesNamesArray.contains(fullName)) {
-                                        speciesNamesArray.add(fullName);
-                                    }
+                                if (!speciesNamesArray.contains(fullName)) {
+                                    speciesNamesArray.add(fullName);
                                 }
                             }
 
@@ -1044,9 +1043,16 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                             for(int i = 0; i < speciesArray.length(); i++) {
                                 String currentScientificName = speciesArray.getJSONObject(i).getString("name");
+                                String currentCommonName = speciesArray.getJSONObject(i).getString("common_name");
+                                String fullName = currentScientificName;
 
-                                if (!speciesNamesArray.contains(currentScientificName)) {
-                                    speciesNamesArray.add(currentScientificName);
+                                if (!currentCommonName.equals("")) {
+                                    String[] nameArray = currentCommonName.split(",");
+                                    fullName = nameArray[0] + ", " + currentScientificName;
+                                }
+
+                                if (!speciesNamesArray.contains(fullName)) {
+                                    speciesNamesArray.add(fullName);
                                 }
                             }
 
