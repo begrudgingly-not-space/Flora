@@ -254,10 +254,12 @@ public class SpeciesInfoActivity extends AppCompatActivity
                 image = BitmapFactory.decodeStream(in);
                 mIcon11=image;
 
-                //bitmap is never getting assigned to image verified by log below crashes
-                //Log.i("place", "decoded bitmap "+image.getHeight());
 
-                Log.i("place", "decoded bitmap ");
+
+                Log.i("place", "claims to have decoded bitmap ");
+
+                //bitmap is never getting assigned to image verified by log below crashes
+                Log.i("place", "actually decoded bitmap "+image.getHeight());
             } catch (Exception e) {
                 Log.e("Error in DownloadImage", e.getMessage());
                 e.printStackTrace();
@@ -272,7 +274,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
                 bmImage.setImageBitmap(image);
 
                 Log.i("place ", "claims done With image");
-                //crashes because result is null object reference
+
+                //crashes because image is null object reference
                 Log.i("place ", "actually done With image"+image.getHeight());
             }
             catch(NullPointerException e)
