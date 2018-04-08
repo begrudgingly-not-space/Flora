@@ -424,7 +424,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                                 if (!currentCommonName.equals("")) {
                                     String[] nameArray = currentCommonName.split(",");
-                                    fullName = nameArray[0] + ", " + currentScientificName;
+                                    fullName = currentScientificName + ", " + nameArray[0];
                                 }
 
                                 if (!speciesNamesArray.contains(fullName)) {
@@ -529,7 +529,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                                 if (!currentCommonName.equals("")) {
                                     String[] nameArray = currentCommonName.split(",");
-                                    fullName = nameArray[0] + ", " + currentScientificName;
+                                    fullName = currentScientificName + ", " + nameArray[0];
                                 }
 
                                 if (!speciesNamesArray.contains(fullName)) {
@@ -655,7 +655,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                                 if (!currentCommonName.equals("")) {
                                     String[] nameArray = currentCommonName.split(",");
-                                    fullName = nameArray[0] + ", " + currentScientificName;
+                                    fullName = currentScientificName + ", " + nameArray[0];
                                 }
 
                                 if (!speciesNamesArray.contains(fullName)) {
@@ -1048,7 +1048,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                                 if (!currentCommonName.equals("")) {
                                     String[] nameArray = currentCommonName.split(",");
-                                    fullName = nameArray[0] + ", " + currentScientificName;
+                                    fullName = currentScientificName + ", " + nameArray[0];
                                 }
 
                                 if (!speciesNamesArray.contains(fullName)) {
