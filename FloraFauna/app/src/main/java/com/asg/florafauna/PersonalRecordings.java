@@ -17,6 +17,7 @@ import android.view.View;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 import java.io.File;
@@ -25,8 +26,9 @@ public class PersonalRecordings extends AppCompatActivity {
 
     private ImageView selectedImage;
     private Bitmap currentImage;
-    private static final int MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE= 0;
-    private final File recordings = new File(Environment.getExternalStorageDirectory().toString(), "/FloraFauna/Recordings");
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE = 0;
+    private String dirName = "FloraFauna/Recordings";
+    private final File recordings = new File(Environment.getExternalStorageDirectory().toString(), dirName);
 
 
 
