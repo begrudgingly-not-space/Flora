@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
 import org.jsoup.*;
+//import java.io.IOException;
 
 /**
  * Created by steven on 3/2/18.
@@ -47,34 +48,20 @@ public class SpeciesInfoActivity extends AppCompatActivity
         scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
 
         if (scientificName == null) {
-            scientificName="No Species Name";
+            //scientificName="No Species Name";
+            scientificName="Ursus Arctos";
+            setFromEOL(this,scientificName);
         }
         else
         {
             setFromEOL(this, scientificName);
         }
 
-        // Currently search page sends scientific name and common name in some cases
-        TextView scientificNameTV = findViewById(R.id.ScientificName);
-        scientificNameTV.setText(scientificName);
-/*
-        TextView commonNameTV = findViewById(R.id.CommonName);
-        commonNameTV.setText(commonName);
-
-        TextView descriptionTV = findViewById(R.id.Description);
-        descriptionTV.setText(description);
-*/
-        TextView eolLinkTV = findViewById(R.id.EoLLink);
-        eolLinkTV.setText(eolLink);
-
-
-
 
         //action bar creation copied form HelpActivity.java
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
 
-        //from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
-        //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(species.getImageLink());
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -108,29 +95,12 @@ public class SpeciesInfoActivity extends AppCompatActivity
         }
     }
 
-
-    /*//opens settings
-    public void openSettings(View view){
-        Intent intent = new Intent(SpeciesInfoActivity.this, SettingsActivity.class);
-        startActivity(intent);
-    }
-
-    public void openSearch(View view){
-        Intent intent = new Intent(SpeciesInfoActivity.this, SearchActivity.class);
-        startActivity(intent);
-    }
-
-    public void openHelp(View view) {
-        Intent intent =  new Intent(SpeciesInfoActivity.this, HelpActivity.class);
-        startActivity(intent);
-    }*/
-
     public void goBack(View view){
         /* closes the activity */
         finish();
     }
 
-
+/*
     //image viewer from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
     {
@@ -160,7 +130,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
             bmImage.setImageBitmap(result);
         }
     }
-
+*/
     //pull relevant info from the search page and from the eol information page
     //all the description="*" lines are for tracking where I am getting to in the program
     private void setFromEOL(final Context context, String name)
@@ -177,30 +147,13 @@ public class SpeciesInfoActivity extends AppCompatActivity
                     {
                         try
                         {
-
                             //this has been tested, gives the data that I am looking for
                             JSONObject results = response.getJSONArray("results").getJSONObject(0);
                             eolLink=results.getString("link");
                             Log.i("EOLLink",eolLink);
-
-
-                            //added from old object, needs to be cleaned up
-                            String page = Jsoup.connect(eolLink).timeout(10000).execute().parse().toString();
-                            int start = page.indexOf("</h4>",page.indexOf("<h4>Description"))+6;
-                            int stop = page.indexOf("\n", start);
-                            description = page.substring(start,stop);
-                            Log.i("Description",description);
-
-                            start = page.indexOf("<title>")+7;
-                            stop = page.indexOf("-",start);
-                            commonName = page.substring(start,stop);
-                            Log.i("CommonName",commonName);
-
-                            start = page.indexOf("<img alt");
-                            start = page.indexOf("src",start)+5;
-                            stop = page.indexOf("\"",start);
-                            imageLink = page.substring(start,stop);
-                            Log.i("ImageLink",imageLink);
+                            MyTask test=new MyTask();
+                            Log.i("task","Task created");
+                            test.execute();
 
                         }
                         catch(Exception e)
@@ -219,35 +172,6 @@ public class SpeciesInfoActivity extends AppCompatActivity
         requestQueue.add(searchRequest);
 
     }
-    /*private void setFromEOL(String name)
-    {
-        try
-        {
-            String query=eolQuery(name);
-
-            String json = Jsoup.connect(query).ignoreContentType(true).execute().parse().toString();
-            eolLink = json.substring(json.indexOf("http"),json.indexOf("?"));
-
-            String page = Jsoup.connect(eolLink).timeout(10000).execute().parse().toString();
-            int start = page.indexOf("</h4>",page.indexOf("<h4>Description"))+6;
-            int stop = page.indexOf("\n", start);
-            description = page.substring(start,stop);
-
-            start = page.indexOf("<title>")+7;
-            stop = page.indexOf("-",start);
-            commonName = page.substring(start,stop);
-
-            start = page.indexOf("<img alt");
-            start = page.indexOf("src",start)+5;
-            stop = page.indexOf("\"",start);
-            imageLink = page.substring(start,stop);
-        }
-        catch(Exception e)
-        {
-            System.out.println(e.toString());
-            error=e.toString();
-        }
-    }*/
 
     //format query to search for an animal(exact name) on eol
     private String eolQuery(String name)
@@ -256,6 +180,58 @@ public class SpeciesInfoActivity extends AppCompatActivity
         String last="&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=";
         name=name.replaceAll(" ","+");
         return first+name+last;
+    }
+
+    private class MyTask extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... params)
+        {
+            Log.i("DIB","doInBackground");
+            try {
+                String page = Jsoup.connect(eolLink).timeout(10000).execute().parse().toString();
+                int start = page.indexOf("</h4>", page.indexOf("<h4>Description")) + 6;
+                int stop = page.indexOf("\n", start);
+                description = page.substring(start, stop);
+                Log.i("Description", description);
+
+                start = page.indexOf("<title>") + 7;
+                stop = page.indexOf("-", start);
+                commonName = page.substring(start, stop);
+                Log.i("CommonName", commonName);
+
+                start = page.indexOf("<img alt");
+                start = page.indexOf("src", start) + 5;
+                stop = page.indexOf("\"", start);
+                imageLink = page.substring(start, stop);
+                Log.i("ImageLink", imageLink);
+            }
+            catch(Exception e)
+            {
+                Log.e("Exception: ", e.toString());
+            }
+            return null;
+        }
+
+        protected void onPostExecute(Void result)
+        {
+            // Currently search page sends scientific name and common name in some cases
+            TextView scientificNameTV = findViewById(R.id.ScientificName);
+            scientificNameTV.setText(scientificName);
+
+            TextView commonNameTV = findViewById(R.id.CommonName);
+            commonNameTV.setText(commonName);
+
+            TextView descriptionTV = findViewById(R.id.Description);
+            descriptionTV.setText(description);
+
+            TextView eolLinkTV = findViewById(R.id.EoLLink);
+            eolLinkTV.setText(eolLink);
+            //return null;
+
+            //from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
+            //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(species.getImageLink());
+        }
     }
 }
 
