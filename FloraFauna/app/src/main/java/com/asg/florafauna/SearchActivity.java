@@ -28,7 +28,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Spinner;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -139,6 +139,26 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
         // Sets the history and sets dropdown list
         setHistory();
+
+        RadioGroup radioGroup = findViewById(R.id.RadioButtons);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton rb = findViewById(checkedId);
+                String selection = (String) rb.getText();
+
+                if (selection.equals("Scientific/Common Name")) {
+                    searchEditText.setHint("Scientific/Common Name");
+                }
+                else if (selection.equals("County, State")) {
+                    searchEditText.setHint("County, State");
+                }
+                else {
+                    searchEditText.setHint("State");
+                }
+            }
+        });
     }
 
     private void getMileage() {
@@ -465,12 +485,20 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
         if (state.length() > 2) {
             stateInput = state.substring(0, 1).toUpperCase() + state.substring(1);
-            stateInput = stateInput.replaceAll(" ", "%20");
+
+            if (stateInput.contains(" ")){
+                String[] stateParts = stateInput.split(" ");
+                stateParts[1] = stateParts[1].substring(0,1).toUpperCase() + stateParts[1].substring(1);
+                stateInput = stateParts[0] + " " + stateParts[1];
+            }
+
         }
         else if (state.length() == 2) {
             stateInput = state.substring(0,2).toUpperCase();
             stateInput = stateFinder(context, stateInput);
         }
+
+        stateInput = stateInput.replaceAll(" ", "%20");
 
         final String url = "https://bison.usgs.gov/api/search.json?state=" + stateInput + "&start=" + offset + "&count=500";
         Log.d("url", url);
@@ -491,9 +519,19 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             for(int i = 0; i < speciesArray.length(); i++) {
                                 String currentScientificName = speciesArray.getJSONObject(i).getString("name");
                                 // TODO: Add common name
+                                String currentCommonName = speciesArray.getJSONObject(i).getString("common_name");
 
                                 if (!speciesNamesArray.contains(currentScientificName)) {
                                     speciesNamesArray.add(currentScientificName);
+                                    String fullName = currentScientificName;
+                                    if (!currentCommonName.equals("")) {
+                                        String[] nameArray = currentCommonName.split(",");
+                                        fullName = nameArray[0] + ", " + currentScientificName;
+                                    }
+
+                                    if (!speciesNamesArray.contains(fullName)) {
+                                        speciesNamesArray.add(fullName);
+                                    }
                                 }
                             }
 
@@ -561,15 +599,28 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             if (searchTerms.length == 2) {
                 county = searchTerms[0];
                 state = searchTerms[1];
+                state = state.substring(1, state.length());
             }
         }
 
-        if (state.length() > 3) {
-            state = state.substring(1, 2).toUpperCase() + state.substring(2);
+        if (state.length() > 2) {
+            state = state.substring(0, 1).toUpperCase() + state.substring(1);
+
+            if (state.contains(" ")){
+                String[] stateParts = state.split(" ");
+                stateParts[1] = stateParts[1].substring(0,1).toUpperCase() + stateParts[1].substring(1);
+                state = stateParts[0] + " " + stateParts[1];
+            }
+
         }
-        else if (state.length() == 3) {
-            state = state.substring(1,3).toUpperCase();
+        else if (state.length() == 2) {
+            state = state.substring(0,2).toUpperCase();
             state = stateFinder(context, state);
+        }
+
+        //capitalizes first char in county
+        if (county.length() > 0){
+            county = county.substring(0, 1).toUpperCase() + county.substring(1);
         }
 
         String countyFips = countyFinder(context, state, county);
@@ -597,9 +648,19 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                             for(int i = 0; i < speciesArray.length(); i++) {
                                 String currentScientificName = speciesArray.getJSONObject(i).getString("name");
+                                String currentCommonName = speciesArray.getJSONObject(i).getString("common_name");
 
                                 if (!speciesNamesArray.contains(currentScientificName)) {
                                     speciesNamesArray.add(currentScientificName);
+                                    String fullName = currentScientificName;
+                                    if (!currentCommonName.equals("")) {
+                                        String[] nameArray = currentCommonName.split(",");
+                                        fullName = nameArray[0] + ", " + currentScientificName;
+                                    }
+
+                                    if (!speciesNamesArray.contains(fullName)) {
+                                        speciesNamesArray.add(fullName);
+                                    }
                                 }
                             }
 

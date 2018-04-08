@@ -25,7 +25,7 @@
                     android:layout_height="30dp"
                     android:background="@drawable/rounded_search_box"
                     android:inputType="textNoSuggestions"
-                    android:hint="Search"
+                    android:hint="Species"
                     android:paddingStart="25dp"
                     android:textColor="@color/black"
                     android:textSize="15sp"

@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:padding="8dp"
-            android:text="The search page allows you to search for species by typing the common name or scientific name of the species into the search bar. You can also search for species by state and county/parish by typing this information into the search bar. The radio buttons allow you to select your search method. After performing a search, you can filter results by location, taxonomy, habitat, and date."
+            android:text="The search page allows you to search for species by typing the common name or scientific name of the species into the search bar. You can also search for species by state and county/parish by typing this information into the search bar. The radio buttons allow you to select your search method. After performing a search, you can filter results by taxonomy."
             android:textColor="@color/darkGreen"/>
         <TextView
             android:layout_width="match_parent"
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:padding="8dp"
-            android:text="The map page allows you to view the occurrences of a species by typing the common name or scientific name of the species into a search bar. You can view the occurrences of a species in a state, county/parish, or a certain radius from your position."
+            android:text="The map page allows you to view the occurrences of a species by typing the common name or scientific name of the species into a search bar. You can view the occurrences of a species in a state or county/parish. When searching by county you must enter the county and state in the form of county, state."
             android:textColor="@color/darkGreen"/>
         <TextView
             android:layout_width="match_parent"
