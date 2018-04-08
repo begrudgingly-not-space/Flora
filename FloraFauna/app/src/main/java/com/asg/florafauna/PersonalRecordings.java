@@ -27,7 +27,7 @@ public class PersonalRecordings extends AppCompatActivity {
     private Bitmap currentImage;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE = 0;
     private String dirName = "FloraFauna/Recordings";
-    private final File recordings = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), dirName);
+    private final File recordings = new File(Environment.getExternalStorageDirectory().toString(), dirName);
 
 
 
