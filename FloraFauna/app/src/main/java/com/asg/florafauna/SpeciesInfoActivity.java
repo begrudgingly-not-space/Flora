@@ -24,7 +24,6 @@ import org.json.JSONObject;
 import java.io.InputStream;
 import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
 import org.jsoup.*;
-//import java.io.IOException;
 
 /**
  * Created by steven on 3/2/18.
@@ -51,17 +50,15 @@ public class SpeciesInfoActivity extends AppCompatActivity
             //scientificName="No Species Name";
             scientificName="Ursus Arctos";
             getPage(this,scientificName);
-
         }
         else
         {
             getPage(this, scientificName);
         }
 
-
         //action bar creation copied form HelpActivity.java
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
-
+        Log.i("Data","ImageLink "+imageLink);
 
     }
     @Override
@@ -122,15 +119,15 @@ public class SpeciesInfoActivity extends AppCompatActivity
                             //this has been tested, gives the data that I am looking for
                             JSONObject results = response.getJSONArray("results").getJSONObject(0);
                             eolLink=results.getString("link");
-                            Log.i("Data",eolLink);
+                            Log.i("eolLink",eolLink);
                             setDataTask task=new setDataTask();
-                            //new setDataTask((ImageView) findViewById(R.id.imageView1)).execute();
                             Log.i("Place","Task created");
                             task.execute();
+
                         }
                         catch(Exception e)
                         {
-                            Log.e("Error: ", e.toString());
+                            Log.e("Error onResponse: ", e.toString());
                         }
                     }
                 }, new Response.ErrorListener()
@@ -138,7 +135,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
             @Override
             public void onErrorResponse(VolleyError error)
             {
-                Log.e("Error: ", error.toString());
+                Log.e("Error onErrorResponse: ", error.toString());
             }
         });
         requestQueue.add(searchRequest);
@@ -154,52 +151,43 @@ public class SpeciesInfoActivity extends AppCompatActivity
         return first+name+last;
     }
 
-    private class setDataTask extends AsyncTask<Void, Void, Void>
+    private class setDataTask extends AsyncTask<Void, String, Void>
     {
-
         @Override
         protected Void doInBackground(Void... params)
         {
             Log.i("Place","doInBackground");
             try {
                 String page = Jsoup.connect(eolLink).timeout(10000).execute().parse().toString();
-                int start = page.indexOf("</h4>", page.indexOf("<h4>Description")) + 6;
-                int stop = page.indexOf("\n", start);
+
+                int start = page.indexOf("<img alt");
+                start = page.indexOf("src", start) + 5;
+                int stop = page.indexOf("\"", start);
+                imageLink = page.substring(start, stop);
+                Log.i("IL for PP", imageLink);
+                publishProgress(imageLink);
+
+                start = page.indexOf("</h4>", page.indexOf("<h4>Description")) + 6;
+                stop = page.indexOf("\n", start);
                 description = page.substring(start, stop);
-                Log.i("Data", description);
+                Log.i("description", description);
 
                 start = page.indexOf("<title>") + 7;
                 stop = page.indexOf("-", start);
                 commonName = page.substring(start, stop);
-                Log.i("Data", commonName);
-
-                start = page.indexOf("<img alt");
-                start = page.indexOf("src", start) + 5;
-                stop = page.indexOf("\"", start);
-                imageLink = page.substring(start, stop);
-                Log.i("Data", imageLink);
-
-
-/*
-                InputStream in = new java.net.URL(imageLink).openStream();
-                //Log.i("place",in.);
-                Bitmap image = BitmapFactory.decodeStream(in);
-                try {
-                    String h = image.getHeight() + "";
-                }
-                catch(Exception e)
-                {
-                    Log.e("Bitmap Error: ",e.toString());
-                }
-                return image;*/
+                Log.i("commonName", commonName);
             }
             catch(Exception e)
             {
-                Log.e("Error: ", e.toString());
+                Log.e("Error diB SetDataTask: ", e.toString());
             }
             return null;
         }
+        protected void onProgressUpdate(String... progress)
+        {
+            new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(progress[0]);
 
+        }
         protected void onPostExecute(Void result)
         {
             // Currently search page sends scientific name and common name in some cases
@@ -217,56 +205,40 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
             TextView imageLinkTV = findViewById(R.id.ImageLink);
             imageLinkTV.setText(imageLink);
-            //return null;
 
             //from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
+            Log.i("Data preDIT",imageLink);
             //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
-            /*try {
-                String h = result.getHeight() + "";
-            }
-            catch(Exception e)
-            {
-                Log.e("Bitmap Error: ",e.toString());
-            }
-            //Log.i("Data",result.getHeight()+"");
-            ImageView bmImage=findViewById(R.id.imageView1);
-            bmImage.setImageBitmap(result);*/
         }
     }
-/*
+
     //image viewer from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
-    {
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 
-        public DownloadImageTask(ImageView bmImage)
-        {
-            Log.i("placement","DownloadImageTask");
+        public DownloadImageTask(ImageView bmImage) {
             this.bmImage = bmImage;
         }
-
-        protected Bitmap doInBackground(String... urls)
-        {
-            Log.i("placement","doInBackground Imagetask");
+        @Override
+        protected Bitmap doInBackground(String... urls) {
             String urldisplay = urls[0];
             Bitmap mIcon11 = null;
-            try
-            {
+            try {
+                Log.i("place", "working on image");
                 InputStream in = new java.net.URL(urldisplay).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
             } catch (Exception e) {
-                Log.e("Error", e.toString());
-                //e.printStackTrace();
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
             }
             return mIcon11;
         }
 
         protected void onPostExecute(Bitmap result) {
-            Log.i("placement","onPostExecute ImageTask");
             bmImage.setImageBitmap(result);
         }
     }
-*/
+
 }
 
 
