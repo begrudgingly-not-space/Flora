@@ -21,10 +21,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.InputStream;
 import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
-import org.jsoup.*;
 
+import java.io.InputStreamReader;
+import java.net.URL;
 /**
  * Created by steven on 3/2/18.
  */
@@ -45,12 +48,14 @@ public class SpeciesInfoActivity extends AppCompatActivity
         //default variables to take values from the results menu from the search/history
 
         scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
-        new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute("https://media.eol.org/content/2009/07/24/11/76438_orig.jpg");
+
+        //proof that displaying images works
+        //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute("https://media.eol.org/content/2014/10/09/11/00594_580_360.jpg");
 
         if (scientificName == null) {
             //scientificName="No Species Name";
             scientificName="Ursus Arctos";
-            //getPage(this,scientificName);
+            getPage(this,scientificName);
         }
         else
         {
@@ -59,7 +64,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
         //action bar creation copied form HelpActivity.java
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
-        Log.i("Data","ImageLink "+imageLink);
+        //Log.i("Data","ImageLink "+imageLink);
 
     }
     @Override
@@ -102,7 +107,6 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
 
     //pull relevant info from the search page and from the eol information page
-    //all the description="*" lines are for tracking where I am getting to in the program
     private void getPage(final Context context, String name)
     {
         String query=eolQuery(name);
@@ -151,7 +155,26 @@ public class SpeciesInfoActivity extends AppCompatActivity
         name=name.replaceAll(" ","+");
         return first+name+last;
     }
-
+    private String pageReader(String url)
+    {
+        String line;
+        String output="";
+        try
+        {
+            URL page = new URL(url);
+            BufferedReader in = new BufferedReader((new InputStreamReader(page.openStream())));
+            while((line=in.readLine()) != null)
+            {
+                output+=line+"\n";
+            }
+            in.close();
+        }
+        catch(Exception e)
+        {
+            Log.e("Error Page Reader: ",e.toString());
+        }
+        return output;
+    }
     private class setDataTask extends AsyncTask<Void, String, Void>
     {
         @Override
@@ -159,17 +182,18 @@ public class SpeciesInfoActivity extends AppCompatActivity
         {
             Log.i("Place","doInBackground");
             try {
-                String page = Jsoup.connect(eolLink).timeout(10000).execute().parse().toString();
-
+                //String page=Jsoup.connect(eolLink).timeout(10000).execute().parse().toString();
+                String page=pageReader(eolLink);
+                //Log.i("pageReader: ",page);
                 int start = page.indexOf("<img alt");
                 start = page.indexOf("src", start) + 5;
-                int stop = page.indexOf("\"", start);
+                int stop = page.indexOf("\'", start);
                 imageLink = page.substring(start, stop);
                 Log.i("IL for PP", imageLink);
                 publishProgress(imageLink);
 
                 start = page.indexOf("</h4>", page.indexOf("<h4>Description")) + 6;
-                stop = page.indexOf("\n", start);
+                stop = page.indexOf("<br>", start);
                 description = page.substring(start, stop);
                 Log.i("description", description);
 
@@ -186,8 +210,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
         }
         protected void onProgressUpdate(String... progress)
         {
+            Log.i("place", "in progressUpdate: "+progress[0]);
             new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(progress[0]);
-
         }
         protected void onPostExecute(Void result)
         {
@@ -208,7 +232,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
             imageLinkTV.setText(imageLink);
 
             //from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
-            Log.i("Data preDIT",imageLink);
+            Log.i("place", "done with text");
             //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
         }
     }
@@ -216,7 +240,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
     //image viewer from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
-
+        Bitmap image;
         public DownloadImageTask(ImageView bmImage) {
             this.bmImage = bmImage;
         }
@@ -225,18 +249,40 @@ public class SpeciesInfoActivity extends AppCompatActivity
             String urldisplay = urls[0];
             Bitmap mIcon11 = null;
             try {
-                Log.i("place", "working on image");
+                Log.i("place", "working on image "+urldisplay);
                 InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
+                image = BitmapFactory.decodeStream(in);
+                mIcon11=image;
+
+                //bitmap is never getting assigned to image verified by log below crashes
+                //Log.i("place", "decoded bitmap "+image.getHeight());
+
+                Log.i("place", "decoded bitmap ");
             } catch (Exception e) {
-                Log.e("Error", e.getMessage());
+                Log.e("Error in DownloadImage", e.getMessage());
                 e.printStackTrace();
             }
+            Log.i("place", "returning bitmap");
             return mIcon11;
         }
 
         protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
+            try {//this try/catch is not needed except to test with getHeight
+                //bmImage.setImageBitmap(result);
+                bmImage.setImageBitmap(image);
+
+                Log.i("place ", "claims done With image");
+                //crashes because result is null object reference
+                Log.i("place ", "actually done With image"+image.getHeight());
+            }
+            catch(NullPointerException e)
+            {
+                Log.e("Error: ", "Done, but Bitmap never loaded");
+            }
+            catch(Exception e)
+            {
+                Log.e("error in display: ",e.toString());
+            }
         }
     }
 
