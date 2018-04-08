@@ -65,7 +65,6 @@ import static com.asg.florafauna.StateFinder.stateFinder;
 
 public class SearchActivity extends AppCompatActivity implements LocationListener {
     private static final String TAG = "SearchActivity";
-    private EditText filterEditText;
     private AutoCompleteTextView searchEditText;
     private ListView speciesListView;
     private InputMethodManager imm;
@@ -79,10 +78,10 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private int offset = 0;
     private ArrayList<String> speciesNamesArray = new ArrayList<>(), filteredArrayList = new ArrayList<>();
     private ArrayAdapter<String> adapter;
-    private LinearLayout filter;
     private ArrayList<String> history = new ArrayList<>();
     private String[] mileageArray = new String[1];
-    private Spinner filterSpinner;
+    private EditText filterEditText;
+    private LinearLayout filterAndRadioButtons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +91,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_search);
 
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
                 ActivityCompat.requestPermissions(this,
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION},
                         MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION);
@@ -101,10 +99,9 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         getMileage();
 
         searchEditText = findViewById(R.id.SearchEditText);
-        filterEditText = findViewById(R.id.FilterEditText);
         speciesListView = findViewById(R.id.ListSpecies);
-        filter = findViewById(R.id.Filter);
-        filterSpinner = findViewById(R.id.FilterSpinner);
+        filterEditText = findViewById(R.id.FilterEditText);
+        filterAndRadioButtons = findViewById(R.id.FilterAndRadioButtons);
 
         // Setup for load more button
         Button btnLoadMore = new Button(this);
@@ -118,7 +115,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 if (searchType != 0) {
                     loadMore(searchType);
                 }
-
             }
         });
 
@@ -126,8 +122,16 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
                     search();
-                    filterEditText.setText("");
-                    filter.setVisibility(View.VISIBLE);
+                    filterAndRadioButtons.setVisibility(View.VISIBLE);
+                }
+                return false;
+            }
+        });
+
+        filterEditText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    filter();
                 }
                 return false;
             }
@@ -253,6 +257,14 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         // Disables going back by manually pressing the back button
     }
 
+    public void search(View view) {
+        search();
+    }
+
+    public void filter(View view) {
+        filter();
+    }
+
     // SEARCH FUNCTIONS
     public void search() {
         String searchInput = searchEditText.getText().toString();
@@ -262,7 +274,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         dialog = ProgressDialog.show(this, "", "Loading. Please wait...", true);
 
         // Create links to radio buttons
-        RadioButton Scientific = findViewById(R.id.SpeciesButton);
+        RadioButton Species = findViewById(R.id.SpeciesButton);
         RadioButton County = findViewById(R.id.CountyButton);
         RadioButton State = findViewById(R.id.StateButton);
 
@@ -272,7 +284,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             // Search by State
             searchRequestWithState(this, searchInput);
         }
-        else if (Scientific.isChecked())
+        else if (Species.isChecked())
         {
             // Search by Species/common name
             searchRequestWithSpecies(this, searchInput);
@@ -291,40 +303,29 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         setHistory();
     }
 
-    private ArrayList<String> filter(String selection) {
-        Log.d("Filter", selection);
+    private void filter() {
+        // Create links to radio buttons
+        RadioButton Kingdom = findViewById(R.id.KingdomButton);
+        RadioButton Genus = findViewById(R.id.GenusButton);
+        RadioButton MyLocation = findViewById(R.id.MyLocationButton);
 
-        // Filter by Kingdom
-        if (selection.equals("Kingdom")){
-            //return filterByKingdom();
-        }
-        // Filter by Genus
-        else if (selection.equals("Genus")){
-            if (filterByGenus() != null) {
-                return filterByGenus();
-            }
-            else {
-                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                alertDialog.setTitle("No matches found.");
-                alertDialog.setMessage("Please check the spelling of your entry.");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface alertDialog, int which) {
-                                alertDialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
-            }
+        //Checks which button (search type) is checked
+        if (Kingdom.isChecked())
+        {
 
         }
-        // Filter by Location
-        else {
-            //return filterByLocation();
+        else if (Genus.isChecked())
+        {
+            filterByGenus();
         }
-        return null;
+        else if (MyLocation.isChecked())
+        {
+            dialog = ProgressDialog.show(this, "","Loading. Please wait...", true);
+            filterByLocation();
+        }
     }
 
-    private ArrayList<String> filterByGenus() {
+    private void filterByGenus() {
         filteredArrayList.clear();
         for (int i = 0; i < speciesNamesArray.size(); i++) {
             String scientificName = speciesNamesArray.get(i);
@@ -336,24 +337,44 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         }
 
         if (filteredArrayList.isEmpty()) {
-            return null;
+            AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+            alertDialog.setTitle("No matches found.");
+            alertDialog.setMessage("Please check the spelling of your entry.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
         }
         else {
-            return filteredArrayList;
+            adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
+            speciesListView.setAdapter(adapter);
         }
     }
 
-    private ArrayList<String> filterByLocation() {
+    private void filterByLocation() {
         filteredArrayList.clear();
         for (int i = 0; i < speciesNamesArray.size(); i++) {
-
+            
         }
 
         if (filteredArrayList.isEmpty()) {
-            return null;
+            AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+            alertDialog.setTitle("No matches found.");
+            alertDialog.setMessage("There are no species by that name near you.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
         }
         else {
-            return filteredArrayList;
+            adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
+            speciesListView.setAdapter(adapter);
         }
     }
 
@@ -390,6 +411,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                             for(int i = 0; i < speciesArray.length(); i++) {
                                 String currentScientificName = speciesArray.getJSONObject(i).getString("name");
+                                // TODO: Add common name
 
                                 if (!speciesNamesArray.contains(currentScientificName)) {
                                     speciesNamesArray.add(currentScientificName);
@@ -398,10 +420,9 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                             Log.d("searchResponse", speciesNamesArray.toString());
 
-                            String selection = filterSpinner.getSelectedItem().toString();
-                            if (!selection.equals("None")){
+                           /* if (!selection.equals("None")){
                                 speciesNamesArray = filter(selection);
-                            }
+                            }*/
 
                             adapter = new ArrayAdapter<>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesNamesArray);
                             speciesListView.setAdapter(adapter);
