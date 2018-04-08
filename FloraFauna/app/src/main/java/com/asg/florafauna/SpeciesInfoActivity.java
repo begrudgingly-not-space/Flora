@@ -45,11 +45,12 @@ public class SpeciesInfoActivity extends AppCompatActivity
         //default variables to take values from the results menu from the search/history
 
         scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
+        new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute("https://media.eol.org/content/2009/07/24/11/76438_orig.jpg");
 
         if (scientificName == null) {
             //scientificName="No Species Name";
             scientificName="Ursus Arctos";
-            getPage(this,scientificName);
+            //getPage(this,scientificName);
         }
         else
         {
