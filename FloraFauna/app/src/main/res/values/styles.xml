@@ -5,12 +5,35 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/darkGreen</item>
         <item name="colorPrimaryDark">@color/darkGreen</item>
-        <item name="colorAccent">@color/mint</item>
+        <item name="colorAccent">@color/midGreen</item>
+        <item name="colorBackgroundFloating">@color/whiteGrey</item>
+
     </style>
 
+    <style name="AppThemeCherry" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/darkOrange</item>
+        <item name="colorPrimaryDark">@color/darkOrange</item>
+        <item name="colorAccent">@color/midOrange</item>
+        <item name="colorBackgroundFloating">@color/paleOrange</item>
+    </style>
+<!--
+    <style name="AppTheme3" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorSecondary</item>
+        <item name="colorBackground">@color/colorTertiary</item>
+    </style>
+
+    <style name="AppThemeCherry" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorSecondary</item>
+        <item name="colorBackground">@color/colorTertiary</item>
+    </style>
+-->
     <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/background_splash</item>
-        <item name="android:colorPrimaryDark">@android:color/transparent</item>
+        <item name="android:windowBackground">?attr/colorPrimary</item>
+        <item name="android:colorPrimaryDark">?attr/colorPrimary</item>
     </style>
 
     <style name="ToolBarStyle" parent="Theme.AppCompat">

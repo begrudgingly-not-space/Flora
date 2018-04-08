@@ -5,7 +5,7 @@
 
     <!-- Specify a color for the background -->
     <solid
-        android:color="@color/lightbg"/>
+        android:color="?attr/colorAccent"/>
 
     <!-- Specify the margins that all content inside the drawable must adhere to -->
 

@@ -24,7 +24,12 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
 
@@ -37,6 +42,37 @@ public class SpeciesInfoActivity extends AppCompatActivity
     private TextView description, eolLink;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //setTheme(R.style.AppTheme);
+        try {
+            //opens the file to read its contents
+            FileInputStream fis = this.openFileInput("theme");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader reader = new BufferedReader(isr);
+
+            themeArray[0] = reader.readLine(); //adds the line to the temp array
+            reader.close();
+            isr.close();
+            fis.close();
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        if (themeArray[0].equals("Green")){
+            setTheme(R.style.AppTheme);
+        }
+        else if (themeArray[0].equals("Blue")){
+            setTheme(R.style.AppTheme);
+        }
+        else if (themeArray[0].equals("Mono"){
+            setTheme(R.style.AppTheme);
+        }
+        else if (themeArray[0].equals("Cherry")){
+            setTheme(R.style.AppThemeCherry);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speciesinfo);
         //default variables to take values from the results menu from the search/history

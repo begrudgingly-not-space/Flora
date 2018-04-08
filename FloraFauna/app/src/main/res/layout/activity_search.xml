@@ -2,13 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/whiteGrey">
+    android:background="?attr/colorBackgroundFloating">
     <RelativeLayout
         android:id="@+id/SearchFilter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:background="@color/darkGreen"
+        android:background="?attr/colorPrimary"
         android:orientation="vertical">
         <FrameLayout
             android:id="@+id/Search"
@@ -50,7 +50,7 @@
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:text="Scientific/Common Name"
-                android:textColor="@color/whiteGrey"
+                android:textColor="?attr/colorBackgroundFloating"
                 android:textSize="14sp" />
             <RadioButton
                 android:id="@+id/CountyButton"
@@ -59,7 +59,7 @@
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:text="County, State"
-                android:textColor="@color/whiteGrey"
+                android:textColor="?attr/colorBackgroundFloating"
                 android:textSize="14sp" />
             <RadioButton
                 android:id="@+id/StateButton"
@@ -68,7 +68,7 @@
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:text="State"
-                android:textColor="@color/whiteGrey"
+                android:textColor="?attr/colorBackgroundFloating"
                 android:textSize="14sp" />
         </RadioGroup>
         <!--<Spinner
@@ -84,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="What's Around Me?"
-            android:textColor="@color/whiteGrey"
+            android:textColor="?attr/colorPrimary"
             android:textStyle="bold"
             android:layout_centerInParent="true"
             android:layout_marginBottom="10dp"
@@ -113,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Filter"
-                android:textColor="@color/whiteGrey"
+                android:textColor="?attr/colorBackgroundFloating"
                 android:textStyle="bold"
                 android:layout_marginBottom="10dp"
                 android:onClick="filterByGenus"/>
@@ -124,7 +124,7 @@
         android:id="@+id/ListSpecies"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/whiteGrey"
+        android:background="?attr/colorBackgroundFloating"
         android:layout_below="@id/SearchFilter"
         android:layout_centerHorizontal="true"
         android:visibility="invisible">
