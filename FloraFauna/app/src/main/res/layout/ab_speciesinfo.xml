@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_marginStart="15dp"
-        android:text="Settings" />
+        android:text="Species Info" />
     <!--<ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

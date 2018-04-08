@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -42,6 +43,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
     private String imageLink;
     private Bitmap image;
     private ImageView bmImage;
+    public static final String INTENT_EXTRA_IMAGELINK = "imageLink";
+
 
     //private TextView description, eolLink;
     @Override
@@ -69,9 +72,22 @@ public class SpeciesInfoActivity extends AppCompatActivity
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
         //Log.i("Data","ImageLink "+imageLink);
 
+        Button button = (Button) findViewById(R.id.button_send);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.i("place","button clicked");
+                Intent intent = new Intent(SpeciesInfoActivity.this, ImageActivity.class);
+                intent.putExtra(INTENT_EXTRA_IMAGELINK, imageLink);
+                //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
+                startActivity(intent);
+
+            }
+        });
+
     }
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.species_menu, menu);
         return super.onCreateOptionsMenu(menu);
@@ -210,7 +226,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
                 Log.e("Error diB SetDataTask: ", e.toString());
             }
 
-            try {
+            /*try {
                 Log.i("place","2nd try for image link "+imageLink);
                 InputStream in = new java.net.URL(imageLink).openStream();
                 image = BitmapFactory.decodeStream(in);
@@ -220,7 +236,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
             catch(Exception e)
             {
                 Log.e("error progress",e.toString());
-            }
+            }*/
             return null;
         }
         protected void onProgressUpdate(String... progress)
@@ -257,58 +273,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         }
     }
 
-    //image viewer from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
-    /*private class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
-    {
-        ImageView bmImage;
-        Bitmap image;
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                Log.i("place", "working on image "+urldisplay);
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                image = BitmapFactory.decodeStream(in);
-                mIcon11=image;
 
-
-
-                Log.i("place", "claims to have decoded bitmap ");
-
-                //bitmap is never getting assigned to image verified by log below crashes
-                Log.i("place", "actually decoded bitmap "+image.getHeight());
-            } catch (Exception e) {
-                Log.e("Error in DownloadImage", e.getMessage());
-                e.printStackTrace();
-            }
-            Log.i("place", "returning bitmap");
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            try {//this try/catch is not needed except to test with getHeight
-                //bmImage.setImageBitmap(result);
-                bmImage.setImageBitmap(image);
-
-                Log.i("place ", "claims done With image");
-
-                //crashes because image is null object reference
-                Log.i("place ", "actually done With image"+image.getHeight());
-            }
-            catch(NullPointerException e)
-            {
-                Log.e("Error: ", "Done, but Bitmap never loaded");
-            }
-            catch(Exception e)
-            {
-                Log.e("error in display: ",e.toString());
-            }
-        }
-    }*/
 
 }
 
