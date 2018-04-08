@@ -299,7 +299,8 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         if(searchInput.length() != 0) {
             saveHistory(searchInput);
         }
-        //read search history
+
+        // Read search history
         setHistory();
     }
 
@@ -355,9 +356,10 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     }
 
     private void filterByLocation() {
-        filteredArrayList.clear();
+        /*filteredArrayList.clear();
         for (int i = 0; i < speciesNamesArray.size(); i++) {
-            
+            String scientificName = speciesNamesArray.get(i);
+            locationRequest(this, scientificName);
         }
 
         if (filteredArrayList.isEmpty()) {
@@ -375,7 +377,84 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         else {
             adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
             speciesListView.setAdapter(adapter);
+        }*/
+    }
+
+    private void locationRequest(Context context, String scientificName){
+        final String url = "https://bison.usgs.gov/api/search.json?species=" + scientificName + "&start=0&count=500";
+        Log.d("url", url);
+
+        // Initialize request queue
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+        JsonObjectRequest searchRequestWithState = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        dialog.dismiss();
+
+                        try {
+                            searchType = 2;
+                            final JSONArray speciesArray = response.getJSONArray("data");
+
+                            for(int i = 0; i < speciesArray.length(); i++) {
+                                String currentScientificName = speciesArray.getJSONObject(i).getString("name");
+                                // TODO: Add common name
+
+                                if (!speciesNamesArray.contains(currentScientificName)) {
+                                    speciesNamesArray.add(currentScientificName);
+                                }
+                            }
+
+                            Log.d("searchResponse", speciesNamesArray.toString());
+
+                           /* if (!selection.equals("None")){
+                                speciesNamesArray = filter(selection);
+                            }*/
+
+                            adapter = new ArrayAdapter<>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesNamesArray);
+                            speciesListView.setAdapter(adapter);
+                            speciesListView.setVisibility(View.VISIBLE);
+                            //speciesListView.setSelection(position);
+
+                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                            speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+                            {
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+                                {
+                                    String speciesName = speciesListView.getItemAtPosition(position).toString();
+                                    Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
+                                    intent.putExtra(INTENT_EXTRA_SPECIES_NAME, speciesName);
+                                    startActivity(intent);
+                                }
+                            });
+                        }
+                        catch (JSONException error) {
+                            Log.e("searchResponseException", error.toString());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("onErrorResponse", error.toString());
+                dialog.dismiss();
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                alertDialog.setTitle("Invalid State");
+                alertDialog.setMessage("Please input the full name of a state.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
         }
+        );
+
+        // Adds request to queue which is then sent
+        requestQueue.add(searchRequestWithState);
     }
 
     private void searchRequestWithState(final Context context, final String state) {
