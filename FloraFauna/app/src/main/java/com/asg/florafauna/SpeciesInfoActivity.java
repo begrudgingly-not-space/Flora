@@ -50,11 +50,12 @@ public class SpeciesInfoActivity extends AppCompatActivity
         if (scientificName == null) {
             //scientificName="No Species Name";
             scientificName="Ursus Arctos";
-            setFromEOL(this,scientificName);
+            getPage(this,scientificName);
+
         }
         else
         {
-            setFromEOL(this, scientificName);
+            getPage(this, scientificName);
         }
 
 
@@ -100,43 +101,14 @@ public class SpeciesInfoActivity extends AppCompatActivity
         finish();
     }
 
-/*
-    //image viewer from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
-    {
-        ImageView bmImage;
 
-        public DownloadImageTask(ImageView bmImage)
-        {
-            this.bmImage = bmImage;
-        }
 
-        protected Bitmap doInBackground(String... urls)
-        {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try
-            {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                //Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
-    }
-*/
     //pull relevant info from the search page and from the eol information page
     //all the description="*" lines are for tracking where I am getting to in the program
-    private void setFromEOL(final Context context, String name)
+    private void getPage(final Context context, String name)
     {
         String query=eolQuery(name);
-        Log.i("query",query);
+        Log.i("Data",query);
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
@@ -150,15 +122,15 @@ public class SpeciesInfoActivity extends AppCompatActivity
                             //this has been tested, gives the data that I am looking for
                             JSONObject results = response.getJSONArray("results").getJSONObject(0);
                             eolLink=results.getString("link");
-                            Log.i("EOLLink",eolLink);
-                            MyTask test=new MyTask();
-                            Log.i("task","Task created");
-                            test.execute();
-
+                            Log.i("Data",eolLink);
+                            setDataTask task=new setDataTask();
+                            //new setDataTask((ImageView) findViewById(R.id.imageView1)).execute();
+                            Log.i("Place","Task created");
+                            task.execute();
                         }
                         catch(Exception e)
                         {
-                            Log.e("Exception: ", e.toString());
+                            Log.e("Error: ", e.toString());
                         }
                     }
                 }, new Response.ErrorListener()
@@ -182,33 +154,48 @@ public class SpeciesInfoActivity extends AppCompatActivity
         return first+name+last;
     }
 
-    private class MyTask extends AsyncTask<Void, Void, Void>
+    private class setDataTask extends AsyncTask<Void, Void, Void>
     {
+
         @Override
         protected Void doInBackground(Void... params)
         {
-            Log.i("DIB","doInBackground");
+            Log.i("Place","doInBackground");
             try {
                 String page = Jsoup.connect(eolLink).timeout(10000).execute().parse().toString();
                 int start = page.indexOf("</h4>", page.indexOf("<h4>Description")) + 6;
                 int stop = page.indexOf("\n", start);
                 description = page.substring(start, stop);
-                Log.i("Description", description);
+                Log.i("Data", description);
 
                 start = page.indexOf("<title>") + 7;
                 stop = page.indexOf("-", start);
                 commonName = page.substring(start, stop);
-                Log.i("CommonName", commonName);
+                Log.i("Data", commonName);
 
                 start = page.indexOf("<img alt");
                 start = page.indexOf("src", start) + 5;
                 stop = page.indexOf("\"", start);
                 imageLink = page.substring(start, stop);
-                Log.i("ImageLink", imageLink);
+                Log.i("Data", imageLink);
+
+
+/*
+                InputStream in = new java.net.URL(imageLink).openStream();
+                //Log.i("place",in.);
+                Bitmap image = BitmapFactory.decodeStream(in);
+                try {
+                    String h = image.getHeight() + "";
+                }
+                catch(Exception e)
+                {
+                    Log.e("Bitmap Error: ",e.toString());
+                }
+                return image;*/
             }
             catch(Exception e)
             {
-                Log.e("Exception: ", e.toString());
+                Log.e("Error: ", e.toString());
             }
             return null;
         }
@@ -227,12 +214,59 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
             TextView eolLinkTV = findViewById(R.id.EoLLink);
             eolLinkTV.setText(eolLink);
+
+            TextView imageLinkTV = findViewById(R.id.ImageLink);
+            imageLinkTV.setText(imageLink);
             //return null;
 
             //from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
-            //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(species.getImageLink());
+            //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
+            /*try {
+                String h = result.getHeight() + "";
+            }
+            catch(Exception e)
+            {
+                Log.e("Bitmap Error: ",e.toString());
+            }
+            //Log.i("Data",result.getHeight()+"");
+            ImageView bmImage=findViewById(R.id.imageView1);
+            bmImage.setImageBitmap(result);*/
         }
     }
+/*
+    //image viewer from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
+    {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage)
+        {
+            Log.i("placement","DownloadImageTask");
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls)
+        {
+            Log.i("placement","doInBackground Imagetask");
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try
+            {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.toString());
+                //e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            Log.i("placement","onPostExecute ImageTask");
+            bmImage.setImageBitmap(result);
+        }
+    }
+*/
 }
 
 
