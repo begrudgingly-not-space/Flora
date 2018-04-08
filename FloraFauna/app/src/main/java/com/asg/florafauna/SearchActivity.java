@@ -2,11 +2,14 @@ package com.asg.florafauna;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -34,28 +37,42 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Security;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import android.widget.EditText;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import static com.asg.florafauna.CountyFinder.countyFinder;
 import static com.asg.florafauna.StateFinder.stateFinder;
+
+
+/**
+ * Created by kkey on 2/1/2018.
+ */
 
 public class SearchActivity extends AppCompatActivity implements LocationListener {
     private static final String TAG = "SearchActivity";
@@ -74,14 +91,16 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private ArrayList<String> scientificNamesArray, filteredArrayList = new ArrayList<String>();
     private ArrayAdapter<String> adapter;
     private LinearLayout filter;
-    private ArrayList<String> history = new ArrayList<>();
+    private ArrayList<String> history = new ArrayList<String>();
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); // Enable hiding/showing keyboard
-        FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_search);
 
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -91,23 +110,27 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         }
         getLocation();
 
+        FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_search);
+
         searchEditText = findViewById(R.id.SearchEditText);
         filterEditText = findViewById(R.id.FilterEditText);
         speciesListView = findViewById(R.id.ListSpecies);
         filter = findViewById(R.id.Filter);
 
-        // Setup for load more button
+        //setup for load more button
         Button btnLoadMore = new Button(this);
         btnLoadMore.setText("Load More");
         speciesListView.addFooterView(btnLoadMore);
 
-        // Listener for load more button
+        //listener for load more button
         btnLoadMore.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View arg0) {
                 if (searchType != 0) {
                     loadMore(searchType);
                 }
+
             }
         });
 
@@ -122,7 +145,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             }
         });
 
-        // Sets the history and sets dropdown list
+        //sets the history and sets dropdown list
         setHistory();
     }
 
@@ -212,44 +235,58 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             this.finish();
         }
     }
+/**
+    public void openHelp(View view){
+        Intent intent = new Intent(SearchActivity.this, HelpActivity.class);
+        startActivity(intent);
+    }
 
+    // opens settings
+    public void openSettings(View view){
+        Intent intent = new Intent(SearchActivity.this, SettingsActivity.class);
+        startActivityForResult(intent, 1);
+    }
+     public void openMapPage(View view) {
+         Intent intent = new Intent(SearchActivity.this, MapActivity.class);
+         startActivity(intent);
+     }
+**/
     @Override
     public void onBackPressed()
     {
         // Disables going back by manually pressing the back button
     }
 
-    // SEARCH FUNCTIONS
+    //SEARCH FUNCTIONS
     public void search() {
         String searchInput = searchEditText.getText().toString();
-        scientificNamesArray = new ArrayList<>();
+        scientificNamesArray = new ArrayList<String>();
         offset = 0;
 
-        dialog = ProgressDialog.show(this, "", "Loading. Please wait...", true);
-
-        // Create links to radio buttons
+        dialog = ProgressDialog.show(this, "",
+                "Loading. Please wait...", true);
+        //create links to radio buttons
         RadioButton Scientific = findViewById(R.id.SpeciesButton);
         RadioButton County = findViewById(R.id.CountyButton);
         RadioButton State = findViewById(R.id.StateButton);
 
         //Checks which button (search type) is checked
-        if (State.isChecked())
+        if(State.isChecked())
         {
             // Search by State
             searchRequestWithState(this, searchInput);
         }
-        else if (Scientific.isChecked())
+        else if(Scientific.isChecked())
         {
             // Search by Species/common name
             searchRequestWithSpecies(this, searchInput);
         }
-        else if (County.isChecked())
+        else if(County.isChecked())
         {
             // Search by County
             searchRequestWithCounty(this, searchInput);
         }
-
-        // Save history to file
+        //Save history to file
         if(searchInput.length() != 0) {
             saveHistory(searchInput);
         }
@@ -747,10 +784,16 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     }
 
     public void whatsAroundMe(View view) {
+        // Using 20 points difference of min and max latitude and longitude
         if (latitude != 0 && longitude != 0) {
-            locationPolygon = setAOIBbox(latitude, longitude, 5);
+            String minLat = Double.toString(latitude - 20);
+            String minLong = Double.toString(longitude - 20);
+            String maxLat = Double.toString(latitude + 20);
+            String maxLong = Double.toString(longitude + 20);
+            locationPolygon = minLat + "," + minLong + "," + maxLat + "," + maxLong;
             Log.d(TAG, locationPolygon);
-            dialog = ProgressDialog.show(this, "","Loading. Please wait...", true);
+            dialog = ProgressDialog.show(this, "",
+                    "Loading. Please wait...", true);
             whatsAroundMeRequest(this, locationPolygon);
         }
         else {
@@ -767,23 +810,11 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     });
             alertDialog.show();
         }
+
+
+
     }
 
-    private String setAOIBbox(double latitude, double longitude, double mileage) {
-        double milesPerDegreeOfLatitude = 69;
-        double milesPerDegreeOfLongitude = Math.cos(Math.toRadians(latitude)) * 69.172;
-        double degreesOfLatitudePerMile = 1/milesPerDegreeOfLatitude;
-        double degreesOfLongitudePerMile = 1/milesPerDegreeOfLongitude;
-        Log.i(TAG, degreesOfLatitudePerMile + " " + degreesOfLongitudePerMile);
-        String minLat = Double.toString(latitude - (degreesOfLatitudePerMile*mileage));
-        String minLong = Double.toString(longitude - (degreesOfLongitudePerMile*mileage));
-        String maxLat = Double.toString(latitude + (degreesOfLatitudePerMile*mileage));
-        String maxLong = Double.toString(longitude + (degreesOfLongitudePerMile*mileage));
-
-        return minLat + "," + minLong + "," + maxLat + "," + maxLong;
-    }
-
-    // What's Around Me? webcall
     private void whatsAroundMeRequest(final Context context, final String polygon)
     {
         final String url = "https://bison.usgs.gov/api/search.json?aoibbox=" + polygon;
@@ -857,8 +888,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         // Adds request to queue which is then sent
         requestQueue.add(whatsAroundMeRequest);
     }
-
-    // Changes offset and reruns search
+    //changes offset and reruns search
     public void loadMore(int searchType){
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
@@ -879,7 +909,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     }
 
-    // Save history method
+    //Save history method
     private void saveHistory(String data){
         try{
             FileOutputStream fOut = openFileOutput("history", MODE_APPEND);
@@ -897,8 +927,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             Log.e("Exception", "Failed to save history: " + e.toString());
         }
     }
-
-    // Sets the history for a dropdown
+    //sets the history for a dropdown
     public void setHistory(){
         history.clear();
         try {
@@ -926,4 +955,5 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         searchEditText.setThreshold(0);
         searchEditText.setAdapter(adapter);
     }
+
 }
