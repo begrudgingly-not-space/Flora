@@ -2,6 +2,7 @@ package com.asg.florafauna;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -39,6 +40,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
     private String description;
     private String eolLink;
     private String imageLink;
+    private Bitmap image;
+    private ImageView bmImage;
 
     //private TextView description, eolLink;
     @Override
@@ -206,12 +209,27 @@ public class SpeciesInfoActivity extends AppCompatActivity
             {
                 Log.e("Error diB SetDataTask: ", e.toString());
             }
+
+            try {
+                Log.i("place","2nd try for image link "+imageLink);
+                InputStream in = new java.net.URL(imageLink).openStream();
+                image = BitmapFactory.decodeStream(in);
+                Log.i("place","claims done with image download");
+                Log.i("place","actually done with image download"+image.getHeight());
+            }
+            catch(Exception e)
+            {
+                Log.e("error progress",e.toString());
+            }
             return null;
         }
         protected void onProgressUpdate(String... progress)
         {
+            String imageL=progress[0];
             Log.i("place", "in progressUpdate: "+progress[0]);
-            new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(progress[0]);
+
+
+            //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(progress[0]);
         }
         protected void onPostExecute(Void result)
         {
@@ -234,11 +252,14 @@ public class SpeciesInfoActivity extends AppCompatActivity
             //from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
             Log.i("place", "done with text");
             //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
+
+            //bmImage.setImageBitmap(image);
         }
     }
 
     //image viewer from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    /*private class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
+    {
         ImageView bmImage;
         Bitmap image;
         public DownloadImageTask(ImageView bmImage) {
@@ -287,7 +308,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
                 Log.e("error in display: ",e.toString());
             }
         }
-    }
+    }*/
 
 }
 
