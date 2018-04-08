@@ -122,10 +122,10 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             setTheme(R.style.AppTheme);
         }
         else if (themeArray[0].equals("Blue")){
-            setTheme(R.style.AppTheme);
+            setTheme(R.style.AppThemeBlue);
         }
         else if (themeArray[0].equals("Mono")){
-            setTheme(R.style.AppTheme);
+            setTheme(R.style.AppThemeMono);
         }
         else if (themeArray[0].equals("Cherry")){
             setTheme(R.style.AppThemeCherry);

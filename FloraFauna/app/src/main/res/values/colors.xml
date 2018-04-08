@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--Theme1-->
+    <!--ThemeGreen-->
     <color name="darkGreen">#0C3F2B</color>
     <color name="midGreen">#1B915C</color>
+
+    <!--ThemeBlue-->
+    <color name="darkBlue">#0018A8</color>
+    <color name="midBlue">#1F75FE</color>
+
+    <!--ThemeMono-->
+    <color name="midGrey">#9D9D9D</color>
     <color name="whiteGrey">#DFE1E0</color>
 
     <!--ThemeCherry-->
@@ -14,7 +21,7 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="translucentWhite">#D9FFFFFF</color>
-    <color name="midGrey">#9D9D9D</color>
+
 </resources>
 
 
