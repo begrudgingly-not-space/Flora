@@ -56,7 +56,7 @@ public class SettingsActivity extends AppCompatActivity {
         else if (themeArray[0].equals("Blue")){
             setTheme(R.style.AppTheme);
         }
-        else if (themeArray[0].equals("Mono"){
+        else if (themeArray[0].equals("Mono")){
             setTheme(R.style.AppTheme);
         }
         else if (themeArray[0].equals("Cherry")){
@@ -115,6 +115,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
         //sets the mileage spinner
         theme.setSelection(((ArrayAdapter<String>)theme.getAdapter()).getPosition(array[0]));
+
 
         // method to save settings to file
         saveSettings(mileage, theme);
@@ -237,6 +238,8 @@ public class SettingsActivity extends AppCompatActivity {
                 catch (IOException e){
                     Log.e("Exception", "Failed to save history: " + e.toString());
                 }
+
+
 
             }
 

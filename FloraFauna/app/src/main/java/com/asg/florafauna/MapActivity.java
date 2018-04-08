@@ -87,7 +87,7 @@ public class MapActivity extends AppCompatActivity{
         else if (themeArray[0].equals("Blue")){
             setTheme(R.style.AppTheme);
         }
-        else if (themeArray[0].equals("Mono"){
+        else if (themeArray[0].equals("Mono")){
             setTheme(R.style.AppTheme);
         }
         else if (themeArray[0].equals("Cherry")){

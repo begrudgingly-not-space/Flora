@@ -40,8 +40,11 @@ import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
 public class SpeciesInfoActivity extends AppCompatActivity
 {
     private TextView description, eolLink;
+    private String[] themeArray = new String[1];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         //setTheme(R.style.AppTheme);
         try {
             //opens the file to read its contents
@@ -66,7 +69,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         else if (themeArray[0].equals("Blue")){
             setTheme(R.style.AppTheme);
         }
-        else if (themeArray[0].equals("Mono"){
+        else if (themeArray[0].equals("Mono")){
             setTheme(R.style.AppTheme);
         }
         else if (themeArray[0].equals("Cherry")){
