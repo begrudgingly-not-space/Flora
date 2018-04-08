@@ -135,21 +135,6 @@ public class MapActivity extends AppCompatActivity{
         }
     }
 
-    /*public void openHelp(View view){
-        Intent intent = new Intent(MapActivity.this, HelpActivity.class);
-        startActivity(intent);
-    }
-
-    public void openSettings(View view){
-        Intent intent = new Intent(MapActivity.this, SettingsActivity.class);
-        startActivity(intent);
-    }
-
-    public void openSearch(View view){
-        Intent intent = new Intent(MapActivity.this, SearchActivity.class);
-        startActivity(intent);
-    }*/
-
     public void goBack(View view){
         finish();
     }

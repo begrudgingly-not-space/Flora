@@ -28,6 +28,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -76,11 +77,12 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private int searchType = 0;
     public static final String INTENT_EXTRA_SPECIES_NAME = "speciesName";
     private int offset = 0;
-    private ArrayList<String> scientificNamesArray = new ArrayList<>(), filteredArrayList = new ArrayList<>();
+    private ArrayList<String> speciesNamesArray = new ArrayList<>(), filteredArrayList = new ArrayList<>();
     private ArrayAdapter<String> adapter;
     private LinearLayout filter;
     private ArrayList<String> history = new ArrayList<>();
     private String[] mileageArray = new String[1];
+    private Spinner filterSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +104,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         filterEditText = findViewById(R.id.FilterEditText);
         speciesListView = findViewById(R.id.ListSpecies);
         filter = findViewById(R.id.Filter);
+        filterSpinner = findViewById(R.id.FilterSpinner);
 
         // Setup for load more button
         Button btnLoadMore = new Button(this);
@@ -253,7 +256,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     // SEARCH FUNCTIONS
     public void search() {
         String searchInput = searchEditText.getText().toString();
-        scientificNamesArray = new ArrayList<>();
+        speciesNamesArray = new ArrayList<>();
         offset = 0;
 
         dialog = ProgressDialog.show(this, "", "Loading. Please wait...", true);
@@ -288,37 +291,76 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         setHistory();
     }
 
-    public void filterByGenus(View view) {
+    private ArrayList<String> filter(String selection) {
+        Log.d("Filter", selection);
+
+        // Filter by Kingdom
+        if (selection.equals("Kingdom")){
+            //return filterByKingdom();
+        }
+        // Filter by Genus
+        else if (selection.equals("Genus")){
+            if (filterByGenus() != null) {
+                return filterByGenus();
+            }
+            else {
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                alertDialog.setTitle("No matches found.");
+                alertDialog.setMessage("Please check the spelling of your entry.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
+
+        }
+        // Filter by Location
+        else {
+            //return filterByLocation();
+        }
+        return null;
+    }
+
+    private ArrayList<String> filterByGenus() {
         filteredArrayList.clear();
-        for (int i = 0; i < scientificNamesArray.size(); i++) {
-            String scientificName = scientificNamesArray.get(i);
+        for (int i = 0; i < speciesNamesArray.size(); i++) {
+            String scientificName = speciesNamesArray.get(i);
             String genus = scientificName.substring(0, scientificName.indexOf(" "));
             if (genus.equals(filterEditText.getText().toString())) {
-                filteredArrayList.add(scientificNamesArray.get(i));
-                adapter = new ArrayAdapter<>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
-                speciesListView.setAdapter(adapter);
+                filteredArrayList.add(speciesNamesArray.get(i));
             }
             Log.d("Genus", genus);
         }
 
         if (filteredArrayList.isEmpty()) {
-            AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-            alertDialog.setTitle("No matches found.");
-            alertDialog.setMessage("Please check the spelling of your entry.");
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface alertDialog, int which) {
-                            alertDialog.dismiss();
-                        }
-                    });
-            alertDialog.show();
+            return null;
+        }
+        else {
+            return filteredArrayList;
+        }
+    }
+
+    private ArrayList<String> filterByLocation() {
+        filteredArrayList.clear();
+        for (int i = 0; i < speciesNamesArray.size(); i++) {
+
+        }
+
+        if (filteredArrayList.isEmpty()) {
+            return null;
+        }
+        else {
+            return filteredArrayList;
         }
     }
 
     private void searchRequestWithState(final Context context, final String state) {
         // stateInput capitalizes the state
         // Bison produces an error if you input a state in all lowercase letters
-        final int position = scientificNamesArray.size();
+        final int position = speciesNamesArray.size();
         String stateInput = "";
 
         if (state.length() > 2) {
@@ -349,15 +391,19 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             for(int i = 0; i < speciesArray.length(); i++) {
                                 String currentScientificName = speciesArray.getJSONObject(i).getString("name");
 
-                                if (!scientificNamesArray.contains(currentScientificName)) {
-                                    scientificNamesArray.add(currentScientificName);
+                                if (!speciesNamesArray.contains(currentScientificName)) {
+                                    speciesNamesArray.add(currentScientificName);
                                 }
                             }
 
-                            Log.d("searchResponse", scientificNamesArray.toString());
+                            Log.d("searchResponse", speciesNamesArray.toString());
 
-                            adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, scientificNamesArray);
+                            String selection = filterSpinner.getSelectedItem().toString();
+                            if (!selection.equals("None")){
+                                speciesNamesArray = filter(selection);
+                            }
 
+                            adapter = new ArrayAdapter<>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesNamesArray);
                             speciesListView.setAdapter(adapter);
                             speciesListView.setVisibility(View.VISIBLE);
                             speciesListView.setSelection(position);
@@ -403,7 +449,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     }
 
     private void searchRequestWithCounty(final Context context, final String searchInput) {
-        final int position = scientificNamesArray.size();
+        final int position = speciesNamesArray.size();
 
         String searchTerms[];
         String county = "";
@@ -452,14 +498,14 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             for(int i = 0; i < speciesArray.length(); i++) {
                                 String currentScientificName = speciesArray.getJSONObject(i).getString("name");
 
-                                if (!scientificNamesArray.contains(currentScientificName)) {
-                                    scientificNamesArray.add(currentScientificName);
+                                if (!speciesNamesArray.contains(currentScientificName)) {
+                                    speciesNamesArray.add(currentScientificName);
                                 }
                             }
 
-                            Log.d("searchRespWithCounty", scientificNamesArray.toString());
+                            Log.d("searchRespWithCounty", speciesNamesArray.toString());
 
-                            adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, scientificNamesArray);
+                            adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesNamesArray);
 
                             speciesListView.setAdapter(adapter);
                             speciesListView.setVisibility(View.VISIBLE);
@@ -820,7 +866,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     {
         final String url = "https://bison.usgs.gov/api/search.json?aoibbox=" + polygon + "&start=" + offset + "&count=50";;
         Log.d("url", url);
-        final int position = scientificNamesArray.size();
+        final int position = speciesNamesArray.size();
 
         // Initialize request queue
         RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -838,14 +884,14 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             for(int i = 0; i < speciesArray.length(); i++) {
                                 String currentScientificName = speciesArray.getJSONObject(i).getString("name");
 
-                                if (!scientificNamesArray.contains(currentScientificName)) {
-                                    scientificNamesArray.add(currentScientificName);
+                                if (!speciesNamesArray.contains(currentScientificName)) {
+                                    speciesNamesArray.add(currentScientificName);
                                 }
                             }
 
-                            Log.d("whatsAroundMeResponse", scientificNamesArray.toString());
+                            Log.d("whatsAroundMeResponse", speciesNamesArray.toString());
 
-                            adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, scientificNamesArray);
+                            adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesNamesArray);
 
                             speciesListView.setAdapter(adapter);
                             speciesListView.setVisibility(View.VISIBLE);

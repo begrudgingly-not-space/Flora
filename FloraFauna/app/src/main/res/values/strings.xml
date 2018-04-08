@@ -32,4 +32,12 @@
         <item>Theme3</item>
         <item>Theme4</item>
     </string-array>
+
+    <string-array name="Filter">
+        <item>None</item>
+        <item>Kingdom</item>
+        <item>Genus</item>
+        <item>Location</item>
+    </string-array>
+
 </resources>
