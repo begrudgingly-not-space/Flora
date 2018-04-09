@@ -352,6 +352,51 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         }
     }
 
+    public void filterByKingdom(final Context context, View view)
+    {
+        String kingdom = filterEditText.getText().toString();
+        final String query = "https://bison.usgs.gov/api/search.jsonp?params=kingdom%3A(%22" + kingdom + "%22)&start=0&count=100";
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+        // get search results, put in structure to intersect with current search results
+        JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null, new Response.Listener<JSONObject>()
+        {
+            @Override
+            public void onResponse(JSONObject response)
+            {
+                String scientificName = null;
+                String commonName = null;
+                boolean match = false;
+
+                // closes the loading, please wait dialog
+                dialog.dismiss();
+
+                try
+                {
+                    JSONArray occurrences = response.getJSONArray("occurrences");
+                    Log.i("occurrences:", occurrences.toString());
+
+                }
+                catch(Exception exception)
+                {
+
+                }
+            }
+        }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                Log.e("Error: ", error.toString());
+                dialog.dismiss();
+            }
+        });
+
+        requestQueue.add(searchRequest);
+
+    }
+
     private void searchRequestWithState(final Context context, final String state) {
         // stateInput capitalizes the state
         // Bison produces an error if you input a state in all lowercase letters
