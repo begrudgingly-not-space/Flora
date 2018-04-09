@@ -18,9 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -41,7 +39,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -274,7 +271,7 @@ public class MapActivity extends AppCompatActivity{
                 Intent home_intent = new Intent(MapActivity.this, SearchActivity.class);
                 startActivity(home_intent);
             case R.id.action_recording:
-                Intent recording_intent = new Intent(MapActivity.this, PersonalRecordings.class);
+                Intent recording_intent = new Intent(MapActivity.this, PersonalRecordingsActivity.class);
                 startActivity(recording_intent);
                 return true;
             default:

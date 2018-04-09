@@ -3,6 +3,7 @@
     <!--ThemeGreen-->
     <color name="darkGreen">#0C3F2B</color>
     <color name="midGreen">#1B915C</color>
+    <color name="mint">#45DC99</color>
 
     <!--ThemeBlue-->
     <color name="darkBlue">#0018A8</color>

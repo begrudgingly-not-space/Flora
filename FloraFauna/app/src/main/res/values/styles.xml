@@ -5,9 +5,8 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/darkGreen</item>
         <item name="colorPrimaryDark">@color/darkGreen</item>
-        <item name="colorAccent">@color/midGreen</item>
+        <item name="colorAccent">@color/midGrey</item>
         <item name="colorBackgroundFloating">@color/whiteGrey</item>
-
     </style>
 
     <style name="AppThemeCherry" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -43,7 +42,7 @@
     </style>
 
     <style name="Button.Dark" parent="Base.Widget.AppCompat.Button.Colored">
-        <item name="android:colorButtonNormal">@color/darkGreen</item>
+        <item name="android:colorButtonNormal">?attr/colorPrimary</item>
         <item name="android:textColor">@color/white</item>
     </style>
 

@@ -17,25 +17,59 @@ import android.view.View;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-import java.io.File;
 
-public class PersonalRecordings extends AppCompatActivity {
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class PersonalRecordingsActivity extends AppCompatActivity {
 
     private ImageView selectedImage;
     private Bitmap currentImage;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE = 0;
     private String dirName = "FloraFauna/Recordings";
     private final File recordings = new File(Environment.getExternalStorageDirectory().toString(), dirName);
-
-
+    private String[] themeArray = new String[1];
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        //setTheme(R.style.AppTheme);
+        try {
+            //opens the file to read its contents
+            FileInputStream fis = this.openFileInput("theme");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader reader = new BufferedReader(isr);
+
+            themeArray[0] = reader.readLine(); //adds the line to the temp array
+            reader.close();
+            isr.close();
+            fis.close();
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        if (themeArray[0].equals("Green")){
+            setTheme(R.style.AppTheme);
+        }
+        else if (themeArray[0].equals("Blue")){
+            setTheme(R.style.AppThemeBlue);
+        }
+        else if (themeArray[0].equals("Mono")){
+            setTheme(R.style.AppThemeMono);
+        }
+        else if (themeArray[0].equals("Cherry")){
+            setTheme(R.style.AppThemeCherry);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_recordings);
 
@@ -106,19 +140,19 @@ public class PersonalRecordings extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_home:
-                Intent search_intent = new Intent(PersonalRecordings.this, SearchActivity.class);
+                Intent search_intent = new Intent(PersonalRecordingsActivity.this, SearchActivity.class);
                 startActivity(search_intent);
                 return true;
             case R.id.action_settings:
-                Intent settings_intent = new Intent(PersonalRecordings.this, SettingsActivity.class);
+                Intent settings_intent = new Intent(PersonalRecordingsActivity.this, SettingsActivity.class);
                 startActivity(settings_intent);
                 return true;
             case R.id.action_help:
-                Intent help_intent = new Intent(PersonalRecordings.this, HelpActivity.class);
+                Intent help_intent = new Intent(PersonalRecordingsActivity.this, HelpActivity.class);
                 startActivity(help_intent);
                 return true;
             case R.id.action_map:
-                Intent intent = new Intent(PersonalRecordings.this, MapActivity.class);
+                Intent intent = new Intent(PersonalRecordingsActivity.this, MapActivity.class);
                 startActivity(intent);
                 return true;
             default:

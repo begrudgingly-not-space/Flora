@@ -54,7 +54,7 @@
             android:screenOrientation="sensorPortrait">
         </activity>
         <activity
-            android:name=".PersonalRecordings"
+            android:name=".PersonalRecordingsActivity"
             android:label="PersonalRecordings"
             android:screenOrientation="sensorPortrait">
         </activity>

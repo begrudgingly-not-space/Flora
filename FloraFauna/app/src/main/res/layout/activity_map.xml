@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="215dp"
         android:layout_centerHorizontal="true"
-        android:background="@color/darkGreen"
+        android:background="?attr/colorPrimary"
         android:orientation="vertical">
 
         <RelativeLayout

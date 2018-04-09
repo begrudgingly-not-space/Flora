@@ -21,8 +21,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Set;
 
 public class SettingsActivity extends AppCompatActivity {
     private String[] array = new String[1];
@@ -145,7 +143,7 @@ public class SettingsActivity extends AppCompatActivity {
                 Intent map_intent = new Intent(SettingsActivity.this, MapActivity.class);
                 startActivity(map_intent);
             case R.id.action_recording:
-                Intent recording_intent = new Intent(SettingsActivity.this, PersonalRecordings.class);
+                Intent recording_intent = new Intent(SettingsActivity.this, PersonalRecordingsActivity.class);
                 startActivity(recording_intent);
                 return true;
             default:

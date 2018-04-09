@@ -19,7 +19,7 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_recording"
-        android:icon="@android:drawable/ic_menu_camera"
+        android:icon="@drawable/ic_camera_white"
         android:title="@string/Recordings"
         app:showAsAction="ifRoom" />
 </menu>
