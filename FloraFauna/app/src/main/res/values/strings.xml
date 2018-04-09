@@ -26,12 +26,12 @@
         <item>Scientific name by county</item>
     </string-array>
 
-    <string name="Themes">Miles</string>
+    <string name="Themes">Themes</string>
     <string-array name="themes">
-        <item>Theme1</item>
-        <item>Theme2</item>
-        <item>Theme3</item>
-        <item>Theme4</item>
+        <item>Green</item>
+        <item>Blue</item>
+        <item>Mono</item>
+        <item>Cherry</item>
     </string-array>
 
     <string-array name="Filter">

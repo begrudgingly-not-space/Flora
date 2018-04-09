@@ -2,13 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/whiteGrey">
+    android:background="?attr/colorBackgroundFloating">
     <RelativeLayout
         android:id="@+id/SearchFilter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:background="@color/darkGreen"
+        android:background="?attr/colorPrimary"
         android:orientation="vertical">
         <RelativeLayout
             android:id="@+id/Search"
@@ -45,7 +45,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
-                android:textColor="@color/whiteGrey"
+                android:textColor="?attr/colorBackgroundFloating"
                 android:textStyle="bold"
                 android:onClick="search"/>
         </RelativeLayout>
@@ -65,7 +65,7 @@
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:text="Species"
-                android:textColor="@color/whiteGrey"
+                android:textColor="?attr/colorBackgroundFloating"
                 android:textSize="14sp" />
             <RadioButton
                 android:id="@+id/CountyButton"
@@ -74,7 +74,7 @@
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:text="County"
-                android:textColor="@color/whiteGrey"
+                android:textColor="?attr/colorBackgroundFloating"
                 android:textSize="14sp" />
             <RadioButton
                 android:id="@+id/StateButton"
@@ -83,7 +83,7 @@
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:text="State"
-                android:textColor="@color/whiteGrey"
+                android:textColor="?attr/colorBackgroundFloating"
                 android:textSize="14sp" />
         </RadioGroup>
         <LinearLayout
@@ -130,7 +130,7 @@
                     android:paddingEnd="5dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerInParent="true"
-                    android:textColor="@color/whiteGrey"
+                    android:textColor="?attr/colorBackgroundFloating"
                     android:textStyle="bold"
                     android:onClick="filter"/>
             </RelativeLayout>
@@ -149,7 +149,7 @@
                     android:scaleX="0.8"
                     android:scaleY="0.8"
                     android:text="Kingdom"
-                    android:textColor="@color/whiteGrey"
+                    android:textColor="?attr/colorBackgroundFloating"
                     android:textSize="14sp" />
                 <RadioButton
                     android:id="@+id/GenusButton"
@@ -158,7 +158,7 @@
                     android:scaleX="0.8"
                     android:scaleY="0.8"
                     android:text="Genus"
-                    android:textColor="@color/whiteGrey"
+                    android:textColor="?attr/colorBackgroundFloating"
                     android:textSize="14sp" />
                 <RadioButton
                     android:id="@+id/MyLocationButton"
@@ -167,7 +167,7 @@
                     android:scaleX="0.8"
                     android:scaleY="0.8"
                     android:text="My Location"
-                    android:textColor="@color/whiteGrey"
+                    android:textColor="?attr/colorBackgroundFloating"
                     android:textSize="14sp" />
             </RadioGroup>
         </LinearLayout>
@@ -177,7 +177,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="What's Around Me?"
-            android:textColor="@color/whiteGrey"
+            android:textColor="?attr/colorBackgroundFloating"
             android:textStyle="bold"
             android:layout_centerInParent="true"
             android:layout_margin="10dp"
@@ -188,7 +188,7 @@
         android:id="@+id/ListSpecies"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/whiteGrey"
+        android:background="?attr/colorBackgroundFloating"
         android:layout_below="@id/SearchFilter"
         android:layout_centerHorizontal="true">
     </ListView>

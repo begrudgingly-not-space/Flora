@@ -2,7 +2,6 @@ package com.asg.florafauna;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -13,22 +12,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 import android.os.AsyncTask;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
 
-import java.io.InputStreamReader;
 import java.net.URL;
 /**
  * Created by steven on 3/2/18.
@@ -36,19 +40,49 @@ import java.net.URL;
 
 public class SpeciesInfoActivity extends AppCompatActivity
 {
+    private String description, eolLink;
+    private String[] themeArray = new String[1];
     private String scientificName;
     private String commonName;
-    private String description;
-    private String eolLink;
     private String imageLink;
     private Bitmap image;
     private ImageView bmImage;
     public static final String INTENT_EXTRA_IMAGELINK = "imageLink";
 
-
-    //private TextView description, eolLink;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        //setTheme(R.style.AppTheme);
+        try {
+            //opens the file to read its contents
+            FileInputStream fis = this.openFileInput("theme");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader reader = new BufferedReader(isr);
+
+            themeArray[0] = reader.readLine(); //adds the line to the temp array
+            reader.close();
+            isr.close();
+            fis.close();
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        if (themeArray[0].equals("Green")){
+            setTheme(R.style.AppTheme);
+        }
+        else if (themeArray[0].equals("Blue")){
+            setTheme(R.style.AppThemeBlue);
+        }
+        else if (themeArray[0].equals("Mono")){
+            setTheme(R.style.AppThemeMono);
+        }
+        else if (themeArray[0].equals("Cherry")){
+            setTheme(R.style.AppThemeCherry);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speciesinfo);
         //default variables to take values from the results menu from the search/history

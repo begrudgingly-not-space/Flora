@@ -2,11 +2,14 @@ package com.asg.florafauna;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -36,33 +39,37 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Security;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import android.widget.EditText;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import static com.asg.florafauna.CountyFinder.countyFinder;
 import static com.asg.florafauna.StateFinder.stateFinder;
-
-
-/**
- * Created by kkey on 2/1/2018.
- */
 
 public class SearchActivity extends AppCompatActivity implements LocationListener {
     private static final String TAG = "SearchActivity";
@@ -87,9 +94,42 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private RadioButton Kingdom;
     private RadioButton Genus;
     private RadioButton MyLocation;
+    private String[] themeArray = new String[1];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        //setTheme(R.style.AppTheme);
+        try {
+            //opens the file to read its contents
+            FileInputStream fis = this.openFileInput("theme");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader reader = new BufferedReader(isr);
+
+            themeArray[0] = reader.readLine(); //adds the line to the temp array
+            reader.close();
+            isr.close();
+            fis.close();
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        if (themeArray[0].equals("Green")){
+            setTheme(R.style.AppTheme);
+        }
+        else if (themeArray[0].equals("Blue")){
+            setTheme(R.style.AppThemeBlue);
+        }
+        else if (themeArray[0].equals("Mono")){
+            setTheme(R.style.AppThemeMono);
+        }
+        else if (themeArray[0].equals("Cherry")){
+            setTheme(R.style.AppThemeCherry);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); // Enable hiding/showing keyboard
@@ -211,7 +251,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     @Override
     public void onProviderDisabled(String provider) {
-        Toast.makeText(SearchActivity.this, "Please Enable GPS and Internet", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(SearchActivity.this, "Please Enable GPS and Internet", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -282,7 +322,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             this.finish();
         }
     }
-
 
     @Override
     public void onBackPressed()

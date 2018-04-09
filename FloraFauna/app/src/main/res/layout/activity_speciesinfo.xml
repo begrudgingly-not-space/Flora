@@ -3,7 +3,7 @@
     android:id="@+id/scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/whiteGrey">
+    android:background="?attr/colorBackgroundFloating">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -13,10 +13,10 @@
             android:layout_height="wrap_content"
             android:text="Scientific Name"
             android:padding="10dp"
-            android:textColor="@color/whiteGrey"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:background="@color/darkGreen"/>
+            android:background="?attr/colorPrimary"/>
         <TextView
             android:id="@+id/ScientificName"
             android:layout_width="match_parent"
@@ -24,16 +24,16 @@
             android:textSize="15sp"
             android:padding="8dp"
             android:text="No scientific name found."
-            android:textColor="@color/darkGreen"/>
+            android:textColor="@color/black"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Common Name"
             android:padding="10dp"
-            android:textColor="@color/whiteGrey"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:background="@color/darkGreen"/>
+            android:background="?attr/colorPrimary"/>
         <TextView
             android:id="@+id/CommonName"
             android:layout_width="match_parent"
@@ -41,16 +41,16 @@
             android:textSize="15sp"
             android:padding="8dp"
             android:text="No common name found."
-            android:textColor="@color/darkGreen"/>
+            android:textColor="@color/black"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Description"
             android:padding="10dp"
-            android:textColor="@color/whiteGrey"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:background="@color/darkGreen"/>
+            android:background="?attr/colorPrimary"/>
         <TextView
             android:id="@+id/Description"
             android:layout_width="match_parent"
@@ -58,16 +58,16 @@
             android:textSize="15sp"
             android:padding="8dp"
             android:text="No description found."
-            android:textColor="@color/darkGreen"/>
+            android:textColor="@color/black"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Image"
             android:padding="10dp"
-            android:textColor="@color/whiteGrey"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:background="@color/darkGreen"/>
+            android:background="?attr/colorPrimary"/>
         <TextView
             android:id="@+id/ImageLink"
             android:layout_width="match_parent"
@@ -75,16 +75,16 @@
             android:textSize="15sp"
             android:padding="8dp"
             android:text="No image found."
-            android:textColor="@color/darkGreen"/>
+            android:textColor="@color/black"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="EoL Link"
-            android:textColor="@color/whiteGrey"
+            android:textColor="@color/white"
             android:padding="10dp"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:background="@color/darkGreen"/>
+            android:background="?attr/colorPrimary"/>
         <TextView
             android:id="@+id/EoLLink"
             android:layout_width="match_parent"
@@ -92,7 +92,7 @@
             android:textSize="15sp"
             android:padding="8dp"
             android:text="No Encyclopedia of Life link found."
-            android:textColor="@color/darkGreen"/>
+            android:textColor="@color/black"/>
         <ImageView
             android:id="@+id/imageView1"
             android:layout_width="wrap_content"
@@ -107,5 +107,4 @@
             android:text="Load images"
             android:onClick="sendMessage" />
     </LinearLayout>
-
 </ScrollView>

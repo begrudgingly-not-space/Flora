@@ -21,13 +21,46 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.Set;
 
 public class SettingsActivity extends AppCompatActivity {
     private String[] array = new String[1];
+    private String[] themeArray = new String[1];
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //setTheme(R.style.AppTheme);
+        try {
+            //opens the file to read its contents
+            FileInputStream fis = this.openFileInput("theme");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader reader = new BufferedReader(isr);
+
+            themeArray[0] = reader.readLine(); //adds the line to the temp array
+            reader.close();
+            isr.close();
+            fis.close();
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        if (themeArray[0].equals("Green")){
+            setTheme(R.style.AppTheme);
+        }
+        else if (themeArray[0].equals("Blue")){
+            setTheme(R.style.AppThemeBlue);
+        }
+        else if (themeArray[0].equals("Mono")){
+            setTheme(R.style.AppThemeMono);
+        }
+        else if (themeArray[0].equals("Cherry")){
+            setTheme(R.style.AppThemeCherry);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
@@ -39,14 +72,14 @@ public class SettingsActivity extends AppCompatActivity {
         Spinner mileage = (Spinner) findViewById(R.id.miles);
         Spinner theme = (Spinner) findViewById(R.id.Style);
 
-        // Sets the mileage spinner
+        // Sets the theme spinner
         try {
             // Opens the file to read its contents
-            FileInputStream fis = this.openFileInput("mileage");
+            FileInputStream fis = this.openFileInput("theme");
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader reader = new BufferedReader(isr);
 
-            array[0] = reader.readLine(); // Adds the line to the temp array
+            themeArray[0] = reader.readLine(); //adds the line to the temp array
             reader.close();
             isr.close();
             fis.close();
@@ -58,13 +91,11 @@ public class SettingsActivity extends AppCompatActivity {
         catch (IOException e){
             e.printStackTrace();
         }
-        // Sets the mileage spinner
-        mileage.setSelection(((ArrayAdapter<String>)mileage.getAdapter()).getPosition(array[0]));
 
         // Sets the theme spinner
         try {
             //opens the file to read its contents
-            FileInputStream fis = this.openFileInput("theme");
+            FileInputStream fis = this.openFileInput("mileage");
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader reader = new BufferedReader(isr);
 
@@ -80,7 +111,11 @@ public class SettingsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         //sets the mileage spinner
-        theme.setSelection(((ArrayAdapter<String>)theme.getAdapter()).getPosition(array[0]));
+        mileage.setSelection(((ArrayAdapter<String>)mileage.getAdapter()).getPosition(array[0]));
+
+        //sets the theme spinner
+        theme.setSelection(((ArrayAdapter<String>)theme.getAdapter()).getPosition(themeArray[0]));
+
 
         // Method to save settings to file
         saveSettings(mileage, theme);
@@ -193,6 +228,14 @@ public class SettingsActivity extends AppCompatActivity {
                 catch (IOException e){
                     Log.e("Exception", "Failed to save history: " + e.toString());
                 }
+
+                if (!text.equals(themeArray[0])){
+                    Intent refresh = new Intent(SettingsActivity.this, SettingsActivity.class);
+                    startActivity(refresh);
+                    finish();
+                }
+
+
 
             }
 
