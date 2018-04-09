@@ -1003,6 +1003,9 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     }
 
     public void whatsAroundMe(View view) {
+        filterAndRadioButtons.setVisibility(View.VISIBLE);
+        speciesNamesArray = new ArrayList<>();
+        offset = 0;
         if (latitude != 0 && longitude != 0) {
             double mileage = Double.parseDouble(mileageArray[0]);
             locationPolygon = setAOIBbox(latitude, longitude, mileage);
