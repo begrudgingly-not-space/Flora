@@ -449,10 +449,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             {
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                                 {
-                                    String speciesName = speciesListView.getItemAtPosition(position).toString();
-                                    Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
-                                    intent.putExtra(INTENT_EXTRA_SPECIES_NAME, speciesName);
-                                    startActivity(intent);
+                                    openSpeciesInfoPage(position);
                                 }
                             });
                         }
@@ -554,10 +551,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             {
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                                 {
-                                    String speciesName = speciesListView.getItemAtPosition(position).toString();
-                                    Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
-                                    intent.putExtra(INTENT_EXTRA_SPECIES_NAME, speciesName);
-                                    startActivity(intent);
+                                    openSpeciesInfoPage(position);
                                 }
                             });
                         }
@@ -677,10 +671,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             {
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                                 {
-                                    String speciesName = speciesListView.getItemAtPosition(position).toString();
-                                    Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
-                                    intent.putExtra(INTENT_EXTRA_SPECIES_NAME, speciesName);
-                                    startActivity(intent);
+                                    openSpeciesInfoPage(position);
                                 }
                             });
                         }
@@ -826,10 +817,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     {
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                         {
-                            String speciesName = speciesListView.getItemAtPosition(position).toString();
-                            Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
-                            intent.putExtra(INTENT_EXTRA_SPECIES_NAME, speciesName);
-                            startActivity(intent);
+                            openSpeciesInfoPage(position);
                         }
                     });
 
@@ -942,10 +930,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     {
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                         {
-                            String speciesName = speciesListView.getItemAtPosition(position).toString();
-                            Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
-                            intent.putExtra(INTENT_EXTRA_SPECIES_NAME, speciesName);
-                            startActivity(intent);
+                            openSpeciesInfoPage(position);
                         }
                     });
 
@@ -1070,10 +1055,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             {
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id)
                                 {
-                                    String speciesName = speciesListView.getItemAtPosition(position).toString();
-                                    Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
-                                    intent.putExtra(INTENT_EXTRA_SPECIES_NAME, speciesName);
-                                    startActivity(intent);
+                                    openSpeciesInfoPage(position);
                                 }
                             });
                         }
@@ -1171,5 +1153,13 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_selectable_list_item, history);
         searchEditText.setThreshold(0);
         searchEditText.setAdapter(adapter);
+    }
+
+    private void openSpeciesInfoPage(int position) {
+        String speciesName = speciesListView.getItemAtPosition(position).toString();
+        String scientificName = speciesName.substring(0, speciesName.indexOf(",") - 1);
+        Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
+        intent.putExtra(INTENT_EXTRA_SPECIES_NAME, scientificName);
+        startActivity(intent);
     }
 }
