@@ -31,8 +31,8 @@
     </style>
 -->
     <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">?attr/colorPrimary</item>
-        <item name="android:colorPrimaryDark">?attr/colorPrimary</item>
+        <item name="android:windowBackground">@drawable/background_splash</item>
+        <item name="android:colorPrimaryDark">@color/darkGreen</item>
     </style>
 
     <style name="ToolBarStyle" parent="Theme.AppCompat">
