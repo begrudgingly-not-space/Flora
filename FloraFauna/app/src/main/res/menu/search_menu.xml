@@ -17,4 +17,9 @@
         android:icon="@drawable/ic_map_action_white"
         android:title="@string/Map"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_recording"
+        android:icon="@android:drawable/ic_menu_camera"
+        android:title="@string/Recordings"
+        app:showAsAction="ifRoom" />
 </menu>

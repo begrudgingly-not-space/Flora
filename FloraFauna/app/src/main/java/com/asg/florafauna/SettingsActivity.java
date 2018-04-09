@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -108,8 +107,11 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(help_intent);
                 return true;
             case R.id.action_map:
-                Intent intent = new Intent(SettingsActivity.this, MapActivity.class);
-                startActivity(intent);
+                Intent map_intent = new Intent(SettingsActivity.this, MapActivity.class);
+                startActivity(map_intent);
+            case R.id.action_recording:
+                Intent recording_intent = new Intent(SettingsActivity.this, PersonalRecordings.class);
+                startActivity(recording_intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

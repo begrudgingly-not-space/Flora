@@ -8,6 +8,11 @@
         android:title="@string/Home"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_help"
+        android:icon="@drawable/ic_help_action_white"
+        android:title="@string/Help"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_settings_white"
         android:title="@string/Settings"
@@ -16,11 +21,6 @@
         android:id="@+id/action_map"
         android:icon="@drawable/ic_map_action_white"
         android:title="@string/Map"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_recording"
-        android:icon="@android:drawable/ic_menu_camera"
-        android:title="@string/Recordings"
         app:showAsAction="ifRoom" />
 
 </menu>
