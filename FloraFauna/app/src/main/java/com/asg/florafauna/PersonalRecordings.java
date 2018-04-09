@@ -56,7 +56,7 @@ public class PersonalRecordings extends AppCompatActivity {
         });
 
         // open the default camera app to take a picture
-        ImageButton openCamera = (ImageButton) findViewById(R.id.imageButton);
+        ImageButton openCamera = (ImageButton) findViewById(R.id.floatingCameraButton);
         openCamera.setOnClickListener(new View.OnClickListener() {
 
             @Override

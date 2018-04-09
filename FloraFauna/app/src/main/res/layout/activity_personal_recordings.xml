@@ -26,18 +26,15 @@
         app:srcCompat="@drawable/plus_sign" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/imageButton"
+        android:id="@+id/floatingCameraButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignStart="@+id/floatingUpload"
-        android:layout_marginBottom="69dp"
-        android:background="@android:color/background_light"
-        android:backgroundTint="@color/white"
+        android:layout_marginBottom="75dp"
         android:clickable="true"
         app:backgroundTint="@color/white"
         app:srcCompat="@drawable/ic_camera" />
-
 
 
 </RelativeLayout>
