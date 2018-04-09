@@ -1,8 +1,10 @@
 package com.asg.florafauna;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -10,6 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,6 +20,9 @@ import android.view.View;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -25,17 +31,28 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class PersonalRecordingsActivity extends AppCompatActivity {
 
     private ImageView selectedImage;
     private Bitmap currentImage;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE = 0;
-    private String dirName = "FloraFauna/Recordings";
-    private final File recordings = new File(Environment.getExternalStorageDirectory().toString(), dirName);
+    private String dirName = Environment.getExternalStorageDirectory().toString() + "/FloraFauna/Recordings/";
+    private final File recordings = new File(dirName);
     private String[] themeArray = new String[1];
+
+    // List Files
+    private int count;
+    private Bitmap[] thumbnails;
+    private boolean[] thumbnailsselection;
+    private String[] arrPath;
+    private ImageAdapter imageAdapter;
+    ArrayList<String> f = new ArrayList<String>();// list of file paths
+    File[] listFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -125,6 +142,12 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             Log.d("error", "dir. already exists");
         }
 
+        //List Files
+        getFromSdcard();
+        GridView imagegrid = (GridView) findViewById(R.id.FileList);
+        imageAdapter = new ImageAdapter();
+        imagegrid.setAdapter(imageAdapter);
+
     }
 
 
@@ -171,10 +194,17 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 //code to mess with images will be here
                 try {
                     currentImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
-                    selectedImage.setImageBitmap(currentImage); //set the image view to the current image
+                    //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
+                    FileOutputStream output = new FileOutputStream(recordings + "/image.png");
+                    currentImage.compress(Bitmap.CompressFormat.PNG, 100, output); //save file
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                Intent refresh = new Intent(PersonalRecordingsActivity.this, PersonalRecordingsActivity.class);
+                startActivity(refresh);
+                finish();
+
             }
         }
     }
@@ -199,6 +229,70 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         /* closes the activity */
         setResult(RESULT_OK, null);
         finish();
+    }
+
+    //List Files
+    public void getFromSdcard()
+    {
+        //File file= new File(android.os.Environment.getExternalStorageDirectory(),"MapleBear");
+
+        if (recordings.isDirectory())
+        {
+            listFile = recordings.listFiles();
+
+
+            for (int i = 0; i < listFile.length; i++)
+            {
+
+                f.add(listFile[i].getAbsolutePath());
+
+            }
+        }
+    }
+
+    public class ImageAdapter extends BaseAdapter {
+        private LayoutInflater mInflater;
+
+        public ImageAdapter() {
+            mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        public int getCount() {
+            return f.size();
+        }
+
+        public Object getItem(int position) {
+            return position;
+        }
+
+        public long getItemId(int position) {
+            return position;
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder;
+            if (convertView == null) {
+                holder = new ViewHolder();
+                convertView = mInflater.inflate(
+                        R.layout.galleryitem, null);
+                holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage);
+
+                convertView.setTag(holder);
+            }
+            else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+
+            Bitmap myBitmap = BitmapFactory.decodeFile(f.get(position));
+            holder.imageview.setImageBitmap(myBitmap);
+            return convertView;
+        }
+    }
+    class ViewHolder {
+        ImageView imageview;
+
+
     }
 
 }
