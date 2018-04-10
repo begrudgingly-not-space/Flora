@@ -2,19 +2,22 @@ package com.asg.florafauna;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.util.Log;
 import android.widget.TextView;
-import android.graphics.Bitmap;
 import android.widget.ImageView;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -23,12 +26,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+
 import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
 
 /**
@@ -38,15 +36,12 @@ import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
 public class SpeciesInfoActivity extends AppCompatActivity
 {
     private String scientificName="", commonName="", description="", eolLink="",  imageLink="";
-    private Bitmap image;
-    private ImageView bmImage;
     public static final String INTENT_EXTRA_IMAGELINK = "imageLink";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
 /* setup*/
-
     setTheme();
 
     super.onCreate(savedInstanceState);
@@ -56,24 +51,12 @@ public class SpeciesInfoActivity extends AppCompatActivity
     FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
     //Log.i("Data","ImageLink "+imageLink);
 
-    Button button = (Button) findViewById(R.id.button_send);
-    button.setOnClickListener(new View.OnClickListener() {
-        public void onClick(View v) {
-            Intent intent = new Intent(SpeciesInfoActivity.this, ImageActivity.class);
-            intent.putExtra(INTENT_EXTRA_IMAGELINK, imageLink);
-            //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
-            startActivity(intent);
-
-        }
-    });
-
 /*not setup*/
         //get scientific name sent by search
         scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
 
         getID(this);
 
-        new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
     }
 
     //pull relevant info from the search page and from the eol information page
@@ -97,14 +80,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
                             eolLink=results.getString("link");
 
                             //strip numeric designation for species
-                            eolLink=eolLink.substring(eolLink.indexOf("org/")+4,eolLink.indexOf("?"));
-
-                            //format to go to details page of that species
-                            //eolLink="http://eol.org/pages/"+eolLink+"/details";
-                            Log.i("eolLink",eolLink);
-                            //setDataTask task=new setDataTask();
-                            //task.execute();
-                            getData(context);
+                            getData(context, eolLink.substring(eolLink.indexOf("org/")+4,eolLink.indexOf("?")));
                         }
                         catch(Exception e)
                         {
@@ -122,9 +98,9 @@ public class SpeciesInfoActivity extends AppCompatActivity
         requestQueue.add(searchRequest);
 
     }
-    private void getData(final Context context)
+    private void getData(final Context context,String ID)
     {
-        String query="http://eol.org/api/pages/1.0.json?batch=false&id="+eolLink+"&images_per_page=1&images_page=1&videos_per_page=0&videos_page=0&sounds_per_page=0&sounds_page=0&maps_per_page=0&maps_page=0&texts_per_page=1&texts_page=1&subjects=overview&licenses=all&details=true&common_names=true&synonyms=false&references=false&taxonomy=false&vetted=1&cache_ttl=&language=en";
+        String query="http://eol.org/api/pages/1.0.json?batch=false&id="+ID+"&images_per_page=1&images_page=1&videos_per_page=0&videos_page=0&sounds_per_page=0&sounds_page=0&maps_per_page=0&maps_page=0&texts_per_page=1&texts_page=1&subjects=overview&licenses=all&details=true&common_names=true&synonyms=false&references=false&taxonomy=false&vetted=1&cache_ttl=&language=en";
         Log.i("query",query);
         //everything until next try block is taken from search activity
         RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -175,6 +151,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
                             imageLink=results.getJSONObject(1).getString("mediaURL");
                             Log.i("imageLink",imageLink);
+
+                            new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
                         }
                         catch(Exception e)
                         {
