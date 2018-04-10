@@ -20,7 +20,7 @@ import static com.asg.florafauna.SpeciesInfoActivity.INTENT_EXTRA_IMAGELINK;
 
 public class ImageActivity extends AppCompatActivity
 {
-    @Override
+   /* @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
@@ -54,5 +54,5 @@ public class ImageActivity extends AppCompatActivity
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
         }
-    }
+    }*/
 }

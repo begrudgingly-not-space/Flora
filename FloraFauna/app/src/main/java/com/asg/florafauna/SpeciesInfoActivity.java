@@ -2,6 +2,7 @@ package com.asg.florafauna;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -14,26 +15,22 @@ import android.widget.TextView;
 import android.graphics.Bitmap;
 import android.widget.ImageView;
 import android.os.AsyncTask;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-
+import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
 
-import java.net.URL;
 /**
  * Created by steven on 3/2/18.
  */
@@ -74,14 +71,15 @@ public class SpeciesInfoActivity extends AppCompatActivity
         //get scientific name sent by search
         scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
 
-        getPage(this);
+        getID(this);
 
+        new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
     }
 
     //pull relevant info from the search page and from the eol information page
-    private void getPage(final Context context)
+    private void getID(final Context context)
     {
-        String query=eolQuery(scientificName);
+        String query="http://eol.org/api/search/1.0.json?q="+scientificName.replaceAll(" ","+")+"&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=";
 
         //everything until next try block is taken from search activity
         RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -92,6 +90,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
                     {
                         try
                         {
+                            //JSONArray results=response.getJSONArray("results");
                             JSONObject results = response.getJSONArray("results").getJSONObject(0);
 
                             //initial link (will be redirected)
@@ -101,10 +100,11 @@ public class SpeciesInfoActivity extends AppCompatActivity
                             eolLink=eolLink.substring(eolLink.indexOf("org/")+4,eolLink.indexOf("?"));
 
                             //format to go to details page of that species
-                            eolLink="http://eol.org/pages/"+eolLink+"/details";
+                            //eolLink="http://eol.org/pages/"+eolLink+"/details";
                             Log.i("eolLink",eolLink);
-                            setDataTask task=new setDataTask();
-                            task.execute();
+                            //setDataTask task=new setDataTask();
+                            //task.execute();
+                            getData(context);
                         }
                         catch(Exception e)
                         {
@@ -120,176 +120,120 @@ public class SpeciesInfoActivity extends AppCompatActivity
             }
         });
         requestQueue.add(searchRequest);
+
     }
-
-    //webcalls without json require AsyncTask
-    private class setDataTask extends AsyncTask<Void, Void, Void>
+    private void getData(final Context context)
     {
-        @Override
-        protected Void doInBackground(Void... params)
+        String query="http://eol.org/api/pages/1.0.json?batch=false&id="+eolLink+"&images_per_page=1&images_page=1&videos_per_page=0&videos_page=0&sounds_per_page=0&sounds_page=0&maps_per_page=0&maps_page=0&texts_per_page=1&texts_page=1&subjects=overview&licenses=all&details=true&common_names=true&synonyms=false&references=false&taxonomy=false&vetted=1&cache_ttl=&language=en";
+        Log.i("query",query);
+        //everything until next try block is taken from search activity
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response)
+                    {
+                        Boolean pref,en;
+                        try
+                        {
+                            JSONArray names=response.getJSONArray("vernacularNames");
+                            for(int i=0;i<names.length();i++)
+                            {
+                                JSONObject record=names.getJSONObject(i);
+
+                                //is this and english name?
+                                en=record.getString("language").equals("en");
+
+                                //EoL doesn't load eol_preferred with false, just leaves it off
+                                //so if it isn't preferred, i am setting it to false
+                                try {pref = record.getBoolean("eol_preferred");}
+                                catch(Exception e) {pref=false;}
+
+                                //if this is an english name and a preferred name, its what we want
+                                //could remove pref to get a list of possible names
+                                if (en && pref)
+                                {
+                                    commonName = record.getString("vernacularName");
+                                }
+                            }
+
+                            JSONArray results=response.getJSONArray("dataObjects");
+                            description=results.getJSONObject(0).getString("description");
+                            Log.i("description",description);
+                            int start,stop;
+                            //removes tacked on links to more info
+                            description=description.substring(0,description.indexOf("<br>"));
+                            //removes HTML markup
+                            while (description.contains("<")) {
+                                //find start of tag
+                                start = description.indexOf("<");
+                                //find end of tag(after the start)
+                                stop = description.indexOf(">", start);
+                                //use everthing from the begining to the start of the tag, and everything after the end of the tag
+                                description = description.substring(0, start) + description.substring(stop + 1);
+                            }
+
+                            imageLink=results.getJSONObject(1).getString("mediaURL");
+                            Log.i("imageLink",imageLink);
+                        }
+                        catch(Exception e)
+                        {
+                            Log.e("Error onResponse: ", e.toString());
+                        }
+                        setData();
+                    }
+                }, new Response.ErrorListener()
         {
-            //returns text version of EoL page
-            String page=pageReader(eolLink);
-
-            //strip common name from page
-            int start = page.indexOf("<title>") + 7;
-            int stop = page.indexOf("-", start);
-            commonName = page.substring(start, stop);
-
-            //long enough, and will have enough options, I didn't want to clutter
-            getDescription(page);
-
-            //not working well yet, possibly due to app webcalls
-            //503 error on phone browser, but works on computer browser
-            //not unique, but both versions(in tested pages) return the same URL
-            start=page.indexOf("http://media.eol.org/content");
-            //stop at end quote
-            stop=page.indexOf("\'",start);
-            imageLink=page.substring(start,stop);
-            Log.i("imagelink",imageLink);
-            //wikipedia page starts with wikipedia.org/w/index.php?title=
-            //ends with & (and symbol)
-
-            return null;
-        }
-        //after page is downloaded and scraped, post the results
-        protected void onPostExecute(Void result)
-        {
-            //error messages if nothing is found for a field
-            //trim() removes whitespace at beggining and end
-            //.equals to see if string is only empty quotes
-            if (scientificName.trim().equals(""))
+            @Override
+            public void onErrorResponse(VolleyError error)
             {
-                scientificName="No data found";
+                Log.e("Error onErrorResponse: ", error.toString());
             }
-            if (commonName.trim().equals(""))
-            {
-                commonName="No data found";
-            }
-            if (description.trim().equals(""))
-            {
-                description="No data found";
-            }
-            if (eolLink.trim().equals(""))
-            {
-                eolLink="No data found";
-            }
-            if (imageLink.trim().equals(""))
-            {
-                imageLink="No data found";
-            }
-            // set each field based on global variable
-            TextView scientificNameTV = findViewById(R.id.ScientificName);
-            scientificNameTV.setText(scientificName);
+        });
+        requestQueue.add(searchRequest);
 
-            TextView commonNameTV = findViewById(R.id.CommonName);
-            commonNameTV.setText(commonName);
-
-            TextView descriptionTV = findViewById(R.id.Description);
-            descriptionTV.setText(description);
-
-            TextView eolLinkTV = findViewById(R.id.EoLLink);
-            eolLinkTV.setText(eolLink);
-
-            TextView imageLinkTV = findViewById(R.id.ImageLink);
-            imageLinkTV.setText(imageLink);
-
-            //bmImage.setImageBitmap(image);
-        }
     }
 
 /*helper functions*/
-
-    //format query to search for an animal(exact name) on eol
-    private String eolQuery(String name)
+    private void setData()
     {
-        //default start to every EoL api search query
-        String first="http://eol.org/api/search/1.0.json?q=";
-
-        //query options I am using
-        String last="&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=";
-
-        //name can't have spaces, needs "+"
-        name=name.replaceAll(" ","+");
-        return first+name+last;
-    }
-
-    //read in the webpage line by line
-    //jsoup had issues closing
-    private String pageReader(String url)
-    {
-        String line="", output="";
-        try//needed for URL
+        if (scientificName.trim().equals(""))
         {
-            URL page = new URL(url);
-            BufferedReader in = new BufferedReader((new InputStreamReader(page.openStream())));
-
-            //read in 1 line, if there is a line to read
-            while((line=in.readLine()) != null)
-            {
-                //add it to document to be parsed(adding stripped newlines to make it easier to parse)
-                output+=line+"\n";
-            }
-            //always close document
-            in.close();
+            scientificName="No data found";
         }
-        catch(Exception e)
+        if (commonName.trim().equals(""))
         {
-            Log.e("Error Page Reader: ",e.toString());
-            description="network error";
+            commonName="No data found";
         }
-        return output;
-    }
-
-    private void getDescription(String page)
-    {
-        String formattedDescription;
-        int start, stop;
-
-        //closest unique string to description on all pages i have tested
-        //needs more testing
-        //
-        start=page.indexOf("Morphology</h3>");
-        if (start!=-1) {
-            //get to line above
-            start = page.indexOf("copy", start);
-
-            //get to line with description
-            start = page.indexOf("\n", start) + 1;
-
-            //stop at the end of that line
-            //all descriptions i have found are on one line
-            stop = page.indexOf("\n", start);
-
-            //grab that line
-            description = page.substring(start, stop);
-
-            //Use some of the old formatting, makes it look cleaner, can be used to do better formatting at a later date
-            description = description.replaceAll("<p>", "\n");
-
-            //removes all other HTML markup
-            while (description.contains("<")) {
-                //find start of tag
-                start = description.indexOf("<");
-                //find end of tag(after the start)
-                stop = description.indexOf(">", start);
-                //use everthing from the begining to the start of the tag, and everything after the end of the tag
-                description = description.substring(0, start) + description.substring(stop + 1);
-            }
-            //remove extra whitepsace from beginning and end
-            description = description.trim();
+        if (description.trim().equals(""))
+        {
+            description="No data found";
         }
-//TODO
-        //special cases found
-            /*
-            https://www.eol.org/pages/401139/details
-            https://www.eol.org/pages/244454/details#morphology
-            https://www.eol.org/pages/449887/details
-            http://eol.org/pages/921578/details
-            http://eol.org/pages/921578/details
-             */
+        if (eolLink.trim().equals(""))
+        {
+            eolLink="No data found";
+        }
+        if (imageLink.trim().equals(""))
+        {
+            imageLink="No data found";
+        }
+        // set each field based on global variable
+        TextView scientificNameTV = findViewById(R.id.ScientificName);
+        scientificNameTV.setText(scientificName);
 
+        TextView commonNameTV = findViewById(R.id.CommonName);
+        commonNameTV.setText(commonName);
 
+        TextView descriptionTV = findViewById(R.id.Description);
+        descriptionTV.setText(description);
+
+        TextView eolLinkTV = findViewById(R.id.EoLLink);
+        eolLinkTV.setText(eolLink);
+
+        TextView imageLinkTV = findViewById(R.id.ImageLink);
+        imageLinkTV.setText(imageLink);
+
+        //bmImage.setImageBitmap(image);
     }
 
 /*Setup functions*/
@@ -311,7 +255,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         catch (Exception e){
             e.printStackTrace();
         }
-
+        //I changed this to switch statement AS claimed it would be faster
         switch (themeArray)
         {
             case "Blue":
@@ -337,6 +281,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         inflater.inflate(R.menu.species_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
     //use options menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -362,6 +307,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
                 return super.onOptionsItemSelected(item);
         }
     }
+
     //Go back
     public void goBack(View view){
         /* closes the activity */
@@ -369,6 +315,30 @@ public class SpeciesInfoActivity extends AppCompatActivity
     }
 
 
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        private DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.toString());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
+    }
 }
 
 
