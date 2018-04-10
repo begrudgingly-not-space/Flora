@@ -22,5 +22,4 @@
         android:icon="@drawable/ic_map_action_white"
         android:title="@string/Map"
         app:showAsAction="ifRoom" />
-
 </menu>

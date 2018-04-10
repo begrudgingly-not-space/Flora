@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cameraButton"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PersonalRecordingsActivity">
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="218dp"
+        android:layout_height="348dp"
+        android:layout_centerInParent="true" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingUpload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="5dp"
+        android:clickable="true"
+        app:backgroundTint="@color/white"
+        app:srcCompat="@drawable/plus_sign" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingCameraButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/floatingUpload"
+        android:layout_marginBottom="75dp"
+        android:clickable="true"
+        app:backgroundTint="?attr/colorBackgroundFloating"
+        app:srcCompat="@drawable/ic_camera" />
+
+
+</RelativeLayout>

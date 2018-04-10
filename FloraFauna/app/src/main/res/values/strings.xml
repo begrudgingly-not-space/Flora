@@ -5,6 +5,7 @@
     <string name="Help">Help</string>
     <string name="Home">Home</string>
     <string name="Map">Map Page</string>
+    <string name="Recordings">Recordings</string>
     <string name="Images">Images ON/OFF</string>
     <string name="Clear">Clear</string>
     <string name="clear_search_history">Clear Search History</string>
@@ -24,4 +25,20 @@
         <item>Scientific name by state</item>
         <item>Scientific name by county</item>
     </string-array>
+
+    <string name="Themes">Themes</string>
+    <string-array name="themes">
+        <item>Green</item>
+        <item>Blue</item>
+        <item>Mono</item>
+        <item>Cherry</item>
+    </string-array>
+
+    <string-array name="Filter">
+        <item>None</item>
+        <item>Kingdom</item>
+        <item>Genus</item>
+        <item>Location</item>
+    </string-array>
+
 </resources>

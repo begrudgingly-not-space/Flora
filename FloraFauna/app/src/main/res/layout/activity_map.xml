@@ -3,7 +3,7 @@
     android:id="@+id/scrollview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="?attr/colorBackgroundFloating">
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="215dp"
         android:layout_centerHorizontal="true"
-        android:background="@color/darkGreen"
+        android:background="?attr/colorPrimary"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -80,7 +80,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
                 android:text="in"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="15sp"
                 android:textStyle="bold" /> -->
 

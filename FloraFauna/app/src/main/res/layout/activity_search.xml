@@ -2,38 +2,53 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/whiteGrey">
+    android:background="?attr/colorBackgroundFloating">
     <RelativeLayout
         android:id="@+id/SearchFilter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:background="@color/darkGreen"
+        android:background="?attr/colorPrimary"
         android:orientation="vertical">
-        <FrameLayout
+        <RelativeLayout
             android:id="@+id/Search"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <AutoCompleteTextView
-                android:id="@+id/SearchEditText"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:background="@drawable/rounded_search_box"
-                android:inputType="textNoSuggestions"
-                android:hint="Scientific/Common Name"
-                android:paddingStart="25dp"
-                android:layout_margin="10dp"
-                android:textColor="@color/black"
-                android:textSize="15sp"
-                android:imeOptions="actionDone"/>
-            <ImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:src="@drawable/vector_search_icon"
-                android:layout_gravity="center_vertical"
-                android:layout_margin="15dp"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/SearchButton">
+                <AutoCompleteTextView
+                    android:id="@+id/SearchEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:background="@drawable/rounded_search_box"
+                    android:inputType="textNoSuggestions"
+                    android:hint="Species"
+                    android:paddingStart="25dp"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:imeOptions="actionDone"/>
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/vector_search_icon"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="3dp"/>
+            </FrameLayout>
+            <TextView
+                android:id="@+id/SearchButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Search"
+                android:layout_marginStart="5dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerInParent="true"
+                android:textColor="?attr/colorBackgroundFloating"
+                android:textStyle="bold"
                 android:onClick="search"/>
-        </FrameLayout>
+        </RelativeLayout>
         <RadioGroup
             android:id="@+id/RadioButtons"
             android:layout_width="match_parent"
@@ -49,8 +64,8 @@
                 android:layout_height="wrap_content"
                 android:scaleX="0.8"
                 android:scaleY="0.8"
-                android:text="Scientific/Common Name"
-                android:textColor="@color/whiteGrey"
+                android:text="Species"
+                android:textColor="?attr/colorBackgroundFloating"
                 android:textSize="14sp" />
             <RadioButton
                 android:id="@+id/CountyButton"
@@ -58,8 +73,8 @@
                 android:layout_height="wrap_content"
                 android:scaleX="0.8"
                 android:scaleY="0.8"
-                android:text="County, State"
-                android:textColor="@color/whiteGrey"
+                android:text="County"
+                android:textColor="?attr/colorBackgroundFloating"
                 android:textSize="14sp" />
             <RadioButton
                 android:id="@+id/StateButton"
@@ -68,65 +83,113 @@
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:text="State"
-                android:textColor="@color/whiteGrey"
+                android:textColor="?attr/colorBackgroundFloating"
                 android:textSize="14sp" />
         </RadioGroup>
-        <!--<Spinner
-            android:id="@+id/planets_spinner"
-            android:layout_width="100dp"
-            android:layout_height="20dp"
-            android:layout_margin="10dp"
+        <LinearLayout
+            android:id="@+id/FilterAndRadioButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/RadioButtons"
-            android:layout_centerHorizontal="true"
-            android:background="@color/white"/>-->
+            android:orientation="vertical"
+            android:visibility="gone">
+            <RelativeLayout
+                android:id="@+id/Filter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@id/FilterButton">
+                    <AutoCompleteTextView
+                        android:id="@+id/FilterEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:background="@drawable/rounded_search_box"
+                        android:inputType="textNoSuggestions"
+                        android:hint="Filter"
+                        android:paddingStart="25dp"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        android:imeOptions="actionDone"/>
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_filter"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="3dp"/>
+                </FrameLayout>
+                <TextView
+                    android:id="@+id/FilterButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Filter"
+                    android:layout_marginStart="5dp"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="true"
+                    android:textColor="?attr/colorBackgroundFloating"
+                    android:textStyle="bold"
+                    android:onClick="filter"/>
+            </RelativeLayout>
+            <RadioGroup
+                android:id="@+id/FilterRadioButtons"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:checkedButton="@+id/KingdomButton"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/KingdomButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8"
+                    android:text="Kingdom"
+                    android:textColor="?attr/colorBackgroundFloating"
+                    android:textSize="14sp" />
+                <RadioButton
+                    android:id="@+id/GenusButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8"
+                    android:text="Genus"
+                    android:textColor="?attr/colorBackgroundFloating"
+                    android:textSize="14sp" />
+                <RadioButton
+                    android:id="@+id/MyLocationButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8"
+                    android:text="My Location"
+                    android:textColor="?attr/colorBackgroundFloating"
+                    android:textSize="14sp" />
+            </RadioGroup>
+        </LinearLayout>
+
         <TextView
             android:id="@+id/WhatsAroundMeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="What's Around Me?"
-            android:textColor="@color/whiteGrey"
+            android:textColor="?attr/colorBackgroundFloating"
             android:textStyle="bold"
             android:layout_centerInParent="true"
-            android:layout_marginBottom="10dp"
-            android:layout_below="@id/RadioButtons"
+            android:layout_margin="10dp"
+            android:layout_below="@id/FilterAndRadioButtons"
             android:onClick="whatsAroundMe"/>
-        <LinearLayout
-            android:id="@+id/Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_centerInParent="true"
-            android:layout_below="@id/WhatsAroundMeButton"
-            android:layout_marginBottom="10dp"
-            android:visibility="gone">
-            <EditText
-                android:id="@+id/FilterEditText"
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_search_box"
-                android:layout_marginEnd="10dp"
-                android:paddingStart="5dp"
-                android:textSize="15sp"
-                android:hint="Genus"/>
-            <TextView
-                android:id="@+id/FilterButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Filter"
-                android:textColor="@color/whiteGrey"
-                android:textStyle="bold"
-                android:layout_marginBottom="10dp"
-                android:onClick="filterByGenus"/>
-        </LinearLayout>
-
     </RelativeLayout>
     <ListView
         android:id="@+id/ListSpecies"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/whiteGrey"
+        android:background="?attr/colorBackgroundFloating"
         android:layout_below="@id/SearchFilter"
-        android:layout_centerHorizontal="true"
-        android:visibility="invisible">
+        android:layout_centerHorizontal="true">
     </ListView>
 </RelativeLayout>

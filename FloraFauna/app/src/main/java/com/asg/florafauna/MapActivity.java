@@ -18,9 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -36,7 +34,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,6 +59,7 @@ public class MapActivity extends AppCompatActivity{
     private Spinner spinner;
     private ProgressDialog dialog;
     private InputMethodManager imm;
+    private String[] themeArray = new String[1];
 
     private double mapLongitude = -96.9583498;
     private double mapLatitude = 40.7507204;
@@ -67,6 +70,37 @@ public class MapActivity extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //setTheme(R.style.AppTheme);
+        try {
+            //opens the file to read its contents
+            FileInputStream fis = this.openFileInput("theme");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader reader = new BufferedReader(isr);
+
+            themeArray[0] = reader.readLine(); //adds the line to the temp array
+            reader.close();
+            isr.close();
+            fis.close();
+        }
+        catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        if (themeArray[0].equals("Green")){
+            setTheme(R.style.AppTheme);
+        }
+        else if (themeArray[0].equals("Blue")){
+            setTheme(R.style.AppThemeBlue);
+        }
+        else if (themeArray[0].equals("Mono")){
+            setTheme(R.style.AppThemeMono);
+        }
+        else if (themeArray[0].equals("Cherry")){
+            setTheme(R.style.AppThemeCherry);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -234,27 +268,16 @@ public class MapActivity extends AppCompatActivity{
                 startActivity(help_intent);
                 return true;
             case R.id.action_home:
-                Intent intent = new Intent(MapActivity.this, SearchActivity.class);
-                startActivity(intent);
+                Intent home_intent = new Intent(MapActivity.this, SearchActivity.class);
+                startActivity(home_intent);
+            case R.id.action_recording:
+                Intent recording_intent = new Intent(MapActivity.this, PersonalRecordingsActivity.class);
+                startActivity(recording_intent);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    /*public void openHelp(View view){
-        Intent intent = new Intent(MapActivity.this, HelpActivity.class);
-        startActivity(intent);
-    }
-
-    public void openSettings(View view){
-        Intent intent = new Intent(MapActivity.this, SettingsActivity.class);
-        startActivity(intent);
-    }
-
-    public void openSearch(View view){
-        Intent intent = new Intent(MapActivity.this, SearchActivity.class);
-        startActivity(intent);
-    }*/
 
     public void goBack(View view){
         finish();
