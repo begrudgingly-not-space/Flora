@@ -26,7 +26,8 @@ public class ImageActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
 
-        String imageLink = getIntent().getStringExtra(INTENT_EXTRA_IMAGELINK);
+        //String imageLink = getIntent().getStringExtra(INTENT_EXTRA_IMAGELINK);
+        String imageLink="https://media.eol.org/content/2014/10/09/11/00594_580_360.jpg";
         //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute("https://media.eol.org/content/2014/10/09/11/00594_580_360.jpg");
         new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
     }
