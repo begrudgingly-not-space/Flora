@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:padding="8dp"
-            android:text="No scientific name found."
+            android:text="Loading scientific name."
             android:textColor="@color/black"/>
         <TextView
             android:layout_width="match_parent"
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:padding="8dp"
-            android:text="No common name found."
+            android:text="Loading common name"
             android:textColor="@color/black"/>
         <TextView
             android:layout_width="match_parent"
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:padding="8dp"
-            android:text="No description found."
+            android:text="Loading description name"
             android:textColor="@color/black"/>
         <TextView
             android:layout_width="match_parent"
@@ -74,8 +74,10 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:padding="8dp"
-            android:text="No image found."
-            android:textColor="@color/black"/>
+            android:text="Loading Image Link"
+            android:textColor="@color/black"
+            android:autoLink="web"
+            android:linksClickable="true"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -91,8 +93,10 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:padding="8dp"
-            android:text="No Encyclopedia of Life link found."
-            android:textColor="@color/black"/>
+            android:text="Loading Encyclopedia of Life link"
+            android:textColor="@color/black"
+            android:autoLink="web"
+            android:linksClickable="true"/>
         <ImageView
             android:id="@+id/imageView1"
             android:layout_width="wrap_content"

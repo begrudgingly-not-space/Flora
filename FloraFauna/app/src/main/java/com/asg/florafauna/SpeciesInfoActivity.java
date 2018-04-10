@@ -40,85 +40,296 @@ import java.net.URL;
 
 public class SpeciesInfoActivity extends AppCompatActivity
 {
-    private String description, eolLink;
-    private String[] themeArray = new String[1];
-    private String scientificName;
-    private String commonName;
-    private String imageLink;
+    private String scientificName="", commonName="", description="", eolLink="",  imageLink="";
     private Bitmap image;
     private ImageView bmImage;
     public static final String INTENT_EXTRA_IMAGELINK = "imageLink";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
+/* setup*/
 
-        //setTheme(R.style.AppTheme);
+    setTheme();
+
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_speciesinfo);
+
+    //action bar creation copied form HelpActivity.java
+    FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
+    //Log.i("Data","ImageLink "+imageLink);
+
+    Button button = (Button) findViewById(R.id.button_send);
+    button.setOnClickListener(new View.OnClickListener() {
+        public void onClick(View v) {
+            Intent intent = new Intent(SpeciesInfoActivity.this, ImageActivity.class);
+            intent.putExtra(INTENT_EXTRA_IMAGELINK, imageLink);
+            //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
+            startActivity(intent);
+
+        }
+    });
+
+/*not setup*/
+        //get scientific name sent by search
+        scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
+
+        getPage(this);
+
+    }
+
+    //pull relevant info from the search page and from the eol information page
+    private void getPage(final Context context)
+    {
+        String query=eolQuery(scientificName);
+
+        //everything until next try block is taken from search activity
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response)
+                    {
+                        try
+                        {
+                            JSONObject results = response.getJSONArray("results").getJSONObject(0);
+
+                            //initial link (will be redirected)
+                            eolLink=results.getString("link");
+
+                            //strip numeric designation for species
+                            eolLink=eolLink.substring(eolLink.indexOf("org/")+4,eolLink.indexOf("?"));
+
+                            //format to go to details page of that species
+                            eolLink="http://eol.org/pages/"+eolLink+"/details";
+                            Log.i("eolLink",eolLink);
+                            setDataTask task=new setDataTask();
+                            task.execute();
+                        }
+                        catch(Exception e)
+                        {
+                            Log.e("Error onResponse: ", e.toString());
+                        }
+                    }
+                }, new Response.ErrorListener()
+        {
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                Log.e("Error onErrorResponse: ", error.toString());
+            }
+        });
+        requestQueue.add(searchRequest);
+    }
+
+    //webcalls without json require AsyncTask
+    private class setDataTask extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... params)
+        {
+            //returns text version of EoL page
+            String page=pageReader(eolLink);
+
+            //strip common name from page
+            int start = page.indexOf("<title>") + 7;
+            int stop = page.indexOf("-", start);
+            commonName = page.substring(start, stop);
+
+            //long enough, and will have enough options, I didn't want to clutter
+            getDescription(page);
+
+            //not working well yet, possibly due to app webcalls
+            //503 error on phone browser, but works on computer browser
+            //not unique, but both versions(in tested pages) return the same URL
+            start=page.indexOf("http://media.eol.org/content");
+            //stop at end quote
+            stop=page.indexOf("\'",start);
+            imageLink=page.substring(start,stop);
+            Log.i("imagelink",imageLink);
+            //wikipedia page starts with wikipedia.org/w/index.php?title=
+            //ends with & (and symbol)
+
+            return null;
+        }
+        //after page is downloaded and scraped, post the results
+        protected void onPostExecute(Void result)
+        {
+            //error messages if nothing is found for a field
+            //trim() removes whitespace at beggining and end
+            //.equals to see if string is only empty quotes
+            if (scientificName.trim().equals(""))
+            {
+                scientificName="No data found";
+            }
+            if (commonName.trim().equals(""))
+            {
+                commonName="No data found";
+            }
+            if (description.trim().equals(""))
+            {
+                description="No data found";
+            }
+            if (eolLink.trim().equals(""))
+            {
+                eolLink="No data found";
+            }
+            if (imageLink.trim().equals(""))
+            {
+                imageLink="No data found";
+            }
+            // set each field based on global variable
+            TextView scientificNameTV = findViewById(R.id.ScientificName);
+            scientificNameTV.setText(scientificName);
+
+            TextView commonNameTV = findViewById(R.id.CommonName);
+            commonNameTV.setText(commonName);
+
+            TextView descriptionTV = findViewById(R.id.Description);
+            descriptionTV.setText(description);
+
+            TextView eolLinkTV = findViewById(R.id.EoLLink);
+            eolLinkTV.setText(eolLink);
+
+            TextView imageLinkTV = findViewById(R.id.ImageLink);
+            imageLinkTV.setText(imageLink);
+
+            //bmImage.setImageBitmap(image);
+        }
+    }
+
+/*helper functions*/
+
+    //format query to search for an animal(exact name) on eol
+    private String eolQuery(String name)
+    {
+        //default start to every EoL api search query
+        String first="http://eol.org/api/search/1.0.json?q=";
+
+        //query options I am using
+        String last="&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=";
+
+        //name can't have spaces, needs "+"
+        name=name.replaceAll(" ","+");
+        return first+name+last;
+    }
+
+    //read in the webpage line by line
+    //jsoup had issues closing
+    private String pageReader(String url)
+    {
+        String line="", output="";
+        try//needed for URL
+        {
+            URL page = new URL(url);
+            BufferedReader in = new BufferedReader((new InputStreamReader(page.openStream())));
+
+            //read in 1 line, if there is a line to read
+            while((line=in.readLine()) != null)
+            {
+                //add it to document to be parsed(adding stripped newlines to make it easier to parse)
+                output+=line+"\n";
+            }
+            //always close document
+            in.close();
+        }
+        catch(Exception e)
+        {
+            Log.e("Error Page Reader: ",e.toString());
+            description="network error";
+        }
+        return output;
+    }
+
+    private void getDescription(String page)
+    {
+        String formattedDescription;
+        int start, stop;
+
+        //closest unique string to description on all pages i have tested
+        //needs more testing
+        //
+        start=page.indexOf("Morphology</h3>");
+        if (start!=-1) {
+            //get to line above
+            start = page.indexOf("copy", start);
+
+            //get to line with description
+            start = page.indexOf("\n", start) + 1;
+
+            //stop at the end of that line
+            //all descriptions i have found are on one line
+            stop = page.indexOf("\n", start);
+
+            //grab that line
+            description = page.substring(start, stop);
+
+            //Use some of the old formatting, makes it look cleaner, can be used to do better formatting at a later date
+            description = description.replaceAll("<p>", "\n");
+
+            //removes all other HTML markup
+            while (description.contains("<")) {
+                //find start of tag
+                start = description.indexOf("<");
+                //find end of tag(after the start)
+                stop = description.indexOf(">", start);
+                //use everthing from the begining to the start of the tag, and everything after the end of the tag
+                description = description.substring(0, start) + description.substring(stop + 1);
+            }
+            //remove extra whitepsace from beginning and end
+            description = description.trim();
+        }
+//TODO
+        //special cases found
+            /*
+            https://www.eol.org/pages/401139/details
+            https://www.eol.org/pages/244454/details#morphology
+            https://www.eol.org/pages/449887/details
+            http://eol.org/pages/921578/details
+            http://eol.org/pages/921578/details
+             */
+
+
+    }
+
+/*Setup functions*/
+/*created by other people, only kinda know how they work*/
+    //set the theme
+    private void setTheme(){
+        String themeArray="";
         try {
             //opens the file to read its contents
             FileInputStream fis = this.openFileInput("theme");
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader reader = new BufferedReader(isr);
 
-            themeArray[0] = reader.readLine(); //adds the line to the temp array
+            themeArray = reader.readLine(); //adds the line to the temp array
             reader.close();
             isr.close();
             fis.close();
         }
-        catch (FileNotFoundException e){
+        catch (Exception e){
             e.printStackTrace();
         }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-        if (themeArray[0].equals("Green")){
-            setTheme(R.style.AppTheme);
-        }
-        else if (themeArray[0].equals("Blue")){
-            setTheme(R.style.AppThemeBlue);
-        }
-        else if (themeArray[0].equals("Mono")){
-            setTheme(R.style.AppThemeMono);
-        }
-        else if (themeArray[0].equals("Cherry")){
-            setTheme(R.style.AppThemeCherry);
-        }
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_speciesinfo);
-        //default variables to take values from the results menu from the search/history
-
-        scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
-
-        //proof that displaying images works
-        //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute("https://media.eol.org/content/2014/10/09/11/00594_580_360.jpg");
-
-        if (scientificName == null) {
-            //scientificName="No Species Name";
-            scientificName="Ursus Arctos";
-            getPage(this,scientificName);
-        }
-        else
+        switch (themeArray)
         {
-            getPage(this, scientificName);
+            case "Blue":
+                setTheme(R.style.AppThemeBlue);
+                break;
+            case "Mono":
+                setTheme(R.style.AppThemeMono);
+                break;
+            case "Cherry":
+                setTheme(R.style.AppThemeCherry);
+                break;
+            default:
+                setTheme(R.style.AppTheme);
+                break;
         }
-
-        //action bar creation copied form HelpActivity.java
-        FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
-        //Log.i("Data","ImageLink "+imageLink);
-
-        Button button = (Button) findViewById(R.id.button_send);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Log.i("place","button clicked");
-                Intent intent = new Intent(SpeciesInfoActivity.this, ImageActivity.class);
-                intent.putExtra(INTENT_EXTRA_IMAGELINK, imageLink);
-                //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
-                startActivity(intent);
-
-            }
-        });
-
     }
+
+    //create options menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -126,7 +337,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         inflater.inflate(R.menu.species_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
+    //use options menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -151,162 +362,11 @@ public class SpeciesInfoActivity extends AppCompatActivity
                 return super.onOptionsItemSelected(item);
         }
     }
-
+    //Go back
     public void goBack(View view){
         /* closes the activity */
         finish();
     }
-
-
-
-    //pull relevant info from the search page and from the eol information page
-    private void getPage(final Context context, String name)
-    {
-        String query=eolQuery(name);
-        Log.i("Data",query);
-
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-
-        JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response)
-                    {
-                        try
-                        {
-                            //this has been tested, gives the data that I am looking for
-                            JSONObject results = response.getJSONArray("results").getJSONObject(0);
-                            eolLink=results.getString("link");
-                            Log.i("eolLink",eolLink);
-                            setDataTask task=new setDataTask();
-                            Log.i("Place","Task created");
-                            task.execute();
-
-                        }
-                        catch(Exception e)
-                        {
-                            Log.e("Error onResponse: ", e.toString());
-                        }
-                    }
-                }, new Response.ErrorListener()
-        {
-            @Override
-            public void onErrorResponse(VolleyError error)
-            {
-                Log.e("Error onErrorResponse: ", error.toString());
-            }
-        });
-        requestQueue.add(searchRequest);
-
-    }
-
-    //format query to search for an animal(exact name) on eol
-    private String eolQuery(String name)
-    {
-        String first="http://eol.org/api/search/1.0.json?q=";
-        String last="&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=";
-        name=name.replaceAll(" ","+");
-        return first+name+last;
-    }
-    private String pageReader(String url)
-    {
-        String line;
-        String output="";
-        try
-        {
-            URL page = new URL(url);
-            BufferedReader in = new BufferedReader((new InputStreamReader(page.openStream())));
-            while((line=in.readLine()) != null)
-            {
-                output+=line+"\n";
-            }
-            in.close();
-        }
-        catch(Exception e)
-        {
-            Log.e("Error Page Reader: ",e.toString());
-        }
-        return output;
-    }
-    private class setDataTask extends AsyncTask<Void, String, Void>
-    {
-        @Override
-        protected Void doInBackground(Void... params)
-        {
-            Log.i("Place","doInBackground");
-            try {
-                //String page=Jsoup.connect(eolLink).timeout(10000).execute().parse().toString();
-                String page=pageReader(eolLink);
-                //Log.i("pageReader: ",page);
-                int start = page.indexOf("<img alt");
-                start = page.indexOf("src", start) + 5;
-                int stop = page.indexOf("\'", start);
-                imageLink = page.substring(start, stop);
-                Log.i("IL for PP", imageLink);
-                publishProgress(imageLink);
-
-                start = page.indexOf("</h4>", page.indexOf("<h4>Description")) + 6;
-                stop = page.indexOf("<br>", start);
-                description = page.substring(start, stop);
-                Log.i("description", description);
-
-                start = page.indexOf("<title>") + 7;
-                stop = page.indexOf("-", start);
-                commonName = page.substring(start, stop);
-                Log.i("commonName", commonName);
-            }
-            catch(Exception e)
-            {
-                Log.e("Error diB SetDataTask: ", e.toString());
-            }
-
-            /*try {
-                Log.i("place","2nd try for image link "+imageLink);
-                InputStream in = new java.net.URL(imageLink).openStream();
-                image = BitmapFactory.decodeStream(in);
-                Log.i("place","claims done with image download");
-                Log.i("place","actually done with image download"+image.getHeight());
-            }
-            catch(Exception e)
-            {
-                Log.e("error progress",e.toString());
-            }*/
-            return null;
-        }
-        protected void onProgressUpdate(String... progress)
-        {
-            String imageL=progress[0];
-            Log.i("place", "in progressUpdate: "+progress[0]);
-
-
-            //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(progress[0]);
-        }
-        protected void onPostExecute(Void result)
-        {
-            // Currently search page sends scientific name and common name in some cases
-            TextView scientificNameTV = findViewById(R.id.ScientificName);
-            scientificNameTV.setText(scientificName);
-
-            TextView commonNameTV = findViewById(R.id.CommonName);
-            commonNameTV.setText(commonName);
-
-            TextView descriptionTV = findViewById(R.id.Description);
-            descriptionTV.setText(description);
-
-            TextView eolLinkTV = findViewById(R.id.EoLLink);
-            eolLinkTV.setText(eolLink);
-
-            TextView imageLinkTV = findViewById(R.id.ImageLink);
-            imageLinkTV.setText(imageLink);
-
-            //from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
-            Log.i("place", "done with text");
-            //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
-
-            //bmImage.setImageBitmap(image);
-        }
-    }
-
 
 
 }
