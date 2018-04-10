@@ -40,11 +40,8 @@ import java.net.URL;
 
 public class SpeciesInfoActivity extends AppCompatActivity
 {
-    private String description, eolLink;
+    private String description="", eolLink="", scientificName="", commonName="", imageLink="";
     private String[] themeArray = new String[1];
-    private String scientificName;
-    private String commonName;
-    private String imageLink;
     private Bitmap image;
     private ImageView bmImage;
     public static final String INTENT_EXTRA_IMAGELINK = "imageLink";
@@ -64,10 +61,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
             isr.close();
             fis.close();
         }
-        catch (FileNotFoundException e){
-            e.printStackTrace();
-        }
-        catch (IOException e){
+        catch (Exception e){
             e.printStackTrace();
         }
         if (themeArray[0].equals("Green")){
@@ -93,9 +87,9 @@ public class SpeciesInfoActivity extends AppCompatActivity
         //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute("https://media.eol.org/content/2014/10/09/11/00594_580_360.jpg");
 
         if (scientificName == null) {
-            //scientificName="No Species Name";
-            scientificName="Canis lupus";
-            getPage(this,scientificName);
+            scientificName="No Species Name";
+            //scientificName="Canis lupus";
+            //getPage(this,scientificName);
         }
         else
         {
@@ -109,7 +103,6 @@ public class SpeciesInfoActivity extends AppCompatActivity
         Button button = (Button) findViewById(R.id.button_send);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Log.i("place","button clicked");
                 Intent intent = new Intent(SpeciesInfoActivity.this, ImageActivity.class);
                 intent.putExtra(INTENT_EXTRA_IMAGELINK, imageLink);
                 //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
@@ -163,7 +156,6 @@ public class SpeciesInfoActivity extends AppCompatActivity
     private void getPage(final Context context, String name)
     {
         String query=eolQuery(name);
-        Log.i("Data",query);
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
@@ -184,9 +176,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
                             //format to go to details page of that species
                             eolLink="http://eol.org/pages/"+eolLink+"/details";
-
+                            Log.i("eolLink",eolLink);
                             setDataTask task=new setDataTask();
-                            Log.i("Place","Task created");
                             task.execute();
 
                         }
@@ -241,64 +232,60 @@ public class SpeciesInfoActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... params)
         {
-            Log.i("Place","doInBackground");
             try {
                 //String page=Jsoup.connect(eolLink).timeout(10000).execute().parse().toString();
                 String page=pageReader(eolLink);
-                Log.i("pageReader: ",page);
-                /*
-                int start = page.indexOf("<img alt");
-                start = page.indexOf("src", start) + 5;
-                int stop = page.indexOf("\'", start);
-                imageLink = page.substring(start, stop);
-                Log.i("IL for PP", imageLink);
-                publishProgress(imageLink);
 
-                start = page.indexOf("</h4>", page.indexOf("<h4>Description")) + 6;
-                stop = page.indexOf("<br>", start);
-                description = page.substring(start, stop);
-                Log.i("description", description);
-
-                start = page.indexOf("<title>") + 7;
-                stop = page.indexOf("-", start);
-                commonName = page.substring(start, stop);
-                Log.i("commonName", commonName);*/
                 int start = page.indexOf("<title>") + 7;
                 int stop = page.indexOf("-", start);
                 commonName = page.substring(start, stop);
-                Log.i("commonName", commonName);
 
-                description=getDescription(page);
+                getDescription(page);
+
+                start=page.indexOf("http://media.eol.org/content");
+                stop=page.indexOf("\'",start);
+                imageLink=page.substring(start,stop);
+                Log.i("imagelink",imageLink);
+                //wikipedia page starts with wikipedia.org/w/index.php?title=
+                //ends with & (and symbol)
             }
             catch(Exception e)
             {
                 Log.e("Error diB SetDataTask: ", e.toString());
             }
 
-            /*try {
-                Log.i("place","2nd try for image link "+imageLink);
-                InputStream in = new java.net.URL(imageLink).openStream();
-                image = BitmapFactory.decodeStream(in);
-                Log.i("place","claims done with image download");
-                Log.i("place","actually done with image download"+image.getHeight());
-            }
-            catch(Exception e)
-            {
-                Log.e("error progress",e.toString());
-            }*/
             return null;
         }
         protected void onProgressUpdate(String... progress)
         {
             String imageL=progress[0];
-            Log.i("place", "in progressUpdate: "+progress[0]);
 
 
             //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(progress[0]);
         }
         protected void onPostExecute(Void result)
         {
-            // Currently search page sends scientific name and common name in some cases
+            if (scientificName.trim().equals(""))
+            {
+                scientificName="No data found";
+            }
+            if (commonName.trim().equals(""))
+            {
+                commonName="No data found";
+            }
+            if (description.trim().equals(""))
+            {
+                description="No data found";
+            }
+            if (eolLink.trim().equals(""))
+            {
+                eolLink="No data found";
+            }
+            if (imageLink.trim().equals(""))
+            {
+                imageLink="No data found";
+            }
+            // set each field based on global variable
             TextView scientificNameTV = findViewById(R.id.ScientificName);
             scientificNameTV.setText(scientificName);
 
@@ -314,37 +301,56 @@ public class SpeciesInfoActivity extends AppCompatActivity
             TextView imageLinkTV = findViewById(R.id.ImageLink);
             imageLinkTV.setText(imageLink);
 
-            //from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
-            Log.i("place", "done with text");
-            //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
-
             //bmImage.setImageBitmap(image);
         }
-        protected String getDescription(String page)
+        protected void getDescription(String page)
         {
-            String formattedDescription="";
+            String formattedDescription;
             int start, stop;
 
+            //closest unique string to description on all pages i have tested
+            //needs more testing
+            //
             start=page.indexOf("Morphology</h3>");
-            Log.i("start",start+"");
-            start=page.indexOf("copy",start);
-            Log.i("start",start+"");
-            start=page.indexOf("\n",start)+1;
-            Log.i("start",start+"");
-            stop=page.indexOf("\n",start);
-            Log.i("stop",stop+"");
-            formattedDescription=page.substring(start,stop);
-            //formattedDescription=formattedDescription.replaceAll("<*>"," ");
-            Log.i("description", formattedDescription);
-            formattedDescription=formattedDescription.replaceAll("<p>","\n");
-            while (formattedDescription.contains("<"))
-            {
-                start=formattedDescription.indexOf("<");
-                stop=formattedDescription.indexOf(">",start);
-                formattedDescription=formattedDescription.substring(0,start)+formattedDescription.substring(stop+1);
+            if (start!=-1) {
+                //get to line above
+                start = page.indexOf("copy", start);
+
+                //get to line with description
+                start = page.indexOf("\n", start) + 1;
+
+                //stop at the end of that line
+                //all descriptions i have found are on one line
+                stop = page.indexOf("\n", start);
+
+                //grab that line
+                description = page.substring(start, stop);
+
+                //Use some of the old formatting, makes it look cleaner, can be used to do better formatting at a later date
+                description = description.replaceAll("<p>", "\n");
+
+                //removes all other HTML markup
+                while (description.contains("<")) {
+                    //find start of tag
+                    start = description.indexOf("<");
+                    //find end of tag(after the start)
+                    stop = description.indexOf(">", start);
+                    //use everthing from the begining to the start of the tag, and everything after the end of the tag
+                    description = description.substring(0, start) + description.substring(stop + 1);
+                }
+                //remove extra whitepsace from beginning and end
+                description = description.trim();
             }
-            Log.i("description", formattedDescription);
-            return formattedDescription.trim();
+            //special cases found
+            /*
+            https://www.eol.org/pages/401139/details
+            https://www.eol.org/pages/244454/details#morphology
+            https://www.eol.org/pages/449887/details
+            http://eol.org/pages/921578/details
+            http://eol.org/pages/921578/details
+             */
+
+
         }
     }
 

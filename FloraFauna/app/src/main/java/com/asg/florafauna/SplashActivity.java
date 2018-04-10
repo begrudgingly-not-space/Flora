@@ -52,8 +52,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         }
 
-        //Intent intent = new Intent(SplashActivity.this, SearchActivity.class);
-        Intent intent = new Intent(SplashActivity.this, SpeciesInfoActivity.class);
+        Intent intent = new Intent(SplashActivity.this, SearchActivity.class);
 
         startActivity(intent);
         finish();
