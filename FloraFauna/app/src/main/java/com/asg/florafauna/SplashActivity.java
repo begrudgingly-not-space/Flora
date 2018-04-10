@@ -21,8 +21,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //this code checks
-
+        //this code checks to see if a theme has been set, then if it hasn't it sets the theme to Green
         try {
             //opens the file to read its contents
             FileInputStream fis = this.openFileInput("theme");
@@ -53,8 +52,8 @@ public class SplashActivity extends AppCompatActivity {
             }
         }
 
-        Intent intent = new Intent(SplashActivity.this, SearchActivity.class);
-        //Intent intent = new Intent(SplashActivity.this, SpeciesInfoActivity.class);
+        //Intent intent = new Intent(SplashActivity.this, SearchActivity.class);
+        Intent intent = new Intent(SplashActivity.this, SpeciesInfoActivity.class);
 
         startActivity(intent);
         finish();

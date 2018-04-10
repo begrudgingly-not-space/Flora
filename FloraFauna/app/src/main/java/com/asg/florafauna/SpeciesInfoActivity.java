@@ -51,7 +51,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-/*
+
         //setTheme(R.style.AppTheme);
         try {
             //opens the file to read its contents
@@ -82,7 +82,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         else if (themeArray[0].equals("Cherry")){
             setTheme(R.style.AppThemeCherry);
         }
-*/
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speciesinfo);
         //default variables to take values from the results menu from the search/history
@@ -94,7 +94,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
         if (scientificName == null) {
             //scientificName="No Species Name";
-            scientificName="Ursus Arctos";
+            scientificName="Canis lupus";
             getPage(this,scientificName);
         }
         else
@@ -174,10 +174,17 @@ public class SpeciesInfoActivity extends AppCompatActivity
                     {
                         try
                         {
-                            //this has been tested, gives the data that I am looking for
                             JSONObject results = response.getJSONArray("results").getJSONObject(0);
+
+                            //initial link (will be redirected)
                             eolLink=results.getString("link");
-                            Log.i("eolLink",eolLink);
+
+                            //strip numeric designation for species
+                            eolLink=eolLink.substring(eolLink.indexOf("org/")+4,eolLink.indexOf("?"));
+
+                            //format to go to details page of that species
+                            eolLink="http://eol.org/pages/"+eolLink+"/details";
+
                             setDataTask task=new setDataTask();
                             Log.i("Place","Task created");
                             task.execute();
@@ -225,6 +232,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         catch(Exception e)
         {
             Log.e("Error Page Reader: ",e.toString());
+            description="network error";
         }
         return output;
     }
@@ -237,7 +245,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
             try {
                 //String page=Jsoup.connect(eolLink).timeout(10000).execute().parse().toString();
                 String page=pageReader(eolLink);
-                //Log.i("pageReader: ",page);
+                Log.i("pageReader: ",page);
+                /*
                 int start = page.indexOf("<img alt");
                 start = page.indexOf("src", start) + 5;
                 int stop = page.indexOf("\'", start);
@@ -253,7 +262,13 @@ public class SpeciesInfoActivity extends AppCompatActivity
                 start = page.indexOf("<title>") + 7;
                 stop = page.indexOf("-", start);
                 commonName = page.substring(start, stop);
+                Log.i("commonName", commonName);*/
+                int start = page.indexOf("<title>") + 7;
+                int stop = page.indexOf("-", start);
+                commonName = page.substring(start, stop);
                 Log.i("commonName", commonName);
+
+                description=getDescription(page);
             }
             catch(Exception e)
             {
@@ -304,6 +319,32 @@ public class SpeciesInfoActivity extends AppCompatActivity
             //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
 
             //bmImage.setImageBitmap(image);
+        }
+        protected String getDescription(String page)
+        {
+            String formattedDescription="";
+            int start, stop;
+
+            start=page.indexOf("Morphology</h3>");
+            Log.i("start",start+"");
+            start=page.indexOf("copy",start);
+            Log.i("start",start+"");
+            start=page.indexOf("\n",start)+1;
+            Log.i("start",start+"");
+            stop=page.indexOf("\n",start);
+            Log.i("stop",stop+"");
+            formattedDescription=page.substring(start,stop);
+            //formattedDescription=formattedDescription.replaceAll("<*>"," ");
+            Log.i("description", formattedDescription);
+            formattedDescription=formattedDescription.replaceAll("<p>","\n");
+            while (formattedDescription.contains("<"))
+            {
+                start=formattedDescription.indexOf("<");
+                stop=formattedDescription.indexOf(">",start);
+                formattedDescription=formattedDescription.substring(0,start)+formattedDescription.substring(stop+1);
+            }
+            Log.i("description", formattedDescription);
+            return formattedDescription.trim();
         }
     }
 
