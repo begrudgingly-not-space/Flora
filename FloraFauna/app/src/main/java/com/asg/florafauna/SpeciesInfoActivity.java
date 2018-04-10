@@ -51,7 +51,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+/*
         //setTheme(R.style.AppTheme);
         try {
             //opens the file to read its contents
@@ -82,7 +82,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         else if (themeArray[0].equals("Cherry")){
             setTheme(R.style.AppThemeCherry);
         }
-
+*/
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_speciesinfo);
         //default variables to take values from the results menu from the search/history

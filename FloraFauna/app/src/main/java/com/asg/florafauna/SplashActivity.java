@@ -21,28 +21,37 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String text = "Green";
+        //this code checks
 
-        try{
-            FileOutputStream fOut = openFileOutput("theme", MODE_PRIVATE); //open file 'theme'
-            OutputStreamWriter osw = new OutputStreamWriter(fOut); // required to 'write' to file
-            osw.write(text);
-            //clean up
-            osw.flush();
-            osw.close();
-            fOut.close();
-        }
-        catch (FileNotFoundException e){
-            e.printStackTrace();
+        try {
+            //opens the file to read its contents
+            FileInputStream fis = this.openFileInput("theme");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader reader = new BufferedReader(isr);
+
+            themeArray[0] = reader.readLine(); //adds the line to the temp array
+            reader.close();
+            isr.close();
+            fis.close();
         }
         catch (IOException e){
             Log.e("Exception", "Failed to set theme: " + e.toString());
+            try{
+                FileOutputStream fOut = openFileOutput("theme", MODE_PRIVATE); //open file 'theme'
+                OutputStreamWriter osw = new OutputStreamWriter(fOut); // required to 'write' to file
+                osw.write("Green");
+                //clean up
+                osw.flush();
+                osw.close();
+                fOut.close();
+            }
+            catch (FileNotFoundException f){
+                f.printStackTrace();
+            }
+            catch (IOException g){
+                Log.e("Exception", "Failed to set theme: " + g.toString());
+            }
         }
-
-
-
-
-
 
         Intent intent = new Intent(SplashActivity.this, SearchActivity.class);
         //Intent intent = new Intent(SplashActivity.this, SpeciesInfoActivity.class);
