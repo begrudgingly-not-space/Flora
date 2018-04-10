@@ -136,18 +136,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
                             JSONArray results=response.getJSONArray("dataObjects");
                             description=results.getJSONObject(0).getString("description");
                             Log.i("description",description);
-                            int start,stop;
-                            //removes tacked on links to more info
-                            description=description.substring(0,description.indexOf("<br>"));
-                            //removes HTML markup
-                            while (description.contains("<")) {
-                                //find start of tag
-                                start = description.indexOf("<");
-                                //find end of tag(after the start)
-                                stop = description.indexOf(">", start);
-                                //use everthing from the begining to the start of the tag, and everything after the end of the tag
-                                description = description.substring(0, start) + description.substring(stop + 1);
-                            }
+                            cleanDescription();
 
                             imageLink=results.getJSONObject(1).getString("mediaURL");
                             Log.i("imageLink",imageLink);
@@ -173,6 +162,43 @@ public class SpeciesInfoActivity extends AppCompatActivity
     }
 
 /*helper functions*/
+
+    //capitalize first letter of each word because java doesn't have .title()
+    private String cap(String str)
+    {
+        String output="";
+        String[] words=str.split(" ");
+        for(String word:words)
+        {
+            output+=(word.substring(0,1).toUpperCase()+word.substring(1)+" ");
+        }
+       return output.trim();
+    }
+
+    //cleans up descriptions, adds linebreaks, removes HTML
+    private void cleanDescription()
+    {
+        int start,stop;
+        //removes tacked on links to more info
+        if(description.contains("<br>"))
+        {
+            description = description.substring(0, description.indexOf("<br>"));
+        }
+        //format list of basic characteristics
+        description=description.replaceAll("<p>","\n");
+        //removes remaining HTML markup
+        while (description.contains("<"))
+        {
+            //find start of tag
+            start = description.indexOf("<");
+            //find end of tag(after the start)
+            stop = description.indexOf(">", start);
+            //use everything from the beginning to the start of the tag, and everything after the end of the tag
+            description = description.substring(0, start) +" "+ description.substring(stop + 1);
+            Log.i("description",description.substring(start,stop));
+        }
+        description=description.replaceAll(" +"," ").trim();
+    }
     private void setData()
     {
         if (scientificName.trim().equals(""))
@@ -197,19 +223,19 @@ public class SpeciesInfoActivity extends AppCompatActivity
         }
         // set each field based on global variable
         TextView scientificNameTV = findViewById(R.id.ScientificName);
-        scientificNameTV.setText(scientificName);
+        scientificNameTV.setText(cap(scientificName));
 
         TextView commonNameTV = findViewById(R.id.CommonName);
-        commonNameTV.setText(commonName);
+        commonNameTV.setText(cap(commonName));
 
         TextView descriptionTV = findViewById(R.id.Description);
-        descriptionTV.setText(description);
+        descriptionTV.setText(description.trim());
 
         TextView eolLinkTV = findViewById(R.id.EoLLink);
-        eolLinkTV.setText(eolLink);
+        eolLinkTV.setText(eolLink.trim());
 
         TextView imageLinkTV = findViewById(R.id.ImageLink);
-        imageLinkTV.setText(imageLink);
+        imageLinkTV.setText(imageLink.trim());
 
         //bmImage.setImageBitmap(image);
     }

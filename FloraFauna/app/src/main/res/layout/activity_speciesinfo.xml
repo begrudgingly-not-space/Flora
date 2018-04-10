@@ -8,6 +8,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:gravity="bottom|center_horizontal"
+            android:paddingBottom="0dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -62,25 +71,6 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Image"
-            android:padding="10dp"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:background="?attr/colorPrimary"/>
-        <TextView
-            android:id="@+id/ImageLink"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:padding="8dp"
-            android:text="Loading Image Link"
-            android:textColor="@color/black"
-            android:autoLink="web"
-            android:linksClickable="true"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:text="EoL Link"
             android:textColor="@color/white"
             android:padding="10dp"
@@ -97,14 +87,26 @@
             android:textColor="@color/black"
             android:autoLink="web"
             android:linksClickable="true"/>
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="fill_parent"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:gravity="bottom|center_horizontal"
-            android:paddingBottom="0dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"/>
+            android:text="Image Link"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:background="?attr/colorPrimary"/>
+        <TextView
+            android:id="@+id/ImageLink"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:padding="8dp"
+            android:text="Loading Image Link"
+            android:textColor="@color/black"
+            android:autoLink="web"
+            android:linksClickable="true"/>
+
+
     </LinearLayout>
 </ScrollView>
