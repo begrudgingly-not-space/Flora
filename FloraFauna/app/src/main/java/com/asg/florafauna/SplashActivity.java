@@ -15,7 +15,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 public class SplashActivity extends AppCompatActivity {
-    private String[] themeArray = new String[1];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,12 +24,6 @@ public class SplashActivity extends AppCompatActivity {
         try {
             //opens the file to read its contents
             FileInputStream fis = this.openFileInput("theme");
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader reader = new BufferedReader(isr);
-
-            themeArray[0] = reader.readLine(); //adds the line to the temp array
-            reader.close();
-            isr.close();
             fis.close();
         }
         catch (IOException e){
