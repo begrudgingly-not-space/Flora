@@ -63,6 +63,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
     private void getID(final Context context)
     {
         String query="http://eol.org/api/search/1.0.json?q="+scientificName.replaceAll(" ","+")+"&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=";
+        Log.i("ID",query);
 
         //everything until next try block is taken from search activity
         RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -80,7 +81,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
                             eolLink=results.getString("link");
 
                             //strip numeric designation for species
-                            getData(context, eolLink.substring(eolLink.indexOf("org/")+4,eolLink.indexOf("?")));
+                            String ID=eolLink.substring(eolLink.indexOf("org/")+4,eolLink.indexOf("?"));
+                            getData(context, ID);
                         }
                         catch(Exception e)
                         {
@@ -101,7 +103,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
     private void getData(final Context context,String ID)
     {
         String query="http://eol.org/api/pages/1.0.json?batch=false&id="+ID+"&images_per_page=1&images_page=1&videos_per_page=0&videos_page=0&sounds_per_page=0&sounds_page=0&maps_per_page=0&maps_page=0&texts_per_page=1&texts_page=1&subjects=overview&licenses=all&details=true&common_names=true&synonyms=false&references=false&taxonomy=false&vetted=1&cache_ttl=&language=en";
-        Log.i("query",query);
+        Log.i("Data",query);
         //everything until next try block is taken from search activity
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null,
@@ -135,7 +137,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
                             JSONArray results=response.getJSONArray("dataObjects");
                             description=results.getJSONObject(0).getString("description");
-                            Log.i("description",description);
+
                             cleanDescription();
 
                             imageLink=results.getJSONObject(1).getString("mediaURL");
@@ -164,7 +166,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
 /*helper functions*/
 
     //capitalize first letter of each word because java doesn't have .title()
-    private String cap(String str)
+    private String title(String str)
     {
         String output="";
         String[] words=str.split(" ");
@@ -175,7 +177,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
        return output.trim();
     }
 
-    //cleans up descriptions, adds linebreaks, removes HTML
+    //cleans up descriptions, adds newlines, removes HTML
     private void cleanDescription()
     {
         int start,stop;
@@ -195,12 +197,20 @@ public class SpeciesInfoActivity extends AppCompatActivity
             stop = description.indexOf(">", start);
             //use everything from the beginning to the start of the tag, and everything after the end of the tag
             description = description.substring(0, start) +" "+ description.substring(stop + 1);
-            Log.i("description",description.substring(start,stop));
         }
+
         description=description.replaceAll(" +"," ").trim();
+    }
+    private void log()
+    {
+        Log.i("sciName",scientificName);
+        Log.i("commonName",commonName);
+        Log.i("eolLink",eolLink);
+        Log.i("imageLink",imageLink);
     }
     private void setData()
     {
+        log();
         if (scientificName.trim().equals(""))
         {
             scientificName="No data found";
@@ -223,10 +233,10 @@ public class SpeciesInfoActivity extends AppCompatActivity
         }
         // set each field based on global variable
         TextView scientificNameTV = findViewById(R.id.ScientificName);
-        scientificNameTV.setText(cap(scientificName));
+        scientificNameTV.setText(title(scientificName));
 
         TextView commonNameTV = findViewById(R.id.CommonName);
-        commonNameTV.setText(cap(commonName));
+        commonNameTV.setText(title(commonName));
 
         TextView descriptionTV = findViewById(R.id.Description);
         descriptionTV.setText(description.trim());
@@ -236,8 +246,32 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
         TextView imageLinkTV = findViewById(R.id.ImageLink);
         imageLinkTV.setText(imageLink.trim());
+    }
 
-        //bmImage.setImageBitmap(image);
+    //download and display an image given a URL
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        private DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.toString());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
     }
 
 /*Setup functions*/
@@ -316,32 +350,6 @@ public class SpeciesInfoActivity extends AppCompatActivity
     public void goBack(View view){
         /* closes the activity */
         finish();
-    }
-
-
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        private DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.toString());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
     }
 }
 
