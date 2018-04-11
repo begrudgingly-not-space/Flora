@@ -35,62 +35,75 @@ import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
 
 public class SpeciesInfoActivity extends AppCompatActivity
 {
-    private String scientificName="", commonName="", description="", eolLink="",  imageLink="";
-    public static final String INTENT_EXTRA_IMAGELINK = "imageLink";
+    private String scientificName = "", commonName = "", description = "", eolLink = "", imageLink = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-/* setup*/
-    setTheme();
+        /* setup*/
+        setTheme();
 
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_speciesinfo);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_speciesinfo);
 
-    //action bar creation copied form HelpActivity.java
-    FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
-    //Log.i("Data","ImageLink "+imageLink);
+        //action bar creation copied form HelpActivity.java
+        FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
 
-/*not setup*/
+        /*not setup*/
         //get scientific name sent by search
         scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
 
-        getID(this);
+        //Set scientific name on display
+        TextView scientificNameTV = findViewById(R.id.ScientificName);
+        scientificNameTV.setText(title(scientificName));
 
+        getID(this);
     }
 
     //pull relevant info from the search page and from the eol information page
     private void getID(final Context context)
     {
-        String query="http://eol.org/api/search/1.0.json?q="+scientificName.replaceAll(" ","+")+"&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=";
-        Log.i("ID",query);
+        //build query that contains the name from search, and set default options
+        String query = "http://eol.org/api/search/1.0.json?q=" + scientificName.replaceAll(" ", "+") + "&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=";
+        Log.i("ID", query);
 
         //everything until next try block is taken from search activity
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null,
-                new Response.Listener<JSONObject>() {
+                new Response.Listener<JSONObject>()
+                {
                     @Override
                     public void onResponse(JSONObject response)
                     {
                         try
                         {
-                            //JSONArray results=response.getJSONArray("results");
+                            //take results, all objects have same link, so take first
                             JSONObject results = response.getJSONArray("results").getJSONObject(0);
 
                             //initial link (will be redirected)
-                            eolLink=results.getString("link");
+                            eolLink = results.getString("link").trim();
 
-                            //strip numeric designation for species
-                            String ID=eolLink.substring(eolLink.indexOf("org/")+4,eolLink.indexOf("?"));
+                            //strip ID that EoL uses for that species
+                            String ID = eolLink.substring(eolLink.indexOf("org/") + 4, eolLink.indexOf("?"));
+
+                            //make sure data was found or set error message
+                            if (eolLink.trim().equals(""))
+                            {
+                                eolLink="No data found";
+                            }
+                            //Set link to EoL page on display
+                            TextView imageLinkTV = findViewById(R.id.EoLLink);
+                            imageLinkTV.setText(eolLink);
+
+                            //Get rest of the data
                             getData(context, ID);
                         }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
-                            Log.e("Error onResponse: ", e.toString());
+                            Log.e("Error: GetID JSON", e.toString());
                         }
                     }
-                }, new Response.ErrorListener()
-        {
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error)
             {
@@ -100,59 +113,28 @@ public class SpeciesInfoActivity extends AppCompatActivity
         requestQueue.add(searchRequest);
 
     }
-    private void getData(final Context context,String ID)
+
+    private void getData(final Context context, String ID)
     {
-        String query="http://eol.org/api/pages/1.0.json?batch=false&id="+ID+"&images_per_page=1&images_page=1&videos_per_page=0&videos_page=0&sounds_per_page=0&sounds_page=0&maps_per_page=0&maps_page=0&texts_per_page=1&texts_page=1&subjects=overview&licenses=all&details=true&common_names=true&synonyms=false&references=false&taxonomy=false&vetted=1&cache_ttl=&language=en";
-        Log.i("Data",query);
-        //everything until next try block is taken from search activity
+        //create query with ID from previous call, and default options
+        String query = "http://eol.org/api/pages/1.0.json?batch=false&id=" + ID + "&images_per_page=1&images_page=1&videos_per_page=0&videos_page=0&sounds_per_page=0&sounds_page=0&maps_per_page=0&maps_page=0&texts_per_page=1&texts_page=1&subjects=overview&licenses=all&details=true&common_names=true&synonyms=false&references=false&taxonomy=false&vetted=1&cache_ttl=&language=en";
+        Log.i("Data", query);
+
+        //everything until get statements taken from search activity
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null,
-                new Response.Listener<JSONObject>() {
+                new Response.Listener<JSONObject>()
+                {
                     @Override
                     public void onResponse(JSONObject response)
                     {
-                        Boolean pref,en;
-                        try
-                        {
-                            JSONArray names=response.getJSONArray("vernacularNames");
-                            for(int i=0;i<names.length();i++)
-                            {
-                                JSONObject record=names.getJSONObject(i);
 
-                                //is this and english name?
-                                en=record.getString("language").equals("en");
-
-                                //EoL doesn't load eol_preferred with false, just leaves it off
-                                //so if it isn't preferred, i am setting it to false
-                                try {pref = record.getBoolean("eol_preferred");}
-                                catch(Exception e) {pref=false;}
-
-                                //if this is an english name and a preferred name, its what we want
-                                //could remove pref to get a list of possible names
-                                if (en && pref)
-                                {
-                                    commonName = record.getString("vernacularName");
-                                }
-                            }
-
-                            JSONArray results=response.getJSONArray("dataObjects");
-                            description=results.getJSONObject(0).getString("description");
-
-                            cleanDescription();
-
-                            imageLink=results.getJSONObject(1).getString("mediaURL");
-                            Log.i("imageLink",imageLink);
-
-                            new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
-                        }
-                        catch(Exception e)
-                        {
-                            Log.e("Error onResponse: ", e.toString());
-                        }
-                        setData();
+                        //get functions for isolation and clarity
+                        getCommonName(response);
+                        getDescription(response);
+                        getImageLink(response);
                     }
-                }, new Response.ErrorListener()
-        {
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error)
             {
@@ -163,8 +145,126 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
     }
 
-/*helper functions*/
+/*Get functions*/
+    private void getCommonName(JSONObject response)
+    {
+        Boolean pref, en;
+        try
+        {
+            //get list of common names, language for that name, and if it is the preferred name
+            JSONArray names = response.getJSONArray("vernacularNames");
 
+            //loop through each record in the array
+            //for each doesn't work with JSONArray
+            for (int i = 0; i < names.length(); i++)
+            {
+                JSONObject record = names.getJSONObject(i);
+
+                // T/F for "is this name in english?"
+                //EoL doesn't put english at the top even with language set to english
+                en = record.getString("language").equals("en");
+
+                //EoL doesn't load eol_preferred with false, just leaves it off
+                //so if it isn't preferred, i am setting it to false
+                try
+                {
+                    pref = record.getBoolean("eol_preferred");
+                }
+                catch (Exception e)
+                {
+                    pref = false;
+                }
+
+                //if this is an english name and a preferred name, its what we want
+                //could remove pref to get a list of possible names
+                if (en && pref)
+                {
+                    commonName = record.getString("vernacularName").trim();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Log.e("Error GetCommonName", e.toString());
+        }
+
+        //make sure data was found or set error message
+        if (commonName.equals(""))
+        {
+            commonName="No data found";
+        }
+        //set common name on display
+        TextView commonNameTV = findViewById(R.id.CommonName);
+        commonNameTV.setText(title(commonName));
+    }
+
+    //fetches and then cleans up descriptions, adds newlines, removes HTML
+    private void getDescription(JSONObject response)
+    {
+        //pull description from JSON
+        try
+        {
+            description = response.getJSONArray("dataObjects").getJSONObject(0).getString("description");
+        }
+        catch (Exception e)
+        {
+            Log.e("Error GetDescription", e.toString());
+        }
+
+        int start, stop;
+        //removes tacked on links to more info
+        if (description.contains("<br>"))
+        {
+            description = description.substring(0, description.indexOf("<br>"));
+        }
+        //format list of basic characteristics
+        description = description.replaceAll("<p>", "\n");
+        //removes remaining HTML markup
+        while (description.contains("<"))
+        {
+            //find start of tag
+            start = description.indexOf("<");
+            //find end of tag(after the start)
+            stop = description.indexOf(">", start);
+            //use everything from the beginning to the start of the tag, and everything after the end of the tag
+            description = description.substring(0, start) + " " + description.substring(stop + 1);
+        }
+        description = description.replaceAll(" +", " ").trim();
+
+        //make sure data was found or set error message
+        if (description.equals(""))
+        {
+            description="No data found";
+        }
+        //Set description on display
+        TextView descriptionTV = findViewById(R.id.Description);
+        descriptionTV.setText(description.trim());
+    }
+
+    private void getImageLink(JSONObject response)
+    {
+        try
+        {
+            imageLink = response.getJSONArray("dataObjects").getJSONObject(1).getString("mediaURL");
+        }
+        catch(Exception e)
+        {
+            Log.e("Error GetImageLink",e.toString());
+        }
+
+        //make sure data was found or set error message
+        if (imageLink.trim().equals(""))
+        {
+            imageLink="No data found";
+        }
+        //Set link to image on display
+        TextView imageLinkTV = findViewById(R.id.ImageLink);
+        imageLinkTV.setText(imageLink.trim());
+        //Display the actual image
+        new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
+    }
+
+/*Small Helper functions */
     //capitalize first letter of each word because java doesn't have .title()
     private String title(String str)
     {
@@ -174,102 +274,48 @@ public class SpeciesInfoActivity extends AppCompatActivity
         {
             output+=(word.substring(0,1).toUpperCase()+word.substring(1)+" ");
         }
-       return output.trim();
+        return output.trim();
     }
 
-    //cleans up descriptions, adds newlines, removes HTML
-    private void cleanDescription()
-    {
-        int start,stop;
-        //removes tacked on links to more info
-        if(description.contains("<br>"))
-        {
-            description = description.substring(0, description.indexOf("<br>"));
-        }
-        //format list of basic characteristics
-        description=description.replaceAll("<p>","\n");
-        //removes remaining HTML markup
-        while (description.contains("<"))
-        {
-            //find start of tag
-            start = description.indexOf("<");
-            //find end of tag(after the start)
-            stop = description.indexOf(">", start);
-            //use everything from the beginning to the start of the tag, and everything after the end of the tag
-            description = description.substring(0, start) +" "+ description.substring(stop + 1);
-        }
-
-        description=description.replaceAll(" +"," ").trim();
-    }
+    //log values
     private void log()
     {
         Log.i("sciName",scientificName);
         Log.i("commonName",commonName);
+        Log.i("description",description);
         Log.i("eolLink",eolLink);
         Log.i("imageLink",imageLink);
     }
-    private void setData()
-    {
-        log();
-        if (scientificName.trim().equals(""))
-        {
-            scientificName="No data found";
-        }
-        if (commonName.trim().equals(""))
-        {
-            commonName="No data found";
-        }
-        if (description.trim().equals(""))
-        {
-            description="No data found";
-        }
-        if (eolLink.trim().equals(""))
-        {
-            eolLink="No data found";
-        }
-        if (imageLink.trim().equals(""))
-        {
-            imageLink="No data found";
-        }
-        // set each field based on global variable
-        TextView scientificNameTV = findViewById(R.id.ScientificName);
-        scientificNameTV.setText(title(scientificName));
-
-        TextView commonNameTV = findViewById(R.id.CommonName);
-        commonNameTV.setText(title(commonName));
-
-        TextView descriptionTV = findViewById(R.id.Description);
-        descriptionTV.setText(description.trim());
-
-        TextView eolLinkTV = findViewById(R.id.EoLLink);
-        eolLinkTV.setText(eolLink.trim());
-
-        TextView imageLinkTV = findViewById(R.id.ImageLink);
-        imageLinkTV.setText(imageLink.trim());
-    }
-
+/*Image downloader and display*/
+    //https://stackoverflow.com/a/10868126
     //download and display an image given a URL
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    private static class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
+    {
         ImageView bmImage;
 
-        private DownloadImageTask(ImageView bmImage) {
+        private DownloadImageTask(ImageView bmImage)
+        {
             this.bmImage = bmImage;
         }
 
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
+        protected Bitmap doInBackground(String... urls)
+        {
+            String url = urls[0];
             Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
+            try
+            {
+                InputStream in = new java.net.URL(url).openStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 Log.e("Error", e.toString());
-                e.printStackTrace();
             }
             return mIcon11;
         }
 
-        protected void onPostExecute(Bitmap result) {
+        protected void onPostExecute(Bitmap result)
+        {
             bmImage.setImageBitmap(result);
         }
     }
@@ -277,9 +323,11 @@ public class SpeciesInfoActivity extends AppCompatActivity
 /*Setup functions*/
 /*created by other people, only kinda know how they work*/
     //set the theme
-    private void setTheme(){
+    private void setTheme()
+    {
         String themeArray="";
-        try {
+        try
+        {
             //opens the file to read its contents
             FileInputStream fis = this.openFileInput("theme");
             InputStreamReader isr = new InputStreamReader(fis);
@@ -290,10 +338,11 @@ public class SpeciesInfoActivity extends AppCompatActivity
             isr.close();
             fis.close();
         }
-        catch (Exception e){
-            e.printStackTrace();
+        catch (Exception e)
+        {
+            Log.e("Error Reading Theme",e.toString());
         }
-        //I changed this to switch statement AS claimed it would be faster
+        //I changed this to switch statement A-S claimed it would be more efficient
         switch (themeArray)
         {
             case "Blue":
@@ -322,7 +371,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
     //use options menu
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_home:
@@ -347,10 +397,9 @@ public class SpeciesInfoActivity extends AppCompatActivity
     }
 
     //Go back
-    public void goBack(View view){
+    public void goBack(View view)
+    {
         /* closes the activity */
         finish();
     }
 }
-
-
