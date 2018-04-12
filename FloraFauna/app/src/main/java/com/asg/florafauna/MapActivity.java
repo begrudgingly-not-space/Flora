@@ -370,11 +370,10 @@ public class MapActivity extends AppCompatActivity{
 
     }
 
-    public void sightingsByState(Context context, String searchType, String species, String location){
-        String state = "";
+    public void sightingsByState(Context context, String searchType, String species, String state){
 
-        if (location.length() > 2) {
-            state = location.substring(0, 1).toUpperCase() + location.substring(1);
+        if (state.length() > 2) {
+            state = state.substring(0, 1).toUpperCase() + state.substring(1);
 
             if (state.contains(" ")){
                 String[] stateParts = state.split(" ");
@@ -383,8 +382,8 @@ public class MapActivity extends AppCompatActivity{
             }
 
         }
-        else if (location.length() == 2) {
-            state = location.substring(0,2).toUpperCase();
+        else if (state.length() == 2) {
+            state = state.substring(0,2).toUpperCase();
             state = stateFinder(context, state);
         }
 
@@ -461,9 +460,7 @@ public class MapActivity extends AppCompatActivity{
         //myWebView.reload();
     }
 
-    public void sightingsByCounty(Context context, String searchType, String species, String stateInput, String countyInput) {
-        String county = countyInput;
-        String state = stateInput;
+    public void sightingsByCounty(Context context, String searchType, String species, String state, String county) {
 
         if (state.length() > 2) {
             state = state.substring(0, 1).toUpperCase() + state.substring(1);
