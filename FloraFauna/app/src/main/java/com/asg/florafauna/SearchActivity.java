@@ -358,6 +358,10 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     public void search() {
         filterAndRadioButtons.setVisibility(View.VISIBLE);
         String searchInput = searchEditText.getText().toString();
+
+        String county = countyInput.getText().toString();
+        String state = stateInput.getText().toString();
+
         speciesNamesArray = new ArrayList<>();
         offset = 0;
 
@@ -382,7 +386,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         else if (County.isChecked())
         {
             // Search by County
-            searchRequestWithCounty(this, searchInput);
+            searchRequestWithCounty(this, state, county);
         }
 
         // Save history to file
@@ -639,22 +643,8 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         requestQueue.add(searchRequestWithState);
     }
 
-    private void searchRequestWithCounty(final Context context, final String searchInput) {
+    private void searchRequestWithCounty(final Context context, String state, String county) {
         final int position = speciesNamesArray.size();
-
-        String searchTerms[];
-        String county = "";
-        String state = "";
-
-        if (searchInput.contains(",") && searchInput.length() >= 3) {
-            searchTerms = searchInput.split(",");
-
-            if (searchTerms.length == 2) {
-                county = searchTerms[0];
-                state = searchTerms[1];
-                state = state.substring(1, state.length());
-            }
-        }
 
         if (state.length() > 2) {
             state = state.substring(0, 1).toUpperCase() + state.substring(1);
@@ -1152,8 +1142,12 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 "Loading. Please wait...", true);
         offset += 500;
         String searchInput = searchEditText.getText().toString();
+
+        String county = countyInput.getText().toString();
+        String state = stateInput.getText().toString();
+
         if (searchType == 1) {
-            searchRequestWithCounty(this, searchInput);
+            searchRequestWithCounty(this, state, county);
         }
         else if (searchType == 2) {
             searchRequestWithState(this, searchInput);
