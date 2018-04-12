@@ -20,6 +20,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 
@@ -53,12 +54,25 @@ import static com.asg.florafauna.StateFinder.stateFinder;
 public class MapActivity extends AppCompatActivity{
 
     WebView myWebView;
+
     String points = "-91.69000244140625 31.219999313 -90.00507354736328 30.337696075439453 -93.58332824707031 32.58332824707031 -89.84539794921875 30.270082473754883";
+
     private EditText speciesInput;
     private EditText locationInput;
+    private EditText speciesInputCounty;
+    private EditText stateInputForCounty;
+    private EditText countyInputForCounty;
+
+
+    private LinearLayout countyInput;
+    private LinearLayout stateInput;
+
     private Spinner spinner;
+
     private ProgressDialog dialog;
+
     private InputMethodManager imm;
+
     private String[] themeArray = new String[1];
 
     private double mapLongitude = -96.9583498;
@@ -133,6 +147,14 @@ public class MapActivity extends AppCompatActivity{
 
         speciesInput = findViewById(R.id.SearchEditText);
         locationInput = findViewById(R.id.SearchEditTextRegion);
+
+        speciesInputCounty = findViewById(R.id.speciesInput);
+        stateInputForCounty = findViewById(R.id.stateInput);
+        countyInputForCounty = findViewById(R.id.countyInput);
+
+        countyInput = findViewById(R.id.CountySearch);
+        stateInput = findViewById(R.id.StateSearch);
+
         spinner = findViewById(R.id.search_selection);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
@@ -144,18 +166,28 @@ public class MapActivity extends AppCompatActivity{
                 {
                     speciesInput.setHint("Common Name");
                     locationInput.setHint("State");
+                    countyInput.setVisibility(View.INVISIBLE);
+                    stateInput.setVisibility(View.VISIBLE);
                 }
                 else if (selectedItem.equals("Common name by county")){
-                    speciesInput.setHint("Common Name");
-                    locationInput.setHint("County, State");
+                    speciesInputCounty.setHint("Common Name");
+                    stateInputForCounty.setHint("State");
+                    countyInputForCounty.setHint("County");
+                    countyInput.setVisibility(View.VISIBLE);
+                    stateInput.setVisibility(View.INVISIBLE);
                 }
                 else if (selectedItem.equals("Scientific name by state")){
                     speciesInput.setHint("Scientific Name");
                     locationInput.setHint("State");
+                    countyInput.setVisibility(View.INVISIBLE);
+                    stateInput.setVisibility(View.VISIBLE);
                 }
                 else if (selectedItem.equals("Scientific name by county")){
-                    speciesInput.setHint("Scientific Name");
-                    locationInput.setHint("County, State");
+                    speciesInputCounty.setHint("Scientific Name");
+                    stateInputForCounty.setHint("State");
+                    countyInputForCounty.setHint("County");
+                    countyInput.setVisibility(View.VISIBLE);
+                    stateInput.setVisibility(View.INVISIBLE);
                 }
             } // to close the onItemSelected
             public void onNothingSelected(AdapterView<?> parent)
@@ -299,9 +331,6 @@ public class MapActivity extends AppCompatActivity{
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
 
-        String species = speciesInput.getText().toString();
-        String location = locationInput.getText().toString();
-
         //Spinner spinner = findViewById(R.id.search_selection);
         String selection = spinner.getSelectedItem().toString();
         Log.d("spinner", selection);
@@ -311,22 +340,32 @@ public class MapActivity extends AppCompatActivity{
         if (selection.equals("Common name by state")){
             Log.d("selection", "common state search");
             searchType = "common_name";
-            sightingsByState(this, searchType, species, location);
+            String species = speciesInput.getText().toString();
+            String state = locationInput.getText().toString();
+            sightingsByState(this, searchType, species, state);
         }
         else if (selection.equals("Common name by county")){
             Log.d("selection", "common county search");
             searchType = "common_name";
-            sightingsByCounty(this, searchType, species, location);
+            String species = speciesInputCounty.getText().toString();
+            String state = stateInputForCounty.getText().toString();
+            String county = countyInputForCounty.getText().toString();
+            sightingsByCounty(this, searchType, species, state, county);
         }
         else if (selection.equals("Scientific name by state")){
             Log.d("selection","scientific state search");
             searchType = "scientific_name";
-            sightingsByState(this, searchType, species, location);
+            String species = speciesInput.getText().toString();
+            String state = locationInput.getText().toString();
+            sightingsByState(this, searchType, species, state);
         }
         else {
             Log.d("selection", "scientific county search");
             searchType = "scientific_name";
-            sightingsByCounty(this, searchType, species, location);
+            String species = speciesInputCounty.getText().toString();
+            String state = stateInputForCounty.getText().toString();
+            String county = countyInputForCounty.getText().toString();
+            sightingsByCounty(this, searchType, species, state, county);
         }
 
     }
@@ -422,20 +461,9 @@ public class MapActivity extends AppCompatActivity{
         //myWebView.reload();
     }
 
-    public void sightingsByCounty(Context context, String searchType, String species, String location){
-        String searchTerms[];
-        String county = "";
-        String state = "";
-
-        if (location.contains(",") && location.length() >= 3) {
-            searchTerms = location.split(",");
-
-            if (searchTerms.length == 2) {
-                county = searchTerms[0];
-                state = searchTerms[1];
-                state = state.substring(1, state.length());
-            }
-        }
+    public void sightingsByCounty(Context context, String searchType, String species, String stateInput, String countyInput) {
+        String county = countyInput;
+        String state = stateInput;
 
         if (state.length() > 2) {
             state = state.substring(0, 1).toUpperCase() + state.substring(1);
