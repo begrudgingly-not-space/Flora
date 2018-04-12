@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
@@ -83,6 +84,13 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private RadioButton MyLocation;
     private String[] themeArray = new String[1];
 
+    private FrameLayout searchBox;
+
+    private LinearLayout countyStateInput;
+
+    private EditText countyInput;
+    private EditText stateInput;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -138,6 +146,12 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         Genus = findViewById(R.id.GenusButton);
         MyLocation = findViewById(R.id.MyLocationButton);
 
+        searchBox = findViewById(R.id.SearchFrame);
+
+        countyStateInput = findViewById(R.id.locationInput);
+
+        countyInput = findViewById(R.id.countyInput);
+        stateInput = findViewById(R.id.stateInput);
 
         // Setup for load more button
         Button btnLoadMore = new Button(this);
@@ -186,12 +200,19 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                 if (selection.equals("Species")) {
                     searchEditText.setHint("Scientific/Common Name");
+                    searchBox.setVisibility(View.VISIBLE);
+                    countyStateInput.setVisibility(View.INVISIBLE);
                 }
                 else if (selection.equals("County")) {
-                    searchEditText.setHint("County, State");
+                    countyInput.setHint("County");
+                    stateInput.setHint("State");
+                    searchBox.setVisibility(View.INVISIBLE);
+                    countyStateInput.setVisibility(View.VISIBLE);
                 }
                 else {
                     searchEditText.setHint("State");
+                    searchBox.setVisibility(View.VISIBLE);
+                    countyStateInput.setVisibility(View.INVISIBLE);
                 }
             }
         });
