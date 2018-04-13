@@ -55,6 +55,7 @@ import java.util.ArrayList;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import static com.asg.florafauna.CountyFinder.countyFinder;
 import static com.asg.florafauna.StateFinder.stateFinder;
@@ -86,28 +87,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //set default theme if none found
-        File themes = new File("theme");
-        if(!themes.exists())
-        {
-            //sets default
-            try{
-                FileOutputStream fOut = openFileOutput("theme", MODE_PRIVATE); //open file 'theme'
-                OutputStreamWriter osw = new OutputStreamWriter(fOut); // required to 'write' to file
-                osw.write("Green");
-                //clean up
-                osw.flush();
-                osw.close();
-                fOut.close();
-            }
-            catch (FileNotFoundException x){
-                x.printStackTrace();
-            }
-            catch (IOException x){
-                Log.e("Exception", "Failed to save history: " + x.toString());
-            }
-        }
-
         //setTheme(R.style.AppTheme);
         try {
             //opens the file to read its contents
