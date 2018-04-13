@@ -75,6 +75,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         catch (IOException e){
             e.printStackTrace();
         }
+
         if (themeArray[0].equals("Green")){
             setTheme(R.style.AppTheme);
         }
