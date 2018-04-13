@@ -31,8 +31,8 @@
 <body>
 <a class="skiplink" href="#map">Go to map</a>
 <div id="map" class="map" tabindex="0"></div>
-<button id="zoom-out">Zoom out</button>
-<button id="zoom-in">Zoom in</button>
+<!-- <button id="zoom-out">Zoom out</button>
+<button id="zoom-in">Zoom in</button> -->
 <script type="text/javascript">
 
 /*
@@ -44,6 +44,10 @@
       var points = Android.getValue();
       console.log(points);
       points = points.split(" ");
+
+      var mapLong = Android.getMapLongitude();
+      var mapLat = Android.getMapLatitude();
+      var zoom = Android.getMapZoom();
 
       var point = [];
       for(var i = 0; i < points.length / 2; i += 1){
@@ -104,8 +108,8 @@
           }
         }),
         view: new ol.View({
-          center: [-10997148, 4569099],
-          zoom: 2
+          center: ol.proj.transform([mapLong, mapLat], 'EPSG:4326', 'EPSG:3857'),
+          zoom: zoom
         })
       });
       map.addLayer(vectorLayer);

@@ -5,7 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -14,7 +15,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SplashActivity"
+        <activity
+            android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,24 +24,38 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SearchActivity"
+        <activity
+            android:name=".SearchActivity"
             android:label="Search Page"
             android:screenOrientation="sensorPortrait">
         </activity>
-        <activity android:name=".HelpActivity"
+        <activity
+            android:name=".HelpActivity"
             android:label="Help Page"
             android:screenOrientation="sensorPortrait">
         </activity>
-        <activity android:name=".SettingsActivity"
+        <activity
+            android:name=".SettingsActivity"
             android:label="Settings"
             android:screenOrientation="sensorPortrait">
         </activity>
-        <activity android:name=".MapActivity"
+        <activity
+            android:name=".MapActivity"
             android:label="Map Page"
             android:screenOrientation="sensorPortrait">
         </activity>
-        <activity android:name=".SpeciesInfoActivity"
+        <activity
+            android:name=".SpeciesInfoActivity"
             android:label="SpeciesInfo"
+            android:screenOrientation="sensorPortrait">
+        </activity>
+        <activity android:name=".ImageActivity"
+            android:label="Image"
+            android:screenOrientation="sensorPortrait">
+        </activity>
+        <activity
+            android:name=".PersonalRecordingsActivity"
+            android:label="PersonalRecordings"
             android:screenOrientation="sensorPortrait">
         </activity>
     </application>

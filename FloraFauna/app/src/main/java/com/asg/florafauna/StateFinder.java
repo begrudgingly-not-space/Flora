@@ -31,6 +31,12 @@ public class StateFinder {
         if (!stateName.equals("")) {
             stateName = stateName.substring(0, stateName.length() - 3);
             stateName = stateName.substring(0,1) + stateName.substring(1).toLowerCase();
+
+            if (stateName.contains(" ")){
+                String[] stateParts = stateName.split(" ");
+                stateParts[1] = stateParts[1].substring(0,1).toUpperCase() + stateParts[1].substring(1);
+                stateName = stateParts[0] + " " + stateParts[1];
+            }
         }
 
         Log.d("scanresults", stateName);

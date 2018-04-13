@@ -16,5 +16,10 @@
         android:icon="@drawable/ic_help_action_white"
         android:title="@string/Help"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_recording"
+        android:icon="@drawable/ic_camera_white"
+        android:title="@string/Recordings"
+        app:showAsAction="ifRoom" />
 
 </menu>
