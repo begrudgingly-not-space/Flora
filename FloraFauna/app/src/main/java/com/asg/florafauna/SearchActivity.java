@@ -207,10 +207,10 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 RadioButton rb = findViewById(checkedId);
                 String selection = (String) rb.getText();
 
-                if (selection.equals("Scientific/Common Name")) {
-                    searchEditText.setHint("Scientific/Common Name");
+                if (selection.equals("Species")) {
+                    searchEditText.setHint("Species");
                 }
-                else if (selection.equals("County, State")) {
+                else if (selection.equals("County")) {
                     searchEditText.setHint("County, State");
                 }
                 else {
