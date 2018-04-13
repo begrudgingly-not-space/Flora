@@ -103,10 +103,12 @@ public class MapActivity extends AppCompatActivity{
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
+        if (getSupportActionBar() != null) {
+            FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_map);
+        }
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         final ScrollView sv = (ScrollView) findViewById(R.id.scrollview);
 
-        FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_map);
 
         myWebView = (WebView) findViewById(R.id.webview);
         WebSettings webSettings = myWebView.getSettings();

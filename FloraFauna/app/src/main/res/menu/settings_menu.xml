@@ -22,5 +22,4 @@
         android:icon="@drawable/ic_camera_white"
         android:title="@string/Recordings"
         app:showAsAction="ifRoom" />
-
 </menu>

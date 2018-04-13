@@ -142,6 +142,7 @@ public class SettingsActivity extends AppCompatActivity {
             case R.id.action_map:
                 Intent map_intent = new Intent(SettingsActivity.this, MapActivity.class);
                 startActivity(map_intent);
+                return true;
             case R.id.action_recording:
                 Intent recording_intent = new Intent(SettingsActivity.this, PersonalRecordingsActivity.class);
                 startActivity(recording_intent);
