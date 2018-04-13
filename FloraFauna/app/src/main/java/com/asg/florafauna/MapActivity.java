@@ -331,41 +331,37 @@ public class MapActivity extends AppCompatActivity{
         dialog = ProgressDialog.show(this, "",
                 "Loading. Please wait...", true);
 
-        //Spinner spinner = findViewById(R.id.search_selection);
         String selection = spinner.getSelectedItem().toString();
         Log.d("spinner", selection);
+
+        String speciesCountySearch = speciesInputCounty.getText().toString();
+        String stateCountySearch = stateInputForCounty.getText().toString();
+        String county = countyInputForCounty.getText().toString();
+
+        String speciesStateSearch = speciesInput.getText().toString();
+        String stateStateSearch = locationInput.getText().toString();
 
         String searchType = "";
 
         if (selection.equals("Common name by state")){
             Log.d("selection", "common state search");
             searchType = "common_name";
-            String species = speciesInput.getText().toString();
-            String state = locationInput.getText().toString();
-            sightingsByState(this, searchType, species, state);
+            sightingsByState(this, searchType, speciesStateSearch, stateStateSearch);
         }
         else if (selection.equals("Common name by county")){
             Log.d("selection", "common county search");
             searchType = "common_name";
-            String species = speciesInputCounty.getText().toString();
-            String state = stateInputForCounty.getText().toString();
-            String county = countyInputForCounty.getText().toString();
-            sightingsByCounty(this, searchType, species, state, county);
+            sightingsByCounty(this, searchType, speciesCountySearch, stateCountySearch, county);
         }
         else if (selection.equals("Scientific name by state")){
             Log.d("selection","scientific state search");
             searchType = "scientific_name";
-            String species = speciesInput.getText().toString();
-            String state = locationInput.getText().toString();
-            sightingsByState(this, searchType, species, state);
+            sightingsByState(this, searchType, speciesStateSearch, stateStateSearch);
         }
         else {
             Log.d("selection", "scientific county search");
             searchType = "scientific_name";
-            String species = speciesInputCounty.getText().toString();
-            String state = stateInputForCounty.getText().toString();
-            String county = countyInputForCounty.getText().toString();
-            sightingsByCounty(this, searchType, species, state, county);
+            sightingsByCounty(this, searchType, speciesCountySearch, stateCountySearch, county);
         }
 
     }
