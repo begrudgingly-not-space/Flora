@@ -367,6 +367,47 @@ public class MapActivity extends AppCompatActivity{
     }
 
     public void sightingsByState(Context context, String searchType, String species, String state){
+        AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
+
+        if (state.equals("") && species.equals("")){
+            alertDialog.setTitle("No species nor state entered");
+            alertDialog.setMessage("Please enter a common name or scientific name in the first search box and a state in the second search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+        else if (species.equals("")){
+            alertDialog.setTitle("No species entered");
+            alertDialog.setMessage("Please enter a common name or scientific name in the first search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+        else if (state.equals("")){
+            alertDialog.setTitle("No state entered");
+            alertDialog.setMessage("Please enter a state in the second search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
 
         if (state.length() > 2) {
             state = state.substring(0, 1).toUpperCase() + state.substring(1);
@@ -418,6 +459,18 @@ public class MapActivity extends AppCompatActivity{
                             if (bisonpoints.length() > 0) {
                                 bisonpoints = bisonpoints.substring(0, bisonpoints.length() - 1);
                             }
+                            else {
+                                AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
+                                alertDialog.setTitle("No results found");
+                                alertDialog.setMessage("No observations in of the entered species in this state");
+                                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface alertDialog, int which) {
+                                                alertDialog.dismiss();
+                                            }
+                                        });
+                                alertDialog.show();
+                            }
                             myWebView.reload();
 
                             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
@@ -434,7 +487,7 @@ public class MapActivity extends AppCompatActivity{
                 dialog.dismiss();
                 AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
                 alertDialog.setTitle("Invalid State or Species");
-                alertDialog.setMessage("Please input the full name of a species in the first box and a state in the other box.");
+                alertDialog.setMessage("Please enter a valid species in the first box and a state in the second search box.");
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface alertDialog, int which) {
