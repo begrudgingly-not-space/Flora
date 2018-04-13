@@ -43,6 +43,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -85,6 +86,27 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //set default theme if none found
+        File themes = new File("theme");
+        if(!themes.exists())
+        {
+            //sets default
+            try{
+                FileOutputStream fOut = openFileOutput("theme", MODE_PRIVATE); //open file 'theme'
+                OutputStreamWriter osw = new OutputStreamWriter(fOut); // required to 'write' to file
+                osw.write("Green");
+                //clean up
+                osw.flush();
+                osw.close();
+                fOut.close();
+            }
+            catch (FileNotFoundException x){
+                x.printStackTrace();
+            }
+            catch (IOException x){
+                Log.e("Exception", "Failed to save history: " + x.toString());
+            }
+        }
 
         //setTheme(R.style.AppTheme);
         try {
