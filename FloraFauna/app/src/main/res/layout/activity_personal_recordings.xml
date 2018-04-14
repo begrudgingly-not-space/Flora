@@ -27,7 +27,7 @@
         android:layout_alignStart="@+id/floatingUpload"
         android:layout_marginBottom="75dp"
         android:clickable="true"
-        app:backgroundTint="?attr/colorBackgroundFloating"
+        app:backgroundTint="@android:color/background_light"
         app:srcCompat="@drawable/ic_camera" />
 
     <GridView
