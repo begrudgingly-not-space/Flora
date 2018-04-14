@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,9 +23,13 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -53,6 +58,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     private ImageAdapter imageAdapter;
     ArrayList<String> f = new ArrayList<String>();// list of file paths
     File[] listFile;
+    AlertDialog.Builder builder;
+    AlertDialog imageDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -188,6 +195,23 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // bring up the prompt for the user to select a directory to save in
+        builder = new AlertDialog.Builder(PersonalRecordingsActivity.this);
+        View dView = getLayoutInflater().inflate(R.layout.dialog_addimage, null);
+
+        EditText description = (EditText) dView.findViewById(R.id.description);
+        EditText imageName = (EditText) dView.findViewById(R.id.nameImage);
+        Button okayButton = (Button) dView.findViewById(R.id.setImageData);
+        Button cancelButton = (Button) dView.findViewById(R.id.cancelImage);
+        TextView saveLoc = (TextView) dView.findViewById(R.id.saveLocation);
+        Spinner dirSelector = (Spinner) dView.findViewById(R.id.dirSpinner);
+
+        builder.setView(dView);
+        imageDialog = builder.create();
+        imageDialog.show();
+
+
+        /*
         if (resultCode == RESULT_OK) {
             Uri photoUri = data.getData();
             if (photoUri != null) {
@@ -206,7 +230,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 finish();
 
             }
-        }
+        }*/
     }
 
     @Override
