@@ -564,7 +564,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
         stateInput = stateInput.replaceAll(" ", "%20");
 
-        final String url = "https://bison.usgs.gov/api/search.json?state=" + stateInput + "&start=" + offset + "&count=50";
+        final String url = "https://bison.usgs.gov/api/search.json?state=" + stateInput + "&start=" + offset + "&count=500";
         Log.d("url", url);
 
         // Initialize request queue
@@ -673,7 +673,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
         state = state.replaceAll(" ", "%20");
 
-        final String url = "https://bison.usgs.gov/api/search.json?state=" + state + "&countyFips=" + countyFips + "&start=" + offset + "&count=50";
+        final String url = "https://bison.usgs.gov/api/search.json?state=" + state + "&countyFips=" + countyFips + "&start=" + offset + "&count=500";
         Log.d("url", url);
 
         // Initialize request queue
@@ -1059,7 +1059,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     // What's Around Me? webcall
     private void whatsAroundMeRequest(final Context context, final String polygon)
     {
-        final String url = "https://bison.usgs.gov/api/search.json?aoibbox=" + polygon + "&start=" + offset + "&count=50";;
+        final String url = "https://bison.usgs.gov/api/search.json?aoibbox=" + polygon + "&start=" + offset + "&count=500";;
         Log.d("url", url);
         final int position = speciesNamesArray.size();
 
