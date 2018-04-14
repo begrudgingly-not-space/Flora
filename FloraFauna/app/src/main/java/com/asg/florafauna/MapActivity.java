@@ -81,6 +81,8 @@ public class MapActivity extends AppCompatActivity{
 
     private Map<String, double[]> stateLocations = new HashMap<>();
 
+    //variables for nearby sightings
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
