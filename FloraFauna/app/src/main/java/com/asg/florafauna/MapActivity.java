@@ -462,7 +462,7 @@ public class MapActivity extends AppCompatActivity{
                             else {
                                 AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
                                 alertDialog.setTitle("No results found");
-                                alertDialog.setMessage("No observations in of the entered species in this state");
+                                alertDialog.setMessage("No observations of the entered species in this state");
                                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface alertDialog, int which) {
@@ -486,7 +486,7 @@ public class MapActivity extends AppCompatActivity{
                 Log.e("onErrorResponse", error.toString());
                 dialog.dismiss();
                 AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
-                alertDialog.setTitle("Invalid State or Species");
+                alertDialog.setTitle("Invalid state or species");
                 alertDialog.setMessage("Please enter a valid species in the first box and a state in the second search box.");
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                         new DialogInterface.OnClickListener() {
@@ -510,6 +510,100 @@ public class MapActivity extends AppCompatActivity{
     }
 
     public void sightingsByCounty(Context context, String searchType, String species, String state, String county) {
+        AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
+
+        if (species.equals("") && state.equals("") && county.equals("")) {
+            alertDialog.setTitle("No species, state, nor county entered");
+            alertDialog.setMessage("Please enter a common name or scientific name in the first search box, a state in the search box labelled state, and a county in the search box labelled county.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+        else if (species.equals("") && state.equals("")){
+            alertDialog.setTitle("No species nor state entered");
+            alertDialog.setMessage("Please enter a common name or scientific name in the first search box and a state in the search box labelled state.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+        else if (species.equals("") && county.equals("")){
+            alertDialog.setTitle("No species nor county entered");
+            alertDialog.setMessage("Please enter a common name or scientific name in the first search box and a county in the search box labelled county.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+        else if (state.equals("") && county.equals("")){
+            alertDialog.setTitle("No state nor county entered");
+            alertDialog.setMessage("Please enter a state in the search box labelled state and a county in the search box labelled county.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+        else if (species.equals("")){
+            alertDialog.setTitle("No species entered");
+            alertDialog.setMessage("Please enter a common name or scientific name in the first search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+        else if (state.equals("")){
+            alertDialog.setTitle("No state entered");
+            alertDialog.setMessage("Please enter a state in the search box labelled state.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+        else if (county.equals("")){
+            alertDialog.setTitle("No county entered");
+            alertDialog.setMessage("Please enter a county in the search box labelled county.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+
 
         if (state.length() > 2) {
             state = state.substring(0, 1).toUpperCase() + state.substring(1);
@@ -569,6 +663,18 @@ public class MapActivity extends AppCompatActivity{
                             if(bisonpoints.length() > 0) {
                                 bisonpoints = bisonpoints.substring(0, bisonpoints.length() - 1);
                             }
+                            else {
+                                AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
+                                alertDialog.setTitle("No results found");
+                                alertDialog.setMessage("No observations of the entered species in this county");
+                                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface alertDialog, int which) {
+                                                alertDialog.dismiss();
+                                            }
+                                        });
+                                alertDialog.show();
+                            }
                             myWebView.reload();
 
                             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
@@ -584,8 +690,8 @@ public class MapActivity extends AppCompatActivity{
                 Log.e("onErrorResponse", error.toString());
                 dialog.dismiss();
                 AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
-                alertDialog.setTitle("Invalid County or Species");
-                alertDialog.setMessage("Please input the full name of a species in the first box and a county, state in the other box.");
+                alertDialog.setTitle("Invalid county or species");
+                alertDialog.setMessage("Please enter a valid species and county and state combination.");
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface alertDialog, int which) {
