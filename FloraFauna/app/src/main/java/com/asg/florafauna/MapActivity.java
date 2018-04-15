@@ -1,12 +1,19 @@
 package com.asg.florafauna;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.location.LocationListener;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -44,6 +51,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.asg.florafauna.CountyFinder.countyFinder;
+import static com.asg.florafauna.SearchActivity.setAOIBbox;
 import static com.asg.florafauna.StateFinder.stateFinder;
 
 
@@ -51,7 +59,7 @@ import static com.asg.florafauna.StateFinder.stateFinder;
  * Created by brada on 3/13/2018.
  */
 
-public class MapActivity extends AppCompatActivity{
+public class MapActivity extends AppCompatActivity implements LocationListener{
 
     WebView myWebView;
 
@@ -82,7 +90,13 @@ public class MapActivity extends AppCompatActivity{
     private Map<String, double[]> stateLocations = new HashMap<>();
 
     //variables for nearby sightings
-
+    private String locationPolygon;
+    private double latitude;
+    private double longitude;
+    private double mileage;
+    private String[] mileageArray = new String[1];
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION = 0;
+    private static final String TAG = "MapActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,6 +205,20 @@ public class MapActivity extends AppCompatActivity{
                     countyInput.setVisibility(View.VISIBLE);
                     stateInput.setVisibility(View.INVISIBLE);
                 }
+                else if (selectedItem.equals("Nearby sightings (common name)")){
+                    speciesInput.setHint("Common Name");
+                    locationInput.setHint("State");
+                    countyInput.setVisibility(View.INVISIBLE);
+                    stateInput.setVisibility(View.VISIBLE);
+                    //locationInput.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    speciesInput.setHint("Scientific Name");
+                    locationInput.setHint("State");
+                    countyInput.setVisibility(View.INVISIBLE);
+                    stateInput.setVisibility(View.VISIBLE);
+                    //locationInput.setVisibility(View.INVISIBLE);
+                }
             } // to close the onItemSelected
             public void onNothingSelected(AdapterView<?> parent)
             {
@@ -248,6 +276,15 @@ public class MapActivity extends AppCompatActivity{
         stateLocations.put("West Virginia", new double[] {-80.954453, 38.491226, 5});
         stateLocations.put("Wisconsin", new double[] {-89.616508, 44.268543, 4});
         stateLocations.put("Wyoming", new double[] {-107.302490, 42.755966, 5});
+
+        //oncreate methods needed for nearby sightings
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION);
+        }
+        getLocation();
+        getMileage();
 
     }
 
@@ -360,10 +397,58 @@ public class MapActivity extends AppCompatActivity{
             searchType = "scientific_name";
             sightingsByState(this, searchType, speciesStateSearch, stateStateSearch);
         }
-        else {
+        else if (selection.equals("Scientific name by county")) {
             Log.d("selection", "scientific county search");
             searchType = "scientific_name";
             sightingsByCounty(this, searchType, speciesCountySearch, stateCountySearch, county);
+        }
+        else if (selection.equals("Nearby sightings (common name)")){
+            Log.d("selection","nearby common");
+            searchType = "common_name";
+            if (latitude != 0 && longitude != 0) {
+                double mileage = Double.parseDouble(mileageArray[0]);
+                locationPolygon = setAOIBbox(latitude, longitude, mileage);
+                Log.d(TAG, locationPolygon);
+                nearbySightings(this, searchType, speciesStateSearch, stateStateSearch, locationPolygon);
+            }
+            else {
+                // Error message
+                Log.e(TAG, "Location not found");
+                AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
+                alertDialog.setTitle("Location not found");
+                alertDialog.setMessage("The application may not be able to locate you.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
+        }
+        else {
+            Log.d("selection", "nearby scientific");
+            searchType = "scientific_name";
+            if (latitude != 0 && longitude != 0) {
+                double mileage = Double.parseDouble(mileageArray[0]);
+                locationPolygon = setAOIBbox(latitude, longitude, mileage);
+                Log.d(TAG, locationPolygon);
+                nearbySightings(this, searchType, speciesStateSearch, stateStateSearch, locationPolygon);
+            }
+            else {
+                // Error message
+                Log.e(TAG, "Location not found");
+                AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
+                alertDialog.setTitle("Location not found");
+                alertDialog.setMessage("The application may not be able to locate you.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
         }
 
     }
@@ -714,6 +799,159 @@ public class MapActivity extends AppCompatActivity{
 
         //myWebView.reload();
     }
+
+    //nearby sightings method
+    public void nearbySightings(Context context, String searchType, String species, String state, String polygon){
+        if (state.length() > 2) {
+            state = state.substring(0, 1).toUpperCase() + state.substring(1);
+
+            if (state.contains(" ")){
+                String[] stateParts = state.split(" ");
+                stateParts[1] = stateParts[1].substring(0,1).toUpperCase() + stateParts[1].substring(1);
+                state = stateParts[0] + " " + stateParts[1];
+            }
+
+        }
+        else if (state.length() == 2) {
+            state = state.substring(0,2).toUpperCase();
+            state = stateFinder(context, state);
+        }
+
+        double[] mapValues = stateLocations.get(state);
+        if (mapValues != null){
+            mapLongitude = mapValues[0];
+            mapLatitude = mapValues[1];
+            mapZoom = mapValues[2];
+        }
+
+        species = species.replaceAll(" ", "%20");
+
+        String url = "https://bison.usgs.gov/api/search.json?aoibbox=" + polygon + "&species=" + species + "&type=" + searchType + "&start=0&count=500";
+        Log.d("url", url);
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+        JsonObjectRequest pointsFromBison = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        dialog.dismiss();
+
+                        try {
+
+                            final JSONArray speciesArray = response.getJSONArray("data");
+
+                            for(int i = 0; i < speciesArray.length(); i++) {
+                                String latitude = speciesArray.getJSONObject(i).getString("decimalLatitude");
+                                String longitude = speciesArray.getJSONObject(i).getString("decimalLongitude");
+                                bisonpoints = bisonpoints + longitude + " " + latitude + " ";
+                                Log.d("latitude", bisonpoints.length() + "a");
+                            }
+
+                            Log.d("latitude", bisonpoints.length() + "a");
+                            if(bisonpoints.length() > 0) {
+                                bisonpoints = bisonpoints.substring(0, bisonpoints.length() - 1);
+                            }
+                            else {
+                                AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
+                                alertDialog.setTitle("No results found");
+                                alertDialog.setMessage("No observations of the entered species in this county");
+                                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface alertDialog, int which) {
+                                                alertDialog.dismiss();
+                                            }
+                                        });
+                                alertDialog.show();
+                            }
+                            myWebView.reload();
+
+                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+                        }
+                        catch (JSONException error) {
+                            Log.e("searchResponseException", error.toString());
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("onErrorResponse", error.toString());
+                dialog.dismiss();
+                AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
+                alertDialog.setTitle("Invalid county or species");
+                alertDialog.setMessage("Please enter a valid species and county and state combination.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+
+            }
+        }
+        );
+
+        // Adds request to queue which is then sent
+        requestQueue.add(pointsFromBison);
+    }
+
+    //methods needed for nearby sightings
+    private void getMileage() {
+        try {
+            // Opens the file to read its contents
+            FileInputStream fis = this.openFileInput("mileage");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader reader = new BufferedReader(isr);
+
+            mileageArray[0] = reader.readLine(); // Adds the line to the mileageArray
+            reader.close();
+            isr.close();
+            fis.close();
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+            mileageArray[0] = "1";
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        mileage = Double.parseDouble(mileageArray[0]);
+    }
+
+    public void getLocation() {
+        try {
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5,this);
+        }
+        catch (SecurityException e) {
+            Log.e("LocationSecurityExc", e.toString());
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+        Log.d (TAG, "Latitude = " + latitude + "\n Longitude = " + longitude);
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        //Toast.makeText(SearchActivity.this, "Please Enable GPS and Internet", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
 
 
 }
