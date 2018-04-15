@@ -81,6 +81,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         catch (IOException e){
             e.printStackTrace();
         }
+
         if (themeArray[0].equals("Green")){
             setTheme(R.style.AppTheme);
         }
@@ -148,11 +149,18 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             Log.d("error", "dir. already exists");
         }
 
-        //List Files
-        getFromSdcard();
-        GridView imagegrid = (GridView) findViewById(R.id.FileList);
-        imageAdapter = new ImageAdapter();
-        imagegrid.setAdapter(imageAdapter);
+        //Check if write storage has permission
+        PackageManager pm = this.getPackageManager();
+        int hasPerm = pm.checkPermission(
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                this.getPackageName());
+        if (hasPerm == PackageManager.PERMISSION_GRANTED) {
+            //list files
+            getFromSdcard();
+            GridView imagegrid = (GridView) findViewById(R.id.FileList);
+            imageAdapter = new ImageAdapter();
+            imagegrid.setAdapter(imageAdapter);
+        }
 
     }
 
@@ -246,8 +254,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     //List Files
     public void getFromSdcard()
     {
-        //File file= new File(android.os.Environment.getExternalStorageDirectory(),"MapleBear");
-
         if (recordings.isDirectory())
         {
             listFile = recordings.listFiles();
