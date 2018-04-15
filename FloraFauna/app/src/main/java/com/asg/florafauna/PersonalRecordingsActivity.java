@@ -58,7 +58,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     private ImageAdapter imageAdapter;
     ArrayList<String> f = new ArrayList<String>();// list of file paths
     File[] listFile;
-    AlertDialog.Builder builder;
     AlertDialog imageDialog;
 
     @Override
@@ -195,23 +194,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // bring up the prompt for the user to select a directory to save in
-        builder = new AlertDialog.Builder(PersonalRecordingsActivity.this);
-        View dView = getLayoutInflater().inflate(R.layout.dialog_addimage, null);
-
-        EditText description = (EditText) dView.findViewById(R.id.description);
-        EditText imageName = (EditText) dView.findViewById(R.id.nameImage);
-        Button okayButton = (Button) dView.findViewById(R.id.setImageData);
-        Button cancelButton = (Button) dView.findViewById(R.id.cancelImage);
-        TextView saveLoc = (TextView) dView.findViewById(R.id.saveLocation);
-        Spinner dirSelector = (Spinner) dView.findViewById(R.id.dirSpinner);
-
-        builder.setView(dView);
-        imageDialog = builder.create();
-        imageDialog.show();
 
 
-        /*
         if (resultCode == RESULT_OK) {
             Uri photoUri = data.getData();
             if (photoUri != null) {
@@ -219,6 +203,10 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 try {
                     currentImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
                     //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
+
+                    // bring up the prompt for the user to select a directory to save in
+                    createImageDialog();
+
                     FileOutputStream output = new FileOutputStream(recordings + "/image.png");
                     currentImage.compress(Bitmap.CompressFormat.PNG, 100, output); //save file
                 } catch (Exception e) {
@@ -230,7 +218,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 finish();
 
             }
-        }*/
+        }
     }
 
     @Override
@@ -317,6 +305,64 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         ImageView imageview;
 
 
+    }
+
+    // function to create the custom alert dialog
+    protected void createImageDialog()
+    {
+        // create a builder to add custom settings to
+        // an alert dialog
+        AlertDialog.Builder builder;
+
+        // create alert dialog in personal recordings context
+        builder = new AlertDialog.Builder(PersonalRecordingsActivity.this);
+        // create a view associated with the alert dialog xml file
+        View dView = getLayoutInflater().inflate(R.layout.dialog_addimage, null);
+
+        // connect all of the components
+        EditText description = (EditText) dView.findViewById(R.id.description);
+        EditText imageName = (EditText) dView.findViewById(R.id.nameImage);
+
+        // this should result in an image being placed in a directory or on the page
+        Button okayButton = (Button) dView.findViewById(R.id.setImageData);
+        okayButton.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                // if we have an image stored, let's make sure
+                // that an image name and description was entered
+                // additionally, we need to ensure a save location was selected
+                if(currentImage != null)
+                {
+                    Log.i("just a log", "log");
+                }
+
+                imageDialog.dismiss();
+            }
+        });
+
+        // this should result in nothing added to either the page
+        // or any of the directories
+        Button cancelButton = (Button) dView.findViewById(R.id.cancelImage);
+        cancelButton.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                imageDialog.dismiss();
+            }
+        });
+
+
+        TextView saveLoc = (TextView) dView.findViewById(R.id.saveLocation);
+
+        // the spinner's entries should be all existing directories in the F&F folder
+        // the user should also have the ability to create a new folder
+        // lastly, the user should be able to save a picture in the 'root' part of the page
+        Spinner dirSelector = (Spinner) dView.findViewById(R.id.dirSpinner);
+
+        builder.setView(dView);
+        imageDialog = builder.create();
+        imageDialog.show();
     }
 
 }
