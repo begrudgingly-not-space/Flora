@@ -806,6 +806,21 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
 
     //nearby sightings method
     public void nearbySightings(Context context, String searchType, String species, String polygon){
+        AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
+
+        if (species.equals("")){
+            alertDialog.setTitle("No species entered");
+            alertDialog.setMessage("Please enter a common name or scientific name in the search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
 
         //converts min & max points from polygon to double
         String[] polygonPoints = polygon.split(",");
