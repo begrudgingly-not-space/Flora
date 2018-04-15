@@ -184,6 +184,7 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
                     locationInput.setHint("State");
                     countyInput.setVisibility(View.INVISIBLE);
                     stateInput.setVisibility(View.VISIBLE);
+                    locationInput.setVisibility(View.VISIBLE);
                 }
                 else if (selectedItem.equals("Common name by county")){
                     speciesInputCounty.setHint("Common Name");
@@ -197,6 +198,7 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
                     locationInput.setHint("State");
                     countyInput.setVisibility(View.INVISIBLE);
                     stateInput.setVisibility(View.VISIBLE);
+                    locationInput.setVisibility(View.VISIBLE);
                 }
                 else if (selectedItem.equals("Scientific name by county")){
                     speciesInputCounty.setHint("Scientific Name");
@@ -210,14 +212,14 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
                     locationInput.setHint("State");
                     countyInput.setVisibility(View.INVISIBLE);
                     stateInput.setVisibility(View.VISIBLE);
-                    //locationInput.setVisibility(View.INVISIBLE);
+                    locationInput.setVisibility(View.INVISIBLE);
                 }
                 else {
                     speciesInput.setHint("Scientific Name");
                     locationInput.setHint("State");
                     countyInput.setVisibility(View.INVISIBLE);
                     stateInput.setVisibility(View.VISIBLE);
-                    //locationInput.setVisibility(View.INVISIBLE);
+                    locationInput.setVisibility(View.INVISIBLE);
                 }
             } // to close the onItemSelected
             public void onNothingSelected(AdapterView<?> parent)
@@ -409,10 +411,11 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
                 double mileage = Double.parseDouble(mileageArray[0]);
                 locationPolygon = setAOIBbox(latitude, longitude, mileage);
                 Log.d(TAG, locationPolygon);
-                nearbySightings(this, searchType, speciesStateSearch, stateStateSearch, locationPolygon);
+                nearbySightings(this, searchType, speciesStateSearch, locationPolygon);
             }
             else {
                 // Error message
+                dialog.dismiss();
                 Log.e(TAG, "Location not found");
                 AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
                 alertDialog.setTitle("Location not found");
@@ -433,10 +436,11 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
                 double mileage = Double.parseDouble(mileageArray[0]);
                 locationPolygon = setAOIBbox(latitude, longitude, mileage);
                 Log.d(TAG, locationPolygon);
-                nearbySightings(this, searchType, speciesStateSearch, stateStateSearch, locationPolygon);
+                nearbySightings(this, searchType, speciesStateSearch, locationPolygon);
             }
             else {
                 // Error message
+                dialog.dismiss();
                 Log.e(TAG, "Location not found");
                 AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
                 alertDialog.setTitle("Location not found");
@@ -801,28 +805,19 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
     }
 
     //nearby sightings method
-    public void nearbySightings(Context context, String searchType, String species, String state, String polygon){
-        if (state.length() > 2) {
-            state = state.substring(0, 1).toUpperCase() + state.substring(1);
+    public void nearbySightings(Context context, String searchType, String species, String polygon){
 
-            if (state.contains(" ")){
-                String[] stateParts = state.split(" ");
-                stateParts[1] = stateParts[1].substring(0,1).toUpperCase() + stateParts[1].substring(1);
-                state = stateParts[0] + " " + stateParts[1];
-            }
-
-        }
-        else if (state.length() == 2) {
-            state = state.substring(0,2).toUpperCase();
-            state = stateFinder(context, state);
+        //converts min & max points from polygon to double
+        String[] polygonPoints = polygon.split(",");
+        Double[] polygonPointsVal = new Double[4];
+        for(int i = 0; i < polygonPoints.length; i++){
+            polygonPointsVal[i] = Double.parseDouble(polygonPoints[i]);
         }
 
-        double[] mapValues = stateLocations.get(state);
-        if (mapValues != null){
-            mapLongitude = mapValues[0];
-            mapLatitude = mapValues[1];
-            mapZoom = mapValues[2];
-        }
+        //averages min & max and sets the average as the center of the map
+        mapLongitude = (polygonPointsVal[0] + polygonPointsVal[2]) / 2;
+        mapLatitude = (polygonPointsVal[1] + polygonPointsVal[3]) / 2;
+        mapZoom = 9;
 
         species = species.replaceAll(" ", "%20");
 
@@ -879,8 +874,8 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
                 Log.e("onErrorResponse", error.toString());
                 dialog.dismiss();
                 AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
-                alertDialog.setTitle("Invalid county or species");
-                alertDialog.setMessage("Please enter a valid species and county and state combination.");
+                alertDialog.setTitle("Invalid species");
+                alertDialog.setMessage("Please enter a valid species in the search box.");
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface alertDialog, int which) {
