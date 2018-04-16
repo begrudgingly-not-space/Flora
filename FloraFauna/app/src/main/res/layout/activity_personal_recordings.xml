@@ -37,7 +37,7 @@
         android:columnWidth="90dp"
         android:gravity="center"
         android:horizontalSpacing="10dp"
-        android:numColumns="auto_fit"
+        android:numColumns="1"
         android:stretchMode="columnWidth"
         android:verticalSpacing="10dp" />
 

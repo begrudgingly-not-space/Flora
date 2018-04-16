@@ -2,6 +2,7 @@ package com.asg.florafauna;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
@@ -21,10 +22,13 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +41,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -58,6 +63,9 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     GridView imagegrid;
     ArrayList<String> f = new ArrayList<String>();// list of file paths
     File[] listFile;
+
+    //fullscreen
+    boolean isImageFitToScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -157,8 +165,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             //list files
             GetFiles();
             imagegrid = (GridView) findViewById(R.id.FileList); //gridview on recordings page
-            imageAdapter = new ImageAdapter();
-            imagegrid.setAdapter(imageAdapter);
+            //imageAdapter = new ImageAdapter();
+            imagegrid.setAdapter(new ImageAdapter());
         }
 
     }
@@ -280,12 +288,12 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             return position;
         }
 
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            final ViewHolder holder;
             if (convertView == null) {
                 holder = new ViewHolder();
-                convertView = mInflater.inflate(
-                        R.layout.galleryitem, null);
+                convertView = mInflater.inflate(R.layout.galleryitem, null);
+
                 holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage); //thumbnail
                 holder.fileName = (TextView) convertView.findViewById(R.id.fileName); //name of text
 
@@ -296,7 +304,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             }
 
             //set thumbnail
-            Bitmap myBitmap = BitmapFactory.decodeFile(f.get(position));
+            final Bitmap myBitmap = BitmapFactory.decodeFile(f.get(position));
             holder.imageview.setImageBitmap(myBitmap);
 
             //breakdown file path to get only file name
@@ -306,13 +314,25 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             //set text name
             holder.fileName.setText(list.get(list.size()-1));
 
+
             //set onclicklistener for each item
-            holder.imageview.setOnClickListener(new View.OnClickListener() {
+            imagegrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onClick(View view) {
-                    //enlarge image
+                public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+                   /*
+                    ArrayList<byte[]> image = new ArrayList<byte[]>();
+                    image.add()
+
+                    Bundle b = new Bundle();
+                    Intent fullscreen = new Intent(getBaseContext(), FullScreenImage.class);
+                    b.putByteArray("image", image.get(position));
+                    fullscreen.putExtras(b);
+                    startActivity(fullscreen);
+
+*/
                 }
             });
+
 
             return convertView;
         }
