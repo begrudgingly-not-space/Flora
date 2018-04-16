@@ -286,8 +286,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 holder = new ViewHolder();
                 convertView = mInflater.inflate(
                         R.layout.galleryitem, null);
-                holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage);
-                holder.textview = (TextView) convertView.findViewById(R.id.grid_text);
+                holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage); //thumbnail
+                holder.fileName = (TextView) convertView.findViewById(R.id.fileName); //name of text
 
                 convertView.setTag(holder);
             }
@@ -304,13 +304,13 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             ArrayList<String> list = new ArrayList<String>(Arrays.asList(filepath.split("/")));
 
             //set text name
-            holder.textview.setText(list.get(list.size()-1));
+            holder.fileName.setText(list.get(list.size()-1));
             return convertView;
         }
     }
     class ViewHolder {
         ImageView imageview;
-        TextView textview;
+        TextView fileName;
 
 
     }
