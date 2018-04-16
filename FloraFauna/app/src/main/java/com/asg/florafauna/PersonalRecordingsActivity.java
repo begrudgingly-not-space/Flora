@@ -305,6 +305,15 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
             //set text name
             holder.fileName.setText(list.get(list.size()-1));
+
+            //set onclicklistener for each item
+            holder.imageview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //enlarge image
+                }
+            });
+
             return convertView;
         }
     }
