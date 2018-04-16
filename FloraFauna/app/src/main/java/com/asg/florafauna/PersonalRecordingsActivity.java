@@ -1,6 +1,7 @@
 package com.asg.florafauna;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -44,6 +45,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class PersonalRecordingsActivity extends AppCompatActivity {
 
@@ -66,6 +68,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
     //fullscreen
     boolean isImageFitToScreen;
+    private ArrayList<String> FilePathStrings = new ArrayList<String>();
+    private ArrayList<String> FileNameStrings = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -156,6 +160,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             Log.d("error", "dir. already exists");
         }
 
+        imagegrid = (GridView) findViewById(R.id.FileList);
+
         //Check if write storage has permission
         PackageManager pm = this.getPackageManager();
         int hasPerm = pm.checkPermission(
@@ -164,11 +170,32 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         if (hasPerm == PackageManager.PERMISSION_GRANTED) {
             //list files
             GetFiles();
-            imagegrid = (GridView) findViewById(R.id.FileList); //gridview on recordings page
+            //imagegrid = (GridView) findViewById(R.id.FileList); //gridview on recordings page
             //imageAdapter = new ImageAdapter();
-            imagegrid.setAdapter(new ImageAdapter());
+            imagegrid.setAdapter(new ImageAdapter(this, FilePathStrings, FileNameStrings));
         }
 
+/*
+
+        //set onclicklistener for each item
+        imagegrid.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+                Log.i("something", "something");
+
+                Intent i = new Intent(getApplicationContext(), FullScreenImage.class);
+                // Pass String arrays FilePathStrings
+                i.putExtra("filepath", FilePathStrings);
+
+                Log.i("filepath", FilePathStrings.toString());
+                // Pass String arrays FileNameStrings
+                i.putExtra("filename", FileNameStrings);
+                // Pass click position
+                i.putExtra("position", pos);
+                startActivity(i);
+            }
+        });
+*/
     }
 
 
@@ -265,14 +292,29 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
                 f.add(listFile[i].getAbsolutePath());
 
+                // Get the path of the image file
+                FilePathStrings.add(listFile[i].getAbsolutePath());
+                // Get the name image file
+                FileNameStrings.add(listFile[i].getName());
+
             }
         }
     }
 
     public class ImageAdapter extends BaseAdapter {
+
+        // Declare variables
+        private Activity activity;
+        private ArrayList<String> filepath;
+        private ArrayList<String> filename;
+
         private LayoutInflater mInflater;
 
-        public ImageAdapter() {
+        public ImageAdapter(Activity a, ArrayList<String> fpath, ArrayList<String> fname) {
+            activity = a;
+            filepath = fpath;
+            filename = fname;
+
             mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
@@ -298,6 +340,22 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 holder.fileName = (TextView) convertView.findViewById(R.id.fileName); //name of text
 
                 convertView.setTag(holder);
+
+                //set onclicklistener for each item
+                convertView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent i = new Intent(getApplicationContext(), FullScreenImage.class);
+                        // Pass String arrays FilePathStrings
+                        i.putExtra("filepath", FilePathStrings);
+                        // Pass String arrays FileNameStrings
+                        i.putExtra("filename", FileNameStrings);
+                        // Pass click position
+                        i.putExtra("position", position);
+                        startActivity(i);
+
+                    }
+                });
             }
             else {
                 holder = (ViewHolder) convertView.getTag();
@@ -313,26 +371,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
             //set text name
             holder.fileName.setText(list.get(list.size()-1));
-
-
-            //set onclicklistener for each item
-            imagegrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                   /*
-                    ArrayList<byte[]> image = new ArrayList<byte[]>();
-                    image.add()
-
-                    Bundle b = new Bundle();
-                    Intent fullscreen = new Intent(getBaseContext(), FullScreenImage.class);
-                    b.putByteArray("image", image.get(position));
-                    fullscreen.putExtras(b);
-                    startActivity(fullscreen);
-
-*/
-                }
-            });
-
 
             return convertView;
         }

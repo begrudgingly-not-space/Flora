@@ -58,6 +58,10 @@
             android:label="PersonalRecordings"
             android:screenOrientation="sensorPortrait">
         </activity>
+        <activity
+            android:name=".FullScreenImage"
+            android:label="Image Viewer">
+        </activity>
     </application>
 
 </manifest>
