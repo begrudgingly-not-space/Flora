@@ -25,7 +25,10 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -51,6 +54,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     private boolean[] thumbnailsselection;
     private String[] arrPath;
     private ImageAdapter imageAdapter;
+    GridView imagegrid;
     ArrayList<String> f = new ArrayList<String>();// list of file paths
     File[] listFile;
 
@@ -150,8 +154,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 this.getPackageName());
         if (hasPerm == PackageManager.PERMISSION_GRANTED) {
             //list files
-            getFromSdcard();
-            GridView imagegrid = (GridView) findViewById(R.id.FileList);
+            GetFiles();
+            imagegrid = (GridView) findViewById(R.id.FileList); //gridview on recordings page
             imageAdapter = new ImageAdapter();
             imagegrid.setAdapter(imageAdapter);
         }
@@ -203,7 +207,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 try {
                     currentImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
                     //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
-                    FileOutputStream output = new FileOutputStream(recordings + "/image.png");
+                    FileOutputStream output = new FileOutputStream(recordings + "/image1.png");
                     currentImage.compress(Bitmap.CompressFormat.PNG, 100, output); //save file
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -240,7 +244,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     }
 
     //List Files
-    public void getFromSdcard()
+    public void GetFiles()
     {
         if (recordings.isDirectory())
         {
@@ -282,6 +286,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 convertView = mInflater.inflate(
                         R.layout.galleryitem, null);
                 holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage);
+                holder.textview = (TextView) convertView.findViewById(R.id.grid_text);
 
                 convertView.setTag(holder);
             }
@@ -289,14 +294,16 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-
+            //set thumbnail
             Bitmap myBitmap = BitmapFactory.decodeFile(f.get(position));
             holder.imageview.setImageBitmap(myBitmap);
+            holder.textview.setText(f.get(position));
             return convertView;
         }
     }
     class ViewHolder {
         ImageView imageview;
+        TextView textview;
 
 
     }
