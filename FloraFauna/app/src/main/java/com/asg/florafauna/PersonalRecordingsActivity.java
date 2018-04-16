@@ -38,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PersonalRecordingsActivity extends AppCompatActivity {
 
@@ -297,7 +298,13 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             //set thumbnail
             Bitmap myBitmap = BitmapFactory.decodeFile(f.get(position));
             holder.imageview.setImageBitmap(myBitmap);
-            holder.textview.setText(f.get(position));
+
+            //breakdown file path to get only file name
+            String filepath = f.get(position);
+            ArrayList<String> list = new ArrayList<String>(Arrays.asList(filepath.split("/")));
+
+            //set text name
+            holder.textview.setText(list.get(list.size()-1));
             return convertView;
         }
     }
