@@ -180,7 +180,7 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/rounded_black_box"
             android:gravity="center"
-            android:text="GO"
+            android:text="Search"
             android:onClick="sightingsSearch"
             android:textColor="@color/white"
             android:textSize="15sp"
