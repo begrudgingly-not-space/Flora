@@ -51,12 +51,9 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
     // List Files
     GridView imagegrid;
-    ArrayList<String> f = new ArrayList<String>();// list of file paths
+    ArrayList<String> FilePathStrings = new ArrayList<String>();// list of file paths
     File[] listFile;
-
-    //fullscreen
-    private ArrayList<String> FilePathStrings = new ArrayList<String>();
-    private ArrayList<String> FileNameStrings = new ArrayList<String>();
+    ArrayList<String> FileNameStrings = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,21 +91,29 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         //traverse directories-------------------------------------------------------
         PR_Directory = getIntent();
         //-------------------------------------
-        Toast.makeText(this, PR_Directory.getStringExtra("RDIR"), Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, PR_Directory.getStringExtra("RDIR"), Toast.LENGTH_LONG).show();
         if (PR_Directory.getStringExtra("RDIR") == null) {
             dirName = Environment.getExternalStorageDirectory().toString() + "/FloraFauna/Recordings/";
+            this.setTitle("YESSS");
 
         }
         else{
             dirName = PR_Directory.getStringExtra("RDIR");
-            Toast.makeText(this, dirName, Toast.LENGTH_LONG).show();
+
+            //split the directory path into an array
+            String[] name = dirName.split("/");
+
+            //call the textView on the action bar .xml file
+            TextView textView = (TextView)findViewById(R.id.recordings_ab_text);
+
+            //set the actionbar title text to current directory
+            textView.setText(name[name.length - 1].substring(0,1).toUpperCase()
+                    + name[name.length - 1].substring(1).toLowerCase());
         }
 
-
         //--------------------------------------------------------------------------------------
-
+        //gallery button
         FloatingActionButton openGallery = (FloatingActionButton) findViewById(R.id.floatingUpload);
-
         openGallery.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -142,6 +147,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                     MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE);
         }
 
+        //set the directory to be read
         recordings = new File(dirName);
 
         //checks if the recordings dir exists
@@ -167,9 +173,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         if (hasPerm == PackageManager.PERMISSION_GRANTED) {
             //list files
             GetFiles();
-            //imagegrid = (GridView) findViewById(R.id.FileList); //gridview on recordings page
-            //imageAdapter = new ImageAdapter();
-            imagegrid.setAdapter(new ImageAdapter(this, FilePathStrings, FileNameStrings));
+            imagegrid.setAdapter(new ImageAdapter());
         }
 
     }
@@ -230,6 +234,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 }
 
                 Intent refresh = new Intent(PersonalRecordingsActivity.this, PersonalRecordingsActivity.class);
+                refresh.putExtra("RDIR", dirName);
                 startActivity(refresh);
                 finish();
 
@@ -270,9 +275,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
             for (int i = 0; i < listFile.length; i++)
             {
-
-                f.add(listFile[i].getAbsolutePath());
-
                 // Get the path of the image file
                 FilePathStrings.add(listFile[i].getAbsolutePath());
                 // Get the name image file
@@ -291,16 +293,12 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
         private LayoutInflater mInflater;
 
-        public ImageAdapter(Activity a, ArrayList<String> fpath, ArrayList<String> fname) {
-            activity = a;
-            f_path_arr = fpath;
-            f_name_arr = fname;
-
+        public ImageAdapter() {
             mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         public int getCount() {
-            return f.size();
+            return FilePathStrings.size();
         }
 
         public Object getItem(int position) {
@@ -315,9 +313,10 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             final ViewHolder holder;
             File testfile = new File(FilePathStrings.get(position));
             if (convertView == null) {
-                holder = new ViewHolder();
-                convertView = mInflater.inflate(R.layout.galleryitem, null);
+                holder = new ViewHolder(); //create new ViewHolder (custom class)
 
+                //inflates the galleryitem.xml layout to be used and populate the gridview
+                convertView = mInflater.inflate(R.layout.galleryitem, null);
                 holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage); //thumbnail
                 holder.fileName = (TextView) convertView.findViewById(R.id.fileName); //name of text
 
@@ -356,7 +355,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             }
 
             //set thumbnail
-            final Bitmap myBitmap = BitmapFactory.decodeFile(f.get(position));
+            final Bitmap myBitmap = BitmapFactory.decodeFile(FilePathStrings.get(position));
             if(!testfile.isDirectory()) {
                 holder.imageview.setImageBitmap(myBitmap);
             }
@@ -364,7 +363,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 holder.imageview.setImageResource(R.drawable.folder);
             }
             //breakdown file path to get only file name
-            String filepath = f.get(position);
+            String filepath = FilePathStrings.get(position);
             ArrayList<String> list = new ArrayList<String>(Arrays.asList(filepath.split("/")));
 
             //set text name
