@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,9 +24,13 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +59,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     ArrayList<String> FilePathStrings = new ArrayList<String>();// list of file paths
     File[] listFile;
     ArrayList<String> FileNameStrings = new ArrayList<String>();
+    AlertDialog imageDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,19 +74,24 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             reader.close();
             isr.close();
             fis.close();
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e){
             e.printStackTrace();
-        } catch (IOException e) {
+        }
+        catch (IOException e){
             e.printStackTrace();
         }
 
-        if (themeArray[0].equals("Green")) {
+        if (themeArray[0].equals("Green")){
             setTheme(R.style.AppTheme);
-        } else if (themeArray[0].equals("Blue")) {
+        }
+        else if (themeArray[0].equals("Blue")){
             setTheme(R.style.AppThemeBlue);
-        } else if (themeArray[0].equals("Mono")) {
+        }
+        else if (themeArray[0].equals("Mono")){
             setTheme(R.style.AppThemeMono);
-        } else if (themeArray[0].equals("Cherry")) {
+        }
+        else if (themeArray[0].equals("Cherry")){
             setTheme(R.style.AppThemeCherry);
         }
         super.onCreate(savedInstanceState);
@@ -220,7 +231,10 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        createImageDialog();
+
         if (resultCode == RESULT_OK) {
+            Log.i("result okay",  "okay");
             Uri photoUri = data.getData();
             if (photoUri != null) {
                 //code to mess with images will be here
@@ -385,6 +399,67 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     class ViewHolder {
         ImageView imageview;
         TextView fileName;
+    }
+
+    // function to create the custom alert dialog
+    protected void createImageDialog()
+    {
+        // create a builder to add custom settings to
+        // an alert dialog
+        AlertDialog.Builder builder;
+
+        // create alert dialog in personal recordings context
+        builder = new AlertDialog.Builder(PersonalRecordingsActivity.this);
+        // create a view associated with the alert dialog xml file
+        View dView = getLayoutInflater().inflate(R.layout.dialog_addimage, null);
+
+        // connect all of the components
+        EditText description = (EditText) dView.findViewById(R.id.description);
+        EditText imageName = (EditText) dView.findViewById(R.id.nameImage);
+
+        // this should result in an image being placed in a directory or on the page
+        Button okayButton = (Button) dView.findViewById(R.id.setImageData);
+        okayButton.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                // if we have an image stored, let's make sure
+                // that an image name and description was entered
+                // additionally, we need to ensure a save location was selected
+                if(currentImage == null)
+                {
+                    Log.i("just a log", "log");
+                }
+
+
+                imageDialog.dismiss();
+            }
+        });
+
+        // this should result in nothing added to either the page
+        // or any of the directories
+        Button cancelButton = (Button) dView.findViewById(R.id.cancelImage);
+        cancelButton.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                imageDialog.dismiss();
+            }
+        });
+
+
+        TextView saveLoc = (TextView) dView.findViewById(R.id.saveLocation);
+
+        // the spinner's entries should be all existing directories in the F&F folder
+        // the user should also have the ability to create a new folder
+        // lastly, the user should be able to save a picture in the 'root' part of the page
+        Spinner dirSelector = (Spinner) dView.findViewById(R.id.dirSpinner);
+
+
+        builder.setView(dView);
+        imageDialog = builder.create();
+        imageDialog.setTitle("Save Image");
+        imageDialog.show();
     }
 
 }
