@@ -332,6 +332,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
         public View getView(final int position, View convertView, ViewGroup parent) {
             final ViewHolder holder;
+            File testfile = new File(FilePathStrings.get(position));
             if (convertView == null) {
                 holder = new ViewHolder();
                 convertView = mInflater.inflate(R.layout.galleryitem, null);
@@ -346,19 +347,22 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         //if image, do this
+                        File testfileclicked = new File(FilePathStrings.get(position));
+                        if(!testfileclicked.isDirectory()) {
+                            Intent i = new Intent(getApplicationContext(), FullScreenImage.class);
+                            // Pass String arrays FilePathStrings
+                            i.putExtra("filepath", FilePathStrings);
+                            // Pass String arrays FileNameStrings
+                            i.putExtra("filename", FileNameStrings);
+                            // Pass click position
+                            i.putExtra("position", position);
+                            startActivity(i);
+                        }
 
-
-                        Intent i = new Intent(getApplicationContext(), FullScreenImage.class);
-                        // Pass String arrays FilePathStrings
-                        i.putExtra("filepath", FilePathStrings);
-                        // Pass String arrays FileNameStrings
-                        i.putExtra("filename", FileNameStrings);
-                        // Pass click position
-                        i.putExtra("position", position);
-                        startActivity(i);
-
-
-                        //if folder, do this
+                        //if folder, set new directory and open new instance
+                        else if(testfileclicked.isDirectory()){
+                            //do stuff
+                        }
 
                     }
                 });
@@ -369,14 +373,28 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
             //set thumbnail
             final Bitmap myBitmap = BitmapFactory.decodeFile(f.get(position));
-            holder.imageview.setImageBitmap(myBitmap);
-
+            if(!testfile.isDirectory()) {
+                holder.imageview.setImageBitmap(myBitmap);
+            }
+            else if(testfile.isDirectory()){
+                holder.imageview.setImageResource(R.drawable.folder);
+            }
             //breakdown file path to get only file name
             String filepath = f.get(position);
             ArrayList<String> list = new ArrayList<String>(Arrays.asList(filepath.split("/")));
 
             //set text name
             holder.fileName.setText(list.get(list.size()-1));
+
+            //set description
+            //if not folder
+            if(!testfile.isDirectory()) {
+
+            }
+            //if folder
+            else if(testfile.isDirectory()){
+
+            }
 
             return convertView;
         }
