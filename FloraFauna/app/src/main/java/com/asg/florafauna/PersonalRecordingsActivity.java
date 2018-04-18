@@ -3,7 +3,6 @@ package com.asg.florafauna;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
@@ -23,17 +22,12 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,17 +36,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class PersonalRecordingsActivity extends AppCompatActivity {
 
     private Bitmap currentImage;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE = 0;
 
-    private Intent shareddata;
+    private Intent PR_Directory;
     private String dirName;// = Environment.getExternalStorageDirectory().toString() + "/FloraFauna/Recordings/";
     private File recordings;// = new File(dirName);
     private String[] themeArray = new String[1];
@@ -99,15 +91,19 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_recordings);
 
-        //testing to traverse directories-------------------------------------------------------
-        shareddata = getIntent();
+        //traverse directories-------------------------------------------------------
+        PR_Directory = getIntent();
         //-------------------------------------
-        if (shareddata.getStringExtra("RDIR") == null) {
+        Toast.makeText(this, PR_Directory.getStringExtra("RDIR"), Toast.LENGTH_LONG).show();
+        if (PR_Directory.getStringExtra("RDIR") == null) {
             dirName = Environment.getExternalStorageDirectory().toString() + "/FloraFauna/Recordings/";
+
         }
         else{
-            dirName = shareddata.getStringExtra("RDIR");
+            dirName = PR_Directory.getStringExtra("RDIR");
+            Toast.makeText(this, dirName, Toast.LENGTH_LONG).show();
         }
+
 
         //--------------------------------------------------------------------------------------
 
@@ -192,18 +188,22 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_home:
                 Intent search_intent = new Intent(PersonalRecordingsActivity.this, SearchActivity.class);
+                PR_Directory.removeExtra("RDIR");
                 startActivity(search_intent);
                 return true;
             case R.id.action_settings:
                 Intent settings_intent = new Intent(PersonalRecordingsActivity.this, SettingsActivity.class);
+                PR_Directory.removeExtra("RDIR");
                 startActivity(settings_intent);
                 return true;
             case R.id.action_help:
                 Intent help_intent = new Intent(PersonalRecordingsActivity.this, HelpActivity.class);
+                PR_Directory.removeExtra("RDIR");
                 startActivity(help_intent);
                 return true;
             case R.id.action_map:
                 Intent intent = new Intent(PersonalRecordingsActivity.this, MapActivity.class);
+                PR_Directory.removeExtra("RDIR");
                 startActivity(intent);
                 return true;
             default:
@@ -255,6 +255,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
     public void goBack(View view){
         /* closes the activity */
+        PR_Directory.removeExtra("RDIR");
         setResult(RESULT_OK, null);
         finish();
     }
@@ -285,15 +286,15 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
         // Declare variables
         private Activity activity;
-        private ArrayList<String> filepath;
-        private ArrayList<String> filename;
+        private ArrayList<String> f_path_arr;
+        private ArrayList<String> f_name_arr;
 
         private LayoutInflater mInflater;
 
         public ImageAdapter(Activity a, ArrayList<String> fpath, ArrayList<String> fname) {
             activity = a;
-            filepath = fpath;
-            filename = fname;
+            f_path_arr = fpath;
+            f_name_arr = fname;
 
             mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
@@ -327,8 +328,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         //if image, do this
-                        File testfileclicked = new File(FilePathStrings.get(position));
-                        if(!testfileclicked.isDirectory()) {
+                        File testFileClicked = new File(FilePathStrings.get(position));
+                        if(!testFileClicked.isDirectory()) {
                             Intent i = new Intent(getApplicationContext(), FullScreenImage.class);
                             // Pass String arrays FilePathStrings
                             i.putExtra("filepath", FilePathStrings);
@@ -340,8 +341,11 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                         }
 
                         //if folder, set new directory and open new instance
-                        else if(testfileclicked.isDirectory()){
+                        else if(testFileClicked.isDirectory()){
                             //do stuff
+                            PR_Directory = new Intent(getApplicationContext(), PersonalRecordingsActivity.class);
+                            PR_Directory.putExtra("RDIR", FilePathStrings.get(position));
+                            startActivity(PR_Directory);
                         }
 
                     }
