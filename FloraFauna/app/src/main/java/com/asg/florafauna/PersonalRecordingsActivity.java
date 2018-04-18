@@ -202,9 +202,10 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-
+        createImageDialog();
 
         if (resultCode == RESULT_OK) {
+            Log.i("result okay",  "okay");
             Uri photoUri = data.getData();
             if (photoUri != null) {
                 //code to mess with images will be here
@@ -213,7 +214,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                     //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
 
                     // bring up the prompt for the user to select a directory to save in
-                    createImageDialog();
+                    //createImageDialog();
 
                     FileOutputStream output = new FileOutputStream(recordings + "/image.png");
                     currentImage.compress(Bitmap.CompressFormat.PNG, 100, output); //save file
@@ -338,10 +339,11 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 // if we have an image stored, let's make sure
                 // that an image name and description was entered
                 // additionally, we need to ensure a save location was selected
-                if(currentImage != null)
+                if(currentImage == null)
                 {
                     Log.i("just a log", "log");
                 }
+
 
                 imageDialog.dismiss();
             }
@@ -366,8 +368,10 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         // lastly, the user should be able to save a picture in the 'root' part of the page
         Spinner dirSelector = (Spinner) dView.findViewById(R.id.dirSpinner);
 
+
         builder.setView(dView);
         imageDialog = builder.create();
+        imageDialog.setTitle("Save Image");
         imageDialog.show();
     }
 
