@@ -28,9 +28,12 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,6 +43,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PersonalRecordingsActivity extends AppCompatActivity {
 
@@ -56,6 +60,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     private boolean[] thumbnailsselection;
     private String[] arrPath;
     private ImageAdapter imageAdapter;
+    GridView imagegrid;
     ArrayList<String> f = new ArrayList<String>();// list of file paths
     File[] listFile;
     AlertDialog imageDialog;
@@ -156,8 +161,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 this.getPackageName());
         if (hasPerm == PackageManager.PERMISSION_GRANTED) {
             //list files
-            getFromSdcard();
-            GridView imagegrid = (GridView) findViewById(R.id.FileList);
+            GetFiles();
+            imagegrid = (GridView) findViewById(R.id.FileList); //gridview on recordings page
             imageAdapter = new ImageAdapter();
             imagegrid.setAdapter(imageAdapter);
         }
@@ -212,11 +217,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 try {
                     currentImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
                     //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
-
-                    // bring up the prompt for the user to select a directory to save in
-                    //createImageDialog();
-
-                    FileOutputStream output = new FileOutputStream(recordings + "/image.png");
+                    FileOutputStream output = new FileOutputStream(recordings + "/image1.png");
                     currentImage.compress(Bitmap.CompressFormat.PNG, 100, output); //save file
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -253,7 +254,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     }
 
     //List Files
-    public void getFromSdcard()
+    public void GetFiles()
     {
         if (recordings.isDirectory())
         {
@@ -294,7 +295,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 holder = new ViewHolder();
                 convertView = mInflater.inflate(
                         R.layout.galleryitem, null);
-                holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage);
+                holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage); //thumbnail
+                holder.fileName = (TextView) convertView.findViewById(R.id.fileName); //name of text
 
                 convertView.setTag(holder);
             }
@@ -302,14 +304,22 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-
+            //set thumbnail
             Bitmap myBitmap = BitmapFactory.decodeFile(f.get(position));
             holder.imageview.setImageBitmap(myBitmap);
+
+            //breakdown file path to get only file name
+            String filepath = f.get(position);
+            ArrayList<String> list = new ArrayList<String>(Arrays.asList(filepath.split("/")));
+
+            //set text name
+            holder.fileName.setText(list.get(list.size()-1));
             return convertView;
         }
     }
     class ViewHolder {
         ImageView imageview;
+        TextView fileName;
 
 
     }

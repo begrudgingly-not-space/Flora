@@ -19,11 +19,11 @@
         android:layout_alignParentTop="true" />
 
     <TextView
-        android:id="@+id/grid_text"
+        android:id="@+id/fileName"
         android:layout_width="82dp"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/thumbImage"
         android:layout_alignEnd="@+id/thumbImage"
+        android:layout_alignStart="@+id/thumbImage"
         android:layout_below="@+id/thumbImage"
         android:text="TextView" />
 </RelativeLayout>
