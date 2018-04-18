@@ -345,6 +345,9 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 convertView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        //if image, do this
+
+
                         Intent i = new Intent(getApplicationContext(), FullScreenImage.class);
                         // Pass String arrays FilePathStrings
                         i.putExtra("filepath", FilePathStrings);
@@ -353,6 +356,9 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                         // Pass click position
                         i.putExtra("position", position);
                         startActivity(i);
+
+
+                        //if folder, do this
 
                     }
                 });
