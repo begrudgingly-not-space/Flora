@@ -2,6 +2,7 @@ package com.asg.florafauna;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -60,6 +61,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     File[] listFile;
     ArrayList<String> FileNameStrings = new ArrayList<String>();
     AlertDialog imageDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -231,28 +233,12 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        createImageDialog();
-
         if (resultCode == RESULT_OK) {
             Log.i("result okay",  "okay");
-            Uri photoUri = data.getData();
-            if (photoUri != null) {
-                //code to mess with images will be here
-                try {
-                    currentImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
-                    //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
-                    FileOutputStream output = new FileOutputStream(recordings + "/image1.png");
-                    currentImage.compress(Bitmap.CompressFormat.PNG, 100, output); //save file
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
 
-                Intent refresh = new Intent(PersonalRecordingsActivity.this, PersonalRecordingsActivity.class);
-                refresh.putExtra("RDIR", dirName);
-                startActivity(refresh);
-                finish();
+            createImageDialog(data);
 
-            }
+
         }
     }
 
@@ -299,11 +285,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     }
 
     public class ImageAdapter extends BaseAdapter {
-
-        // Declare variables
-        private Activity activity;
-        private ArrayList<String> f_path_arr;
-        private ArrayList<String> f_name_arr;
 
         private LayoutInflater mInflater;
 
@@ -402,14 +383,16 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     }
 
     // function to create the custom alert dialog
-    protected void createImageDialog()
+    protected void createImageDialog(final Intent data)
     {
         // create a builder to add custom settings to
         // an alert dialog
+        ;
         AlertDialog.Builder builder;
 
         // create alert dialog in personal recordings context
-        builder = new AlertDialog.Builder(PersonalRecordingsActivity.this);
+        builder = new AlertDialog.Builder(this);
+
         // create a view associated with the alert dialog xml file
         View dView = getLayoutInflater().inflate(R.layout.dialog_addimage, null);
 
@@ -429,6 +412,26 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 if(currentImage == null)
                 {
                     Log.i("just a log", "log");
+
+                    Uri photoUri = data.getData();
+                    if (photoUri != null) {
+                        //code to mess with images will be here
+                        ContentResolver cr = getContentResolver();
+                        try {
+                            currentImage = MediaStore.Images.Media.getBitmap(cr, photoUri);
+                            //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
+                            FileOutputStream output = new FileOutputStream(recordings + "/image1.png");
+                            currentImage.compress(Bitmap.CompressFormat.PNG, 100, output); //save file
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        Intent refresh = new Intent(PersonalRecordingsActivity.this, PersonalRecordingsActivity.class);
+                        refresh.putExtra("RDIR", dirName);
+                        startActivity(refresh);
+                        finish();
+
+                    }
                 }
 
 
@@ -457,6 +460,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
 
         builder.setView(dView);
+
         imageDialog = builder.create();
         imageDialog.setTitle("Save Image");
         imageDialog.show();
