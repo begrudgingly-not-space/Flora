@@ -49,31 +49,25 @@ import android.widget.AdapterView.OnItemClickListener;
 
 public class PersonalRecordingsActivity extends AppCompatActivity {
 
-    private ImageView selectedImage;
     private Bitmap currentImage;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE = 0;
-    private String dirName = Environment.getExternalStorageDirectory().toString() + "/FloraFauna/Recordings/";
-    private final File recordings = new File(dirName);
+
+    private Intent shareddata;
+    private String dirName;// = Environment.getExternalStorageDirectory().toString() + "/FloraFauna/Recordings/";
+    private File recordings;// = new File(dirName);
     private String[] themeArray = new String[1];
 
     // List Files
-    private int count;
-    private Bitmap[] thumbnails;
-    private boolean[] thumbnailsselection;
-    private String[] arrPath;
-    private ImageAdapter imageAdapter;
     GridView imagegrid;
     ArrayList<String> f = new ArrayList<String>();// list of file paths
     File[] listFile;
 
     //fullscreen
-    boolean isImageFitToScreen;
     private ArrayList<String> FilePathStrings = new ArrayList<String>();
     private ArrayList<String> FileNameStrings = new ArrayList<String>();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         //setTheme(R.style.AppTheme);
         try {
             //opens the file to read its contents
@@ -85,24 +79,19 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             reader.close();
             isr.close();
             fis.close();
-        }
-        catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
-        if (themeArray[0].equals("Green")){
+        if (themeArray[0].equals("Green")) {
             setTheme(R.style.AppTheme);
-        }
-        else if (themeArray[0].equals("Blue")){
+        } else if (themeArray[0].equals("Blue")) {
             setTheme(R.style.AppThemeBlue);
-        }
-        else if (themeArray[0].equals("Mono")){
+        } else if (themeArray[0].equals("Mono")) {
             setTheme(R.style.AppThemeMono);
-        }
-        else if (themeArray[0].equals("Cherry")){
+        } else if (themeArray[0].equals("Cherry")) {
             setTheme(R.style.AppThemeCherry);
         }
         super.onCreate(savedInstanceState);
@@ -110,8 +99,18 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
         FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_recordings);
 
+        //testing to traverse directories-------------------------------------------------------
+        shareddata = getIntent();
+        //-------------------------------------
+        if (shareddata.getStringExtra("RDIR") == null) {
+            dirName = Environment.getExternalStorageDirectory().toString() + "/FloraFauna/Recordings/";
+        }
+        else{
+            dirName = shareddata.getStringExtra("RDIR");
+        }
 
-        selectedImage = (ImageView) findViewById(R.id.imageView1);
+        //--------------------------------------------------------------------------------------
+
         FloatingActionButton openGallery = (FloatingActionButton) findViewById(R.id.floatingUpload);
 
         openGallery.setOnClickListener(new View.OnClickListener() {
@@ -147,6 +146,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                     MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE);
         }
 
+        recordings = new File(dirName);
+
         //checks if the recordings dir exists
         if (!recordings.exists()) {
             //if directory creation fails, tell the user
@@ -175,27 +176,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             imagegrid.setAdapter(new ImageAdapter(this, FilePathStrings, FileNameStrings));
         }
 
-/*
-
-        //set onclicklistener for each item
-        imagegrid.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-                Log.i("something", "something");
-
-                Intent i = new Intent(getApplicationContext(), FullScreenImage.class);
-                // Pass String arrays FilePathStrings
-                i.putExtra("filepath", FilePathStrings);
-
-                Log.i("filepath", FilePathStrings.toString());
-                // Pass String arrays FileNameStrings
-                i.putExtra("filename", FileNameStrings);
-                // Pass click position
-                i.putExtra("position", pos);
-                startActivity(i);
-            }
-        });
-*/
     }
 
 
@@ -402,8 +382,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     class ViewHolder {
         ImageView imageview;
         TextView fileName;
-
-
     }
 
 }
