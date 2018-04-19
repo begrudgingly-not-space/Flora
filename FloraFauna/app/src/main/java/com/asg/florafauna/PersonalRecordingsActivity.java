@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -45,6 +46,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static android.widget.Toast.LENGTH_LONG;
+
 public class PersonalRecordingsActivity extends AppCompatActivity {
 
     private Bitmap currentImage;
@@ -61,6 +64,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     File[] listFile;
     ArrayList<String> FileNameStrings = new ArrayList<String>();
     AlertDialog imageDialog;
+    boolean nameGiven = true;
 
 
     @Override
@@ -168,7 +172,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             //if directory creation fails, tell the user
             if (!recordings.mkdirs()) {
                 Log.d("error", "failed to make dir");
-                Toast.makeText(this, "Failed to create directory", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Failed to create directory", LENGTH_LONG).show();
             }
         }
         //if the directory exists, make a log
@@ -398,7 +402,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
         // connect all of the components
         EditText description = (EditText) dView.findViewById(R.id.description);
-        EditText imageName = (EditText) dView.findViewById(R.id.nameImage);
+        final EditText imageName = (EditText) dView.findViewById(R.id.nameImage);
 
         // this should result in an image being placed in a directory or on the page
         Button okayButton = (Button) dView.findViewById(R.id.setImageData);
@@ -406,36 +410,49 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         {
             public void onClick(View v)
             {
-                // if we have an image stored, let's make sure
-                // that an image name and description was entered
-                // additionally, we need to ensure a save location was selected
-                if(currentImage == null)
-                {
-                    Log.i("just a log", "log");
-
-                    Uri photoUri = data.getData();
-                    if (photoUri != null) {
-                        //code to mess with images will be here
-                        ContentResolver cr = getContentResolver();
-                        try {
-                            currentImage = MediaStore.Images.Media.getBitmap(cr, photoUri);
-                            //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
-                            FileOutputStream output = new FileOutputStream(recordings + "/image1.png");
-                            currentImage.compress(Bitmap.CompressFormat.PNG, 100, output); //save file
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        Intent refresh = new Intent(PersonalRecordingsActivity.this, PersonalRecordingsActivity.class);
-                        refresh.putExtra("RDIR", dirName);
-                        startActivity(refresh);
-                        finish();
-
-                    }
+                //if name is empty, tell user
+                if(imageName.getText().toString().equalsIgnoreCase("")){
+                    Toast.makeText(getBaseContext(), "Please Input a File Name..", LENGTH_LONG).show();
+                    nameGiven = false;
+                    imageDialog.dismiss();
+                    createImageDialog(data);
+                }
+                else {
+                    nameGiven = true;
                 }
 
 
-                imageDialog.dismiss();
+                //test if previously name was given
+                if(nameGiven) {
+                    // if we have an image stored, let's make sure
+                    // that an image name and description was entered
+                    // additionally, we need to ensure a save location was selected
+                    if (currentImage == null) {
+                        Log.i("just a log", "log");
+
+                        Uri photoUri = data.getData();
+                        if (photoUri != null) {
+                            //code to mess with images will be here
+                            ContentResolver cr = getContentResolver();
+                            try {
+                                currentImage = MediaStore.Images.Media.getBitmap(cr, photoUri);
+                                //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
+                                FileOutputStream output = new FileOutputStream(recordings + "/image1.png");
+                                currentImage.compress(Bitmap.CompressFormat.PNG, 75, output); //save file
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            Intent refresh = new Intent(PersonalRecordingsActivity.this, PersonalRecordingsActivity.class);
+                            refresh.putExtra("RDIR", dirName);
+                            finish();
+                            startActivity(refresh);
+                        }
+                    }
+
+
+                    imageDialog.dismiss();
+                }
             }
         });
 
@@ -462,6 +479,12 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         builder.setView(dView);
 
         imageDialog = builder.create();
+
+        if(!nameGiven){
+            imageName.setTextColor(Color.RED);
+            imageName.setHintTextColor(Color.RED);
+        }
+
         imageDialog.setTitle("Save Image");
         imageDialog.show();
     }
