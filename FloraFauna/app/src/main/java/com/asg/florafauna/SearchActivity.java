@@ -416,7 +416,8 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         for (int i = 0; i < speciesNamesArray.size(); i++) {
             String scientificName = speciesNamesArray.get(i);
             String genus = scientificName.substring(0, scientificName.indexOf(" "));
-            if (genus.equals(filterEditText.getText().toString())) {
+            String inputGenus = filterEditText.getText().toString().replaceAll("\\s+","");
+            if (genus.equalsIgnoreCase(filterEditText.getText().toString())) {
                 filteredArrayList.add(speciesNamesArray.get(i));
             }
             Log.d("Genus", genus);
