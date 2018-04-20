@@ -16,6 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp">
             <FrameLayout
+                android:id="@+id/SearchFrame"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@id/SearchButton">
@@ -25,7 +26,7 @@
                     android:layout_height="30dp"
                     android:background="@drawable/rounded_search_box"
                     android:inputType="textNoSuggestions"
-                    android:hint="Species"
+                    android:hint="Scientific/Common Name"
                     android:paddingStart="25dp"
                     android:textColor="@color/black"
                     android:textSize="15sp"
@@ -37,6 +38,42 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="3dp"/>
             </FrameLayout>
+
+            <!-- Generated for county search -->
+            <LinearLayout
+                android:id="@+id/locationInput"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_below="@id/speciesInput"
+                android:layout_toStartOf="@id/SearchButton"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/countyInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/rounded_search_box"
+                    android:paddingStart="10dp"
+                    android:layout_marginRight="5dp"
+                    android:inputType="textNoSuggestions"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:layout_weight="1"/>
+
+                <EditText
+                    android:id="@+id/stateInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/rounded_search_box"
+                    android:paddingStart="10dp"
+                    android:inputType="textNoSuggestions"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/SearchButton"
                 android:layout_width="wrap_content"

@@ -61,7 +61,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_below="@id/DropDownBox"
-            android:id="@+id/linearLayout" >
+            android:id="@+id/StateSearch" >
 
             <EditText
                 android:id="@+id/SearchEditText"
@@ -96,6 +96,64 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/CountySearch"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:orientation="vertical"
+            android:layout_below="@id/DropDownBox"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/speciesInput"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@drawable/rounded_search_box"
+                android:paddingStart="10dp"
+                android:inputType="textNoSuggestions"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+
+            <LinearLayout
+                android:id="@+id/locationInput"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_below="@id/speciesInput"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/countyInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/rounded_search_box"
+                    android:paddingStart="10dp"
+                    android:layout_marginRight="5dp"
+                    android:inputType="textNoSuggestions"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:layout_weight="1"/>
+
+                <EditText
+                    android:id="@+id/stateInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/rounded_search_box"
+                    android:paddingStart="10dp"
+                    android:inputType="textNoSuggestions"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
         <!-- <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="30dip"
@@ -117,12 +175,12 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_height="35dp"
-            android:layout_below="@id/linearLayout"
+            android:layout_below="@id/StateSearch"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
             android:background="@drawable/rounded_black_box"
             android:gravity="center"
-            android:text="GO"
+            android:text="Search"
             android:onClick="sightingsSearch"
             android:textColor="@color/white"
             android:textSize="15sp"

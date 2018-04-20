@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
@@ -83,6 +84,16 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private RadioButton Genus;
     private RadioButton MyLocation;
     private String[] themeArray = new String[1];
+
+    private FrameLayout searchBox;
+
+    private LinearLayout countyStateInput;
+
+    private EditText countyInput;
+    private EditText stateInput;
+
+    //load more button
+    private Button btnLoadMore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,9 +172,15 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         Genus = findViewById(R.id.GenusButton);
         MyLocation = findViewById(R.id.MyLocationButton);
 
+        searchBox = findViewById(R.id.SearchFrame);
+
+        countyStateInput = findViewById(R.id.locationInput);
+
+        countyInput = findViewById(R.id.countyInput);
+        stateInput = findViewById(R.id.stateInput);
 
         // Setup for load more button
-        Button btnLoadMore = new Button(this);
+        btnLoadMore = new Button(this);
         btnLoadMore.setText("Load More");
         speciesListView.addFooterView(btnLoadMore);
 
@@ -208,13 +225,20 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 String selection = (String) rb.getText();
 
                 if (selection.equals("Species")) {
-                    searchEditText.setHint("Species");
+                    searchEditText.setHint("Scientific/Common Name");
+                    searchBox.setVisibility(View.VISIBLE);
+                    countyStateInput.setVisibility(View.INVISIBLE);
                 }
                 else if (selection.equals("County")) {
-                    searchEditText.setHint("County, State");
+                    countyInput.setHint("County");
+                    stateInput.setHint("State");
+                    searchBox.setVisibility(View.INVISIBLE);
+                    countyStateInput.setVisibility(View.VISIBLE);
                 }
                 else {
                     searchEditText.setHint("State");
+                    searchBox.setVisibility(View.VISIBLE);
+                    countyStateInput.setVisibility(View.INVISIBLE);
                 }
             }
         });
@@ -360,6 +384,10 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     public void search() {
         filterAndRadioButtons.setVisibility(View.VISIBLE);
         String searchInput = searchEditText.getText().toString();
+
+        String county = countyInput.getText().toString();
+        String state = stateInput.getText().toString();
+
         speciesNamesArray = new ArrayList<>();
         offset = 0;
 
@@ -384,7 +412,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         else if (County.isChecked())
         {
             // Search by County
-            searchRequestWithCounty(this, searchInput);
+            searchRequestWithCounty(this, state, county);
         }
 
         // Save history to file
@@ -541,6 +569,8 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     }
 
     private void searchRequestWithState(final Context context, final String state) {
+        btnLoadMore.setVisibility(View.VISIBLE);
+
         // stateInput capitalizes the state
         // Bison produces an error if you input a state in all lowercase letters
         final int position = speciesNamesArray.size();
@@ -563,7 +593,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
         stateInput = stateInput.replaceAll(" ", "%20");
 
-        final String url = "https://bison.usgs.gov/api/search.json?state=" + stateInput + "&start=" + offset + "&count=50";
+        final String url = "https://bison.usgs.gov/api/search.json?state=" + stateInput + "&start=" + offset + "&count=500";
         Log.d("url", url);
 
         // Initialize request queue
@@ -642,22 +672,10 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         requestQueue.add(searchRequestWithState);
     }
 
-    private void searchRequestWithCounty(final Context context, final String searchInput) {
+    private void searchRequestWithCounty(final Context context, String state, String county) {
+        btnLoadMore.setVisibility(View.VISIBLE);
+
         final int position = speciesNamesArray.size();
-
-        String searchTerms[];
-        String county = "";
-        String state = "";
-
-        if (searchInput.contains(",") && searchInput.length() >= 3) {
-            searchTerms = searchInput.split(",");
-
-            if (searchTerms.length == 2) {
-                county = searchTerms[0];
-                state = searchTerms[1];
-                state = state.substring(1, state.length());
-            }
-        }
 
         if (state.length() > 2) {
             state = state.substring(0, 1).toUpperCase() + state.substring(1);
@@ -686,7 +704,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
         state = state.replaceAll(" ", "%20");
 
-        final String url = "https://bison.usgs.gov/api/search.json?state=" + state + "&countyFips=" + countyFips + "&start=" + offset + "&count=50";
+        final String url = "https://bison.usgs.gov/api/search.json?state=" + state + "&countyFips=" + countyFips + "&start=" + offset + "&count=500";
         Log.d("url", url);
 
         // Initialize request queue
@@ -764,6 +782,8 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     private void searchRequestWithSpecies(final Context context, final String speciesName)
     {
+        btnLoadMore.setVisibility(View.GONE);
+
         final SpeciesSearchHelper helper = new SpeciesSearchHelper();
         int length = helper.getNameLength(speciesName);
 
@@ -1053,7 +1073,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         }
     }
 
-    private String setAOIBbox(double latitude, double longitude, double mileage) {
+    public static String setAOIBbox(double latitude, double longitude, double mileage) {
         double milesPerDegreeOfLatitude = 69;
         double milesPerDegreeOfLongitude = Math.cos(Math.toRadians(latitude)) * 69.172;
 
@@ -1072,7 +1092,9 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     // What's Around Me? webcall
     private void whatsAroundMeRequest(final Context context, final String polygon)
     {
-        final String url = "https://bison.usgs.gov/api/search.json?aoibbox=" + polygon + "&start=" + offset + "&count=50";;
+        btnLoadMore.setVisibility(View.VISIBLE);
+
+        final String url = "https://bison.usgs.gov/api/search.json?aoibbox=" + polygon + "&start=" + offset + "&count=500";
         Log.d("url", url);
         final int position = speciesNamesArray.size();
 
@@ -1155,8 +1177,12 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 "Loading. Please wait...", true);
         offset += 500;
         String searchInput = searchEditText.getText().toString();
+
+        String county = countyInput.getText().toString();
+        String state = stateInput.getText().toString();
+
         if (searchType == 1) {
-            searchRequestWithCounty(this, searchInput);
+            searchRequestWithCounty(this, state, county);
         }
         else if (searchType == 2) {
             searchRequestWithState(this, searchInput);
