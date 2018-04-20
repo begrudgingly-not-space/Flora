@@ -320,11 +320,11 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage); //thumbnail
                 holder.fileName = (TextView) convertView.findViewById(R.id.fileName); //name of text
                 holder.checkBox = (CheckBox) convertView.findViewById(R.id.itemCheckBox); //checkbox of item
+                holder.delete = (TextView) convertView.findViewById(R.id.delete); //delete button
 
                 convertView.setTag(holder);
 
                 //set onCheckListerner for each item
-
                 holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
@@ -339,8 +339,35 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                     }
                 });
 
+                //set onclicklistener for delete for each item
+                holder.delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //code to delete file here
+                        //on click, confirm with pop-up,
+                        //if true, delete
+                        if(true){
+                            File deleteThis = new File(FilePathStrings.get(position));
+                            if(deleteThis.isDirectory()){
+                                String[] children = deleteThis.list();
+                                for (int i = 0; i < children.length; i++)
+                                {
+                                    new File(deleteThis, children[i]).delete();
+                                }
+                                deleteThis.delete();
+
+                            }
+                            else {
+                                deleteThis.delete();
+                            }
+                            //refresh the activity
+                            refresh();
+                        }
+                    }
+                });
+
                 //set onclicklistener for each item
-                convertView.setOnClickListener(new View.OnClickListener() {
+                holder.imageview.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         //if image, do this
@@ -403,6 +430,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         ImageView imageview;
         TextView fileName;
         CheckBox checkBox;
+        TextView delete;
     }
 
     // function to create the custom alert dialog
@@ -462,10 +490,13 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
+                            refresh();
+                            /*
                             Intent refresh = new Intent(PersonalRecordingsActivity.this, PersonalRecordingsActivity.class);
                             refresh.putExtra("RDIR", dirName);
                             finish();
                             startActivity(refresh);
+                            */
                         }
                     }
 
@@ -506,6 +537,14 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
         imageDialog.setTitle("Save Image");
         imageDialog.show();
+    }
+
+    protected void refresh(){
+        Intent refresh = new Intent(PersonalRecordingsActivity.this, PersonalRecordingsActivity.class);
+        refresh.putExtra("RDIR", dirName);
+        finish();
+        startActivity(refresh);
+
     }
 
 }

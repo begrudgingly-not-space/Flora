@@ -22,6 +22,7 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="translucentWhite">#D9FFFFFF</color>
+    <color name="maroon">#800000</color>
 
 </resources>
 
