@@ -314,6 +314,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 convertView = mInflater.inflate(R.layout.galleryitem, null);
                 holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage); //thumbnail
                 holder.fileName = (TextView) convertView.findViewById(R.id.fileName); //name of text
+                holder.imgDescription = (TextView) convertView.findViewById(R.id.description); // image description
 
                 convertView.setTag(holder);
 
@@ -361,13 +362,22 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             String filepath = FilePathStrings.get(position);
             ArrayList<String> list = new ArrayList<String>(Arrays.asList(filepath.split("/")));
 
-            //set text name
-            holder.fileName.setText(list.get(list.size()-1));
+            // set text name
+            // both file name and description come as one string, split by '!'
+            // name is first, description is second
+            String[] nameDescr = list.get(list.size() - 1).split("!");
+            if(nameDescr.length > 0) {
+                holder.fileName.setText(nameDescr[0]);
+            }
+
 
             //set description
             //if not folder
             if(!testfile.isDirectory()) {
-
+                if(nameDescr.length > 1)
+                {
+                    holder.imgDescription.setText(nameDescr[1]);
+                }
             }
             //if folder
             else if(testfile.isDirectory()){
@@ -380,6 +390,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     class ViewHolder {
         ImageView imageview;
         TextView fileName;
+        TextView imgDescription;
     }
 
     // function to create the custom alert dialog
@@ -387,7 +398,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     {
         // create a builder to add custom settings to
         // an alert dialog
-        ;
         AlertDialog.Builder builder;
 
         // create alert dialog in personal recordings context
@@ -397,8 +407,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         View dView = getLayoutInflater().inflate(R.layout.dialog_addimage, null);
 
         // connect all of the components
-        EditText description = (EditText) dView.findViewById(R.id.description);
-        EditText imageName = (EditText) dView.findViewById(R.id.nameImage);
+        final EditText description = (EditText) dView.findViewById(R.id.description);
+        final EditText imageName = (EditText) dView.findViewById(R.id.nameImage);
 
         // this should result in an image being placed in a directory or on the page
         Button okayButton = (Button) dView.findViewById(R.id.setImageData);
@@ -420,8 +430,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                         try {
                             currentImage = MediaStore.Images.Media.getBitmap(cr, photoUri);
                             //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
-                            FileOutputStream output = new FileOutputStream(recordings + "/image1.png");
-                            currentImage.compress(Bitmap.CompressFormat.PNG, 100, output); //save file
+                            FileOutputStream output = new FileOutputStream(recordings + "/" + imageName.getText() + "!" + description.getText());
+                            currentImage.compress(Bitmap.CompressFormat.PNG, 75, output); //save file
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
