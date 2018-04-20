@@ -635,7 +635,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
         imageDialog = builder.create();
 
-        imageDialog.setTitle("Save Image");
+        imageDialog.setTitle("Confirm Delete?");
         imageDialog.show();
     }
 
