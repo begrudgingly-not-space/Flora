@@ -24,6 +24,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -66,7 +68,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     ArrayList<String> FileNameStrings = new ArrayList<String>();
     AlertDialog imageDialog;
     boolean nameGiven = true;
-    boolean confirm = false;
+    ArrayAdapter<String> spinAdapter;
 
 
     @Override
@@ -322,6 +324,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 holder.fileName = (TextView) convertView.findViewById(R.id.fileName); //name of text
                 holder.checkBox = (CheckBox) convertView.findViewById(R.id.itemCheckBox); //checkbox of item
                 holder.delete = (TextView) convertView.findViewById(R.id.delete); //delete button
+                holder.imgDescription = (TextView) convertView.findViewById(R.id.description); // image description
 
                 convertView.setTag(holder);
 
@@ -395,13 +398,22 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             String filepath = FilePathStrings.get(position);
             ArrayList<String> list = new ArrayList<String>(Arrays.asList(filepath.split("/")));
 
-            //set text name
-            holder.fileName.setText(list.get(list.size()-1));
+            // set text name
+            // both file name and description come as one string, split by '!'
+            // name is first, description is second
+            String[] nameDescr = list.get(list.size() - 1).split("!");
+            if(nameDescr.length > 0) {
+                holder.fileName.setText(nameDescr[0]);
+            }
+
 
             //set description
             //if not folder
             if(!testfile.isDirectory()) {
-
+                if(nameDescr.length > 1)
+                {
+                    holder.imgDescription.setText(nameDescr[1]);
+                }
             }
             //if folder
             else if(testfile.isDirectory()){
@@ -416,6 +428,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         TextView fileName;
         CheckBox checkBox;
         TextView delete;
+        TextView imgDescription;
     }
 
     // function to create the custom alert dialog
@@ -423,7 +436,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     {
         // create a builder to add custom settings to
         // an alert dialog
-        ;
         AlertDialog.Builder builder;
 
         // create alert dialog in personal recordings context
@@ -433,7 +445,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         View dView = getLayoutInflater().inflate(R.layout.dialog_addimage, null);
 
         // connect all of the components
-        EditText description = (EditText) dView.findViewById(R.id.description);
+        final EditText description = (EditText) dView.findViewById(R.id.description);
         final EditText imageName = (EditText) dView.findViewById(R.id.nameImage);
 
         // this should result in an image being placed in a directory or on the page
@@ -469,19 +481,14 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                             try {
                                 currentImage = MediaStore.Images.Media.getBitmap(cr, photoUri);
                                 //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
-                                FileOutputStream output = new FileOutputStream(recordings + "/image1.png");
+                                FileOutputStream output = new FileOutputStream(recordings + "/" + imageName.getText() + "!" + description.getText());
                                 currentImage.compress(Bitmap.CompressFormat.PNG, 75, output); //save file
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
                             refresh();
-                            /*
-                            Intent refresh = new Intent(PersonalRecordingsActivity.this, PersonalRecordingsActivity.class);
-                            refresh.putExtra("RDIR", dirName);
-                            finish();
-                            startActivity(refresh);
-                            */
+
                         }
                     }
 
@@ -502,13 +509,62 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             }
         });
 
+        // using an array list to create entries for the save location spinner
+        ArrayList<String> defaultDirs = new ArrayList<>();
+        defaultDirs.add("On Page");
+        defaultDirs.add("Create New");
 
+
+        if(!FilePathStrings.isEmpty())
+        {
+            defaultDirs.addAll(FilePathStrings);
+            spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, FilePathStrings);
+        }
+        else
+        {
+            spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, defaultDirs);
+        }
+
+        spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // just a TextView to display words, "Save Location"
         TextView saveLoc = (TextView) dView.findViewById(R.id.saveLocation);
 
         // the spinner's entries should be all existing directories in the F&F folder
         // the user should also have the ability to create a new folder
         // lastly, the user should be able to save a picture in the 'root' part of the page
-        Spinner dirSelector = (Spinner) dView.findViewById(R.id.dirSpinner);
+        // "On Page" for now
+        final Spinner dirSelector = (Spinner) dView.findViewById(R.id.dirSpinner);
+        dirSelector.setAdapter(spinAdapter);
+
+        dirSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // if "Create New" is selected, then open a prompt for the user to type in
+                // the name of the new folder
+                // if "On Page" is selected, place image on the personal recording page
+                // else, place image in selected folder
+                String selectedDir = dirSelector.getSelectedItem().toString();
+                if(selectedDir.equals("Create New"))
+                {
+                    Log.i("selected new", "folder");
+
+                }
+                else if(selectedDir.equals("On Page"))
+                {
+                    Log.i("Save on page", "image");
+                }
+                else
+                {
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
 
         builder.setView(dView);
