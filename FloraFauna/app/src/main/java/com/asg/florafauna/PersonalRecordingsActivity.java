@@ -24,6 +24,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -61,6 +63,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     File[] listFile;
     ArrayList<String> FileNameStrings = new ArrayList<String>();
     AlertDialog imageDialog;
+    ArrayAdapter<String> spinAdapter;
 
 
     @Override
@@ -460,13 +463,62 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             }
         });
 
+        // using an array list to create entries for the save location spinner
+        ArrayList<String> defaultDirs = new ArrayList<>();
+        defaultDirs.add("On Page");
+        defaultDirs.add("Create New");
 
+
+        if(!FilePathStrings.isEmpty())
+        {
+            defaultDirs.addAll(FilePathStrings);
+            spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, FilePathStrings);
+        }
+        else
+        {
+            spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, defaultDirs);
+        }
+
+        spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // just a TextView to display words, "Save Location"
         TextView saveLoc = (TextView) dView.findViewById(R.id.saveLocation);
 
         // the spinner's entries should be all existing directories in the F&F folder
         // the user should also have the ability to create a new folder
         // lastly, the user should be able to save a picture in the 'root' part of the page
-        Spinner dirSelector = (Spinner) dView.findViewById(R.id.dirSpinner);
+        // "On Page" for now
+        final Spinner dirSelector = (Spinner) dView.findViewById(R.id.dirSpinner);
+        dirSelector.setAdapter(spinAdapter);
+
+        dirSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // if "Create New" is selected, then open a prompt for the user to type in
+                // the name of the new folder
+                // if "On Page" is selected, place image on the personal recording page
+                // else, place image in selected folder
+                String selectedDir = dirSelector.getSelectedItem().toString();
+                if(selectedDir.equals("Create New"))
+                {
+                    Log.i("selected new", "folder");
+
+                }
+                else if(selectedDir.equals("On Page"))
+                {
+                    Log.i("Save on page", "image");
+                }
+                else
+                {
+
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
 
         builder.setView(dView);
