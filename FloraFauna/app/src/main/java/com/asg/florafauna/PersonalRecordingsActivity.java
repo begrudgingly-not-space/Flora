@@ -66,6 +66,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     ArrayList<String> FileNameStrings = new ArrayList<String>();
     AlertDialog imageDialog;
     boolean nameGiven = true;
+    boolean confirm = false;
 
 
     @Override
@@ -346,23 +347,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                         //code to delete file here
                         //on click, confirm with pop-up,
                         //if true, delete
-                        if(true){
-                            File deleteThis = new File(FilePathStrings.get(position));
-                            if(deleteThis.isDirectory()){
-                                String[] children = deleteThis.list();
-                                for (int i = 0; i < children.length; i++)
-                                {
-                                    new File(deleteThis, children[i]).delete();
-                                }
-                                deleteThis.delete();
-
-                            }
-                            else {
-                                deleteThis.delete();
-                            }
-                            //refresh the activity
-                            refresh();
-                        }
+                        ConfirmDelete(position);
                     }
                 });
 
@@ -534,6 +519,65 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             imageName.setTextColor(Color.RED);
             imageName.setHintTextColor(Color.RED);
         }
+
+        imageDialog.setTitle("Save Image");
+        imageDialog.show();
+    }
+
+    // function to create the custom alert dialog
+    public void ConfirmDelete(final int position)
+    {
+        // create a builder to add custom settings to
+        // an alert dialog
+        AlertDialog.Builder builder;
+
+        // create alert dialog in personal recordings context
+        builder = new AlertDialog.Builder(this);
+
+        // create a view associated with the alert dialog xml file
+        View dView = getLayoutInflater().inflate(R.layout.dialog_confirmdelete, null);
+
+
+        // this should result in an image being placed in a directory or on the page
+        Button okayButton = (Button) dView.findViewById(R.id.yesButton);
+        okayButton.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                File deleteThis = new File(FilePathStrings.get(position));
+                //if directory, recursively delete
+                if(deleteThis.isDirectory()){
+                    String[] children = deleteThis.list();
+                    for (int i = 0; i < children.length; i++)
+                    {
+                        new File(deleteThis, children[i]).delete();
+                    }
+                    deleteThis.delete();
+
+                }
+                else {
+                    deleteThis.delete();
+                }
+                //refresh the activity
+                refresh();
+                imageDialog.dismiss();
+            }
+        });
+
+        // this should result in nothing added to either the page
+        // or any of the directories
+        Button cancelButton = (Button) dView.findViewById(R.id.noButton);
+        cancelButton.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                imageDialog.dismiss();
+            }
+        });
+
+        builder.setView(dView);
+
+        imageDialog = builder.create();
 
         imageDialog.setTitle("Save Image");
         imageDialog.show();
