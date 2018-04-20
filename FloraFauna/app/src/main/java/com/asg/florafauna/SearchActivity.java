@@ -547,6 +547,22 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private void searchRequestWithState(final Context context, final String state) {
         btnLoadMore.setVisibility(View.VISIBLE);
 
+        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+
+        if (state.equals("")){
+            alertDialog.setTitle("No state entered");
+            alertDialog.setMessage("Please enter a state in the search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+
         // stateInput capitalizes the state
         // Bison produces an error if you input a state in all lowercase letters
         final int position = speciesNamesArray.size();
@@ -650,6 +666,48 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     private void searchRequestWithCounty(final Context context, String state, String county) {
         btnLoadMore.setVisibility(View.VISIBLE);
+
+        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+
+        if (state.equals("") && county.equals("")){
+            alertDialog.setTitle("No county nor state entered");
+            alertDialog.setMessage("Please enter a county in the first search box and a state in the second search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+        else if (state.equals("")){
+            alertDialog.setTitle("No state entered");
+            alertDialog.setMessage("Please enter a state in the second search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+        else if (county.equals("")){
+            alertDialog.setTitle("No county entered");
+            alertDialog.setMessage("Please enter a county in the first search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
 
         final int position = speciesNamesArray.size();
 
@@ -759,6 +817,22 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private void searchRequestWithSpecies(final Context context, final String speciesName)
     {
         btnLoadMore.setVisibility(View.GONE);
+
+        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+
+        if (speciesName.equals("")){
+            alertDialog.setTitle("No species entered");
+            alertDialog.setMessage("Please enter a species name in the search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
 
         final SpeciesSearchHelper helper = new SpeciesSearchHelper();
         int length = helper.getNameLength(speciesName);
