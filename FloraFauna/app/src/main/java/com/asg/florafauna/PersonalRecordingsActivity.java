@@ -1,7 +1,6 @@
 package com.asg.florafauna;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +26,8 @@ import android.provider.MediaStore;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
@@ -318,8 +319,25 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 convertView = mInflater.inflate(R.layout.galleryitem, null);
                 holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage); //thumbnail
                 holder.fileName = (TextView) convertView.findViewById(R.id.fileName); //name of text
+                holder.checkBox = (CheckBox) convertView.findViewById(R.id.itemCheckBox); //checkbox of item
 
                 convertView.setTag(holder);
+
+                //set onCheckListerner for each item
+
+                holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        if(isChecked){ //if item is checked
+
+                        }
+                        else //if item is unchecked from being checked
+                        {
+
+                        }
+
+                    }
+                });
 
                 //set onclicklistener for each item
                 convertView.setOnClickListener(new View.OnClickListener() {
@@ -384,6 +402,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     class ViewHolder {
         ImageView imageview;
         TextView fileName;
+        CheckBox checkBox;
     }
 
     // function to create the custom alert dialog
