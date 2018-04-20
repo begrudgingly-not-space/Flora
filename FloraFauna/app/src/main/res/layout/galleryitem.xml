@@ -8,8 +8,7 @@
         android:id="@+id/itemCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
+        />
 
     <LinearLayout
         android:layout_width="99dp"
@@ -20,17 +19,13 @@
             android:id="@+id/thumbImage"
             android:layout_width="82dp"
             android:layout_height="82dp"
-            android:layout_alignParentTop="true"
             android:layout_marginTop="11dp"
-            android:layout_toEndOf="@+id/itemCheckBox" />
+            android:contentDescription="N/A" />
 
         <TextView
             android:id="@+id/fileName"
             android:layout_width="82dp"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/thumbImage"
-            android:layout_alignStart="@+id/thumbImage"
-            android:layout_below="@+id/thumbImage"
             android:paddingBottom="3dp"
             android:text="Name"
             android:textAlignment="center"
@@ -46,7 +41,7 @@
         <TextView
             android:id="@+id/description"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginEnd="35dp"
             android:layout_weight="1"
             android:text="No description "
@@ -56,7 +51,7 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1">
 
@@ -67,12 +62,11 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_marginBottom="5dp"
-            android:layout_weight="1"
             android:paddingBottom="2dp"
-            android:paddingRight="4dp"
+            android:paddingEnd="4dp"
             android:text="Delete"
             android:textColor="@color/maroon"
-            android:textSize="10dp" />
+            android:textSize="10sp" />
     </RelativeLayout>
 
 </LinearLayout>
