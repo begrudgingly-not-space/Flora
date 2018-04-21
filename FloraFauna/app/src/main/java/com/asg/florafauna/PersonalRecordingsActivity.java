@@ -66,6 +66,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     File[] listFile;
     ArrayList<String> FileNameStrings = new ArrayList<String>();
     AlertDialog imageDialog;
+    AlertDialog folderDialog;
     boolean nameGiven = true;
     ArrayAdapter<String> spinAdapter;
 
@@ -518,8 +519,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 String selectedDir = dirSelector.getSelectedItem().toString();
                 if(selectedDir.equals("Create New"))
                 {
-                    Log.i("selected new", "folder");
-
+                    createFolderDialog();
                 }
                 else if(selectedDir.equals("On Page"))
                 {
@@ -549,6 +549,52 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
         imageDialog.setTitle("Save Image");
         imageDialog.show();
+    }
+
+    protected void createFolderDialog()
+    {
+        Log.i("selected new", "folder");
+        // create a builder to add custom settings to
+        // an alert dialog
+        AlertDialog.Builder dirBuilder;
+
+        // create alert dialog in personal recordings context
+        dirBuilder = new AlertDialog.Builder(PersonalRecordingsActivity.this);
+
+        // create a view associated with the alert dialog xml file
+        View dirView = getLayoutInflater().inflate(R.layout.dialog_createdir, null);
+
+        // three components of this dialog
+        // dirText, cancelButton, saveButton
+        final EditText newFolder = (EditText) dirView.findViewById(R.id.dirText);
+
+        Button noSave = (Button) dirView.findViewById(R.id.cancelButton);
+        noSave.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                imageDialog.dismiss();
+            }
+        });
+
+        Button saveFolder = (Button) dirView.findViewById(R.id.saveButton);
+        saveFolder.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                // get the folder name and create the folder
+                String folderName = newFolder.getText().toString();
+            }
+        });
+
+        dirBuilder.setView(dirView);
+
+        folderDialog = dirBuilder.create();
+        folderDialog.setTitle("Create New Folder");
+        folderDialog.show();
+
+
+
     }
 
 }
