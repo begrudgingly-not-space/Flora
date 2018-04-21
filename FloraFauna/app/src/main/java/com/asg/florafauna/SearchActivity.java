@@ -533,11 +533,11 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("onErrorResponse", error.toString());
-                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
 
                 if (speciesListCount == 0) {
                     if (filteredArrayList.isEmpty()) {
                         dialog.dismiss();
+                        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
                         alertDialog.setTitle("No matches found.");
                         alertDialog.setMessage("There are no species by that name near you.");
                         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
