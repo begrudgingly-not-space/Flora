@@ -454,6 +454,21 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         String scientificName;
         String commonName;
         int speciesListCount = speciesNamesArray.size();
+        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+
+        if (speciesListCount == 0){
+            dialog.dismiss();
+            alertDialog.setTitle("No results to filter by.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            return;
+        }
+
         for (int i = 0; i < speciesNamesArray.size(); i++) {
             speciesListCount--;
             if (speciesNamesArray.get(i).contains(",")) {
@@ -518,10 +533,11 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("onErrorResponse", error.toString());
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+
                 if (speciesListCount == 0) {
                     if (filteredArrayList.isEmpty()) {
                         dialog.dismiss();
-                        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
                         alertDialog.setTitle("No matches found.");
                         alertDialog.setMessage("There are no species by that name near you.");
                         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
@@ -538,6 +554,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                         speciesListView.setAdapter(adapter);
                     }
                 }
+
             }
         }
         );
@@ -824,15 +841,39 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 Log.e("onErrorResponse", error.toString());
                 dialog.dismiss();
                 AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                alertDialog.setTitle("Invalid County, State");
-                alertDialog.setMessage("Please input the name of a county followed by a comma and then the name of the state");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface alertDialog, int which) {
-                                alertDialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
+
+                if (error instanceof NoConnectionError){
+                    alertDialog.setTitle("No internet connection");
+                    alertDialog.setMessage("Device must be connected to internet to retrieve results.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else if (error instanceof TimeoutError) {
+                    alertDialog.setTitle("Cannot connect to BISON servers at this time.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else {
+                    alertDialog.setTitle("Invalid County, State");
+                    alertDialog.setMessage("Please input a county in the first search box and a state in the second search box.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
             }
         }
         );
@@ -1003,6 +1044,29 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 {
                     Log.e("Error: ", error.toString());
                     dialog.dismiss();
+                    AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+
+                    if (error instanceof NoConnectionError){
+                        alertDialog.setTitle("No internet connection");
+                        alertDialog.setMessage("Device must be connected to internet to retrieve results.");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface alertDialog, int which) {
+                                        alertDialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                    }
+                    else if (error instanceof TimeoutError) {
+                        alertDialog.setTitle("Cannot connect to ITIS servers at this time.");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface alertDialog, int which) {
+                                        alertDialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                    }
                 }
             });
 
@@ -1116,6 +1180,30 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             {
                 Log.e("Error: ", error.toString());
                 dialog.dismiss();
+
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+
+                if (error instanceof NoConnectionError){
+                    alertDialog.setTitle("No internet connection");
+                    alertDialog.setMessage("Device must be connected to internet to retrieve results.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else if (error instanceof TimeoutError) {
+                    alertDialog.setTitle("Cannot connect to ITIS servers at this time.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
             }
         });
 
@@ -1231,15 +1319,39 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 Log.e("onErrorResponse", error.toString());
                 dialog.dismiss();
                 AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                alertDialog.setTitle("What's Around Me Error Description");
-                alertDialog.setMessage(error.toString());
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface alertDialog, int which) {
-                                alertDialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
+
+                if (error instanceof NoConnectionError){
+                    alertDialog.setTitle("No internet connection");
+                    alertDialog.setMessage("Device must be connected to internet to retrieve results.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else if (error instanceof TimeoutError) {
+                    alertDialog.setTitle("Cannot connect to ITIS servers at this time.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else {
+                    alertDialog.setTitle("What's Around Me Error Description");
+                    alertDialog.setMessage(error.toString());
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
             }
         }
         );
