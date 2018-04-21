@@ -68,8 +68,10 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     ArrayList<String> FileNameStrings = new ArrayList<String>();
     AlertDialog imageDialog;
     AlertDialog folderDialog;
+    String folderName;
     boolean nameGiven = true;
     ArrayAdapter<String> spinAdapter;
+    ArrayList<File> folderAL = new ArrayList<File>();
 
 
     @Override
@@ -418,7 +420,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             }
             //if folder
             else if(testfile.isDirectory()){
-
+                    holder.imgDescription.setText("");
             }
 
             return convertView;
@@ -512,20 +514,22 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
         // using an array list to create entries for the save location spinner
         ArrayList<String> defaultDirs = new ArrayList<>();
+
+        // if there are existing folders, populate those in the imageDialog spinner
+        if(!folderAL.isEmpty())
+        {
+            for(int i = 0; i < folderAL.size(); i++)
+            {
+                defaultDirs.add(folderAL.get(i).getName());
+            }
+        }
+
+
+        // add the two default settings
         defaultDirs.add("On Page");
         defaultDirs.add("Create New");
 
-
-        if(!FilePathStrings.isEmpty())
-        {
-            defaultDirs.addAll(FilePathStrings);
-            spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, FilePathStrings);
-        }
-        else
-        {
-            spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, defaultDirs);
-        }
-
+        spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, defaultDirs);
         spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // just a TextView to display words, "Save Location"
@@ -549,6 +553,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 if(selectedDir.equals("Create New"))
                 {
                     createFolderDialog();
+
                 }
                 else if(selectedDir.equals("On Page"))
                 {
@@ -587,6 +592,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         // an alert dialog
         AlertDialog.Builder dirBuilder;
 
+
         // create alert dialog in personal recordings context
         dirBuilder = new AlertDialog.Builder(PersonalRecordingsActivity.this);
 
@@ -597,12 +603,13 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         // dirText, cancelButton, saveButton
         final EditText newFolder = (EditText) dirView.findViewById(R.id.dirText);
 
+        // don't create folder, just close dialog
         Button noSave = (Button) dirView.findViewById(R.id.cancelButton);
         noSave.setOnClickListener(new View.OnClickListener()
         {
             public void onClick(View v)
             {
-                imageDialog.dismiss();
+                folderDialog.dismiss();
             }
         });
 
@@ -612,7 +619,22 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 // get the folder name and create the folder
-                String folderName = newFolder.getText().toString();
+                if(!newFolder.getText().toString().equalsIgnoreCase("")) {
+                    folderName = newFolder.getText().toString();
+                    // if folder doesn't already exist, create it
+                    if(!folderAL.contains(folderName))
+                    {
+                        createNewFolder(folderName);
+
+                    }
+                }
+                // alert that a name hasn't been entered
+                else
+                {
+                    Toast.makeText(getBaseContext(), "Enter a folder name", LENGTH_LONG).show();
+                }
+
+
             }
         });
 
@@ -690,6 +712,25 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         refresh.putExtra("RDIR", dirName);
         finish();
         startActivity(refresh);
+
+    }
+
+    // create a folder in the root path /FloraFauna/Recordings
+    protected void createNewFolder(String pathname)
+    {
+        String folderPath = dirName + pathname;
+        Log.i("root directory", folderPath);
+        File newFolder = new File(folderPath);
+
+        // create new folder and store it in the folder array list
+        if(newFolder.mkdir())
+        {
+            folderAL.add(newFolder);
+        }
+        else
+        {
+            Toast.makeText(getBaseContext(), "Couldn't create folder", LENGTH_LONG).show();
+        }
 
     }
 
