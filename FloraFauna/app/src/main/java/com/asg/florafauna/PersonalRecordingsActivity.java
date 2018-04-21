@@ -1,7 +1,6 @@
 package com.asg.florafauna;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -29,6 +28,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
@@ -322,12 +323,40 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 convertView = mInflater.inflate(R.layout.galleryitem, null);
                 holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage); //thumbnail
                 holder.fileName = (TextView) convertView.findViewById(R.id.fileName); //name of text
+                holder.checkBox = (CheckBox) convertView.findViewById(R.id.itemCheckBox); //checkbox of item
+                holder.delete = (TextView) convertView.findViewById(R.id.delete); //delete button
                 holder.imgDescription = (TextView) convertView.findViewById(R.id.description); // image description
 
                 convertView.setTag(holder);
 
+                //set onCheckListerner for each item
+                holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                        if(isChecked){ //if item is checked
+
+                        }
+                        else //if item is unchecked from being checked
+                        {
+
+                        }
+
+                    }
+                });
+
+                //set onclicklistener for delete for each item
+                holder.delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //code to delete file here
+                        //on click, confirm with pop-up,
+                        //if true, delete
+                        ConfirmDelete(position);
+                    }
+                });
+
                 //set onclicklistener for each item
-                convertView.setOnClickListener(new View.OnClickListener() {
+                holder.imageview.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         //if image, do this
@@ -398,6 +427,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     class ViewHolder {
         ImageView imageview;
         TextView fileName;
+        CheckBox checkBox;
+        TextView delete;
         TextView imgDescription;
     }
 
@@ -457,10 +488,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
-                            Intent refresh = new Intent(PersonalRecordingsActivity.this, PersonalRecordingsActivity.class);
-                            refresh.putExtra("RDIR", dirName);
-                            finish();
-                            startActivity(refresh);
+                            refresh();
+
                         }
                     }
 
@@ -594,6 +623,73 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         folderDialog.show();
 
 
+
+    }
+
+    // function to create the custom alert dialog
+    public void ConfirmDelete(final int position)
+    {
+        // create a builder to add custom settings to
+        // an alert dialog
+        AlertDialog.Builder builder;
+
+        // create alert dialog in personal recordings context
+        builder = new AlertDialog.Builder(this);
+
+        // create a view associated with the alert dialog xml file
+        View dView = getLayoutInflater().inflate(R.layout.dialog_confirmdelete, null);
+
+
+        // this should result in an image being placed in a directory or on the page
+        Button okayButton = (Button) dView.findViewById(R.id.yesButton);
+        okayButton.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                File deleteThis = new File(FilePathStrings.get(position));
+                //if directory, recursively delete
+                if(deleteThis.isDirectory()){
+                    String[] children = deleteThis.list();
+                    for (int i = 0; i < children.length; i++)
+                    {
+                        new File(deleteThis, children[i]).delete();
+                    }
+                    deleteThis.delete();
+
+                }
+                else {
+                    deleteThis.delete();
+                }
+                //refresh the activity
+                refresh();
+                imageDialog.dismiss();
+            }
+        });
+
+        // this should result in nothing added to either the page
+        // or any of the directories
+        Button cancelButton = (Button) dView.findViewById(R.id.noButton);
+        cancelButton.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                imageDialog.dismiss();
+            }
+        });
+
+        builder.setView(dView);
+
+        imageDialog = builder.create();
+
+        imageDialog.setTitle("Confirm Delete?");
+        imageDialog.show();
+    }
+
+    protected void refresh(){
+        Intent refresh = new Intent(PersonalRecordingsActivity.this, PersonalRecordingsActivity.class);
+        refresh.putExtra("RDIR", dirName);
+        finish();
+        startActivity(refresh);
 
     }
 
