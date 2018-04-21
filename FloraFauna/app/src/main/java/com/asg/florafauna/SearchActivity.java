@@ -1332,7 +1332,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     alertDialog.show();
                 }
                 else if (error instanceof TimeoutError) {
-                    alertDialog.setTitle("Cannot connect to ITIS servers at this time.");
+                    alertDialog.setTitle("Cannot connect to BISON servers at this time.");
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface alertDialog, int which) {
