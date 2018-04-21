@@ -12,8 +12,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Folder"
-        android:inputType="textPersonName"
-        android:text="Folder" />
+        android:inputType="textPersonName" />
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="wrap_content"
