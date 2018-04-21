@@ -865,7 +865,7 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
                             else {
                                 AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
                                 alertDialog.setTitle("No results found");
-                                alertDialog.setMessage("No observations of the entered species in this county");
+                                alertDialog.setMessage("No observations of the entered species in this location.");
                                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                                         new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface alertDialog, int which) {

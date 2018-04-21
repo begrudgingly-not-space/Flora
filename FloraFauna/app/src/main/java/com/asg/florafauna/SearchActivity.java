@@ -32,9 +32,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -646,16 +648,41 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             public void onErrorResponse(VolleyError error) {
                 Log.e("onErrorResponse", error.toString());
                 dialog.dismiss();
+
                 AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                alertDialog.setTitle("Invalid State");
-                alertDialog.setMessage("Please input the full name of a state.");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface alertDialog, int which) {
-                                alertDialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
+
+                if (error instanceof NoConnectionError){
+                    alertDialog.setTitle("No internet connection");
+                    alertDialog.setMessage("Device must be connected to internet to retrieve results.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else if (error instanceof TimeoutError) {
+                    alertDialog.setTitle("Cannot connect to BISON servers at this time.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else {
+                    alertDialog.setTitle("Invalid State");
+                    alertDialog.setMessage("Please input the full name of a state.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
             }
         }
         );
