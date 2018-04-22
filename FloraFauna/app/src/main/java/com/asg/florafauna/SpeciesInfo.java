@@ -1,14 +1,9 @@
 package com.asg.florafauna;
 
-/**
- * Created by steven on 2/8/18.
- */
+// Created by steven on 2/8/18.
 
 import android.content.Context;
 import android.util.Log;
-import android.view.View;
-import android.widget.ArrayAdapter;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -16,43 +11,36 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.*;
 
 public class SpeciesInfo
 {
-    String scientificName;
-    String commonName;
-    String eolLink;
-    String description;
-    String imageLink;
-    String done;
-    String dispError;
+    private String scientificName, commonName, eolLink, description, imageLink, done, dispError;
 
-    //initializer for when only passed name(Search results from bison)
+    // Initializer for when only passed name (search results from bison)
     public SpeciesInfo(final Context context, String name)
     {
-        this.scientificName=name;
+        this.scientificName = name;
         setFromEOL(context, name);
     }
-    //initializer for when passed eol link, skips first search
-    //unused for now
+
+    // Initializer for when passed eol link, skips first search (unused for now)
     /*
     public SpeciesInfo(String name, String link)
     {
-        this.scientificName=name;
-        this.eolLink=link;
+        this.scientificName = name;
+        this.eolLink = link;
     }*/
 
-    //pull relevant info from the search page and from the eol information page
-    //all the description="*" lines are for tracking where I am getting to in the program
+    // Pull relevant info from the search page and from the eol information page
+    // All the description="*" lines are for tracking where I am getting to in the program
     private void setFromEOL(final Context context, String name)
     {
-        String query=eolQuery(name);
-        Log.i("query",query);
+        String query = eolQuery(name);
+        Log.i("query", query);
         //RequestQueue requestQueue = Volley.newRequestQueue(context);
-        description="\nIn setFromEOL";
+        description = "\nIn setFromEOL";
+
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
         JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null,
@@ -65,14 +53,14 @@ public class SpeciesInfo
                 {
                     description+="\nin onResponse try block";
 
-                    //this has been tested, gives the data that I am looking for
+                    // This has been tested, gives the data that I am looking for
                     JSONObject results = response.getJSONArray("results").getJSONObject(0);
                     Log.i("linkResponse",results.getString("link"));
                     eolLink = results.getString("link");
 
-                    //the log updates, but not every time?
+                    // The log updates, but not every time?
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Log.e("Error: ", e.toString());
                     dispError=e.toString();
@@ -85,20 +73,19 @@ public class SpeciesInfo
             public void onErrorResponse(VolleyError error)
             {
                 Log.e("Error: ", error.toString());
-                dispError=error.toString();
-                description+="\nin onErrorResponse";
+                dispError = error.toString();
+                description += "\nin onErrorResponse";
             }
         });
         requestQueue.add(searchRequest);
-        //description="finished with searchRequest";
+        //description = "finished with searchRequest";
 
     }
-    /*private void setFromEOL(String name)
-    {
+
+    /*private void setFromEOL(String name) {
         try
         {
-            String query=eolQuery(name);
-
+            String query = eolQuery(name);
             String json = Jsoup.connect(query).ignoreContentType(true).execute().parse().toString();
             eolLink = json.substring(json.indexOf("http"),json.indexOf("?"));
 
@@ -116,31 +103,31 @@ public class SpeciesInfo
             stop = page.indexOf("\"",start);
             imageLink = page.substring(start,stop);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             System.out.println(e.toString());
             error=e.toString();
         }
     }*/
 
-    //format query to search for an animal(exact name) on eol
+    // Format query to search for a species(exact name) on eol
     private String eolQuery(String name)
     {
         String first="http://eol.org/api/search/1.0.json?q=";
         String last="&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=";
         name=name.replaceAll(" ","+");
-        return first+name+last;
+        return first + name + last;
     }
 
-    //format query to search for an animal on gbif
+    // Format query to search for a species on gbif
     private String gbifQuery(String name)
     {
         String first = "http://api.gbif.org/v1/species?name=";
-        name=name.replaceAll(" ","+");
-        return first+name;
+        name = name.replaceAll(" ","+");
+        return first + name;
     }
 
-    //getters to return values from the object
+    // Getters to return values from the object
     public String getScientificName()
     {
         return scientificName;

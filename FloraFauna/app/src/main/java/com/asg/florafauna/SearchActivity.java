@@ -83,7 +83,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private RadioButton Kingdom;
     private RadioButton Genus;
     private RadioButton MyLocation;
-    private String[] themeArray = new String[1];
     private FrameLayout searchBox;
     private LinearLayout countyStateInput;
     private EditText countyInput, stateInput, filterEditText;
@@ -91,7 +90,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(ThemeCreator.getTheme(this, themeArray[0]));
+        setTheme(ThemeCreator.getTheme(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         if (getSupportActionBar() != null) {

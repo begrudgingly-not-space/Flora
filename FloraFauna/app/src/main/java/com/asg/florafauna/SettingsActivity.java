@@ -28,7 +28,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(ThemeCreator.getTheme(this, themeArray[0]));
+        setTheme(ThemeCreator.getTheme(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         if (getSupportActionBar() != null) {

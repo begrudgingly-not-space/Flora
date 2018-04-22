@@ -29,12 +29,11 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE = 0;
     private String dirName = "FloraFauna/Recordings";
     private final File recordings = new File(Environment.getExternalStorageDirectory().toString(), dirName);
-    private String[] themeArray = new String[1];
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        setTheme(ThemeCreator.getTheme(this, themeArray[0]));
+        setTheme(ThemeCreator.getTheme(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_recordings);
         if (getSupportActionBar() != null) {

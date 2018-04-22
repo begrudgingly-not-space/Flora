@@ -66,7 +66,6 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
     private Spinner spinner;
     private ProgressDialog dialog;
     private InputMethodManager imm;
-    private String[] themeArray = new String[1];
     private Map<String, double[]> stateLocations = new HashMap<>();
 
     // Variables for nearby sightings
@@ -84,7 +83,7 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(ThemeCreator.getTheme(this, themeArray[0]));
+        setTheme(ThemeCreator.getTheme(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         if (getSupportActionBar() != null) {

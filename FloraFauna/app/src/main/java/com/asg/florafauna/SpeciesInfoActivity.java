@@ -26,9 +26,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
@@ -46,35 +43,31 @@ public class SpeciesInfoActivity extends AppCompatActivity
     public static final String INTENT_EXTRA_IMAGELINK = "imageLink";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
-/* setup*/
+    protected void onCreate(Bundle savedInstanceState) {
+        setTheme(ThemeCreator.getTheme(this));
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_speciesinfo);
 
-    setTheme();
+        //action bar creation copied form HelpActivity.java
+        FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
+        //Log.i("Data","ImageLink "+imageLink);
 
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_speciesinfo);
+        Button button = (Button) findViewById(R.id.button_send);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(SpeciesInfoActivity.this, ImageActivity.class);
+                intent.putExtra(INTENT_EXTRA_IMAGELINK, imageLink);
+                //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
+                startActivity(intent);
 
-    //action bar creation copied form HelpActivity.java
-    FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
-    //Log.i("Data","ImageLink "+imageLink);
+            }
+        });
 
-    Button button = (Button) findViewById(R.id.button_send);
-    button.setOnClickListener(new View.OnClickListener() {
-        public void onClick(View v) {
-            Intent intent = new Intent(SpeciesInfoActivity.this, ImageActivity.class);
-            intent.putExtra(INTENT_EXTRA_IMAGELINK, imageLink);
-            //new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
-            startActivity(intent);
+    /*not setup*/
+            //get scientific name sent by search
+            scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
 
-        }
-    });
-
-/*not setup*/
-        //get scientific name sent by search
-        scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
-
-        getPage(this);
+            getPage(this);
 
     }
 
