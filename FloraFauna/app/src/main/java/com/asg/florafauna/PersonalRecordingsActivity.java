@@ -72,6 +72,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     boolean nameGiven = true;
     ArrayAdapter<String> spinAdapter;
     ArrayList<File> folderAL = new ArrayList<File>();
+    File imageLocation;
 
 
     @Override
@@ -475,8 +476,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                     // that an image name and description was entered
                     // additionally, we need to ensure a save location was selected
                     if (currentImage == null) {
-                        Log.i("just a log", "log");
-
                         Uri photoUri = data.getData();
                         if (photoUri != null) {
                             //code to mess with images will be here
@@ -484,7 +483,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                             try {
                                 currentImage = MediaStore.Images.Media.getBitmap(cr, photoUri);
                                 //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
-                                FileOutputStream output = new FileOutputStream(recordings + "/" + imageName.getText() + "!" + description.getText());
+                                FileOutputStream output = new FileOutputStream(getSaveFolder() + "/" + imageName.getText() + "!" + description.getText());
                                 currentImage.compress(Bitmap.CompressFormat.PNG, 75, output); //save file
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -494,7 +493,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
                         }
                     }
-
 
                     imageDialog.dismiss();
                 }
@@ -513,14 +511,14 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         });
 
         // using an array list to create entries for the save location spinner
-        ArrayList<String> defaultDirs = new ArrayList<>();
+        final ArrayList<String> defaultDirs = new ArrayList<>();
 
         // if there are existing folders, populate those in the imageDialog spinner
-        if(!folderAL.isEmpty())
+        for(int i = 0; i < listFile.length; i++)
         {
-            for(int i = 0; i < folderAL.size(); i++)
+            if(listFile[i].isDirectory())
             {
-                defaultDirs.add(folderAL.get(i).getName());
+                defaultDirs.add(listFile[i].getName());
             }
         }
 
@@ -555,13 +553,21 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                     createFolderDialog();
 
                 }
+                // root personal recordings page
                 else if(selectedDir.equals("On Page"))
                 {
                     Log.i("Save on page", "image");
+                    imageLocation = recordings;
+
                 }
                 else
                 {
-
+                    // create new file for image
+                    String folderPath = dirName + selectedDir;
+                    Log.i("root directory", folderPath);
+                    File newFolder = new File(folderPath);
+                    imageLocation = newFolder;
+                    Log.i("PATH", imageLocation.getName());
                 }
             }
 
@@ -591,7 +597,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         // create a builder to add custom settings to
         // an alert dialog
         AlertDialog.Builder dirBuilder;
-
 
         // create alert dialog in personal recordings context
         dirBuilder = new AlertDialog.Builder(PersonalRecordingsActivity.this);
@@ -643,8 +648,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         folderDialog = dirBuilder.create();
         folderDialog.setTitle("Create New Folder");
         folderDialog.show();
-
-
 
     }
 
@@ -732,6 +735,11 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             Toast.makeText(getBaseContext(), "Couldn't create folder", LENGTH_LONG).show();
         }
 
+    }
+
+    protected File getSaveFolder()
+    {
+        return imageLocation;
     }
 
 }
