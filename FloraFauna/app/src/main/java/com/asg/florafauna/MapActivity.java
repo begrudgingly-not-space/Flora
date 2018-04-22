@@ -54,93 +54,47 @@ import static com.asg.florafauna.CountyFinder.countyFinder;
 import static com.asg.florafauna.SearchActivity.setAOIBbox;
 import static com.asg.florafauna.StateFinder.stateFinder;
 
-
 /**
  * Created by brada on 3/13/2018.
  */
 
 public class MapActivity extends AppCompatActivity implements LocationListener{
-
+    private static final String TAG = "MapActivity";
     WebView myWebView;
-
-    String points = "-91.69000244140625 31.219999313 -90.00507354736328 30.337696075439453 -93.58332824707031 32.58332824707031 -89.84539794921875 30.270082473754883";
-
-    private EditText speciesInput;
-    private EditText locationInput;
-    private EditText speciesInputCounty;
-    private EditText stateInputForCounty;
-    private EditText countyInputForCounty;
-
-
-    private LinearLayout countyInput;
-    private LinearLayout stateInput;
-
+    private EditText speciesInput, locationInput, speciesInputCounty, stateInputForCounty, countyInputForCounty;
+    private LinearLayout countyInput, stateInput;
     private Spinner spinner;
-
     private ProgressDialog dialog;
-
     private InputMethodManager imm;
-
     private String[] themeArray = new String[1];
-
-    private double mapLongitude = -96.9583498;
-    private double mapLatitude = 40.7507204;
-    private double mapZoom = 2;
-
     private Map<String, double[]> stateLocations = new HashMap<>();
 
-    //variables for nearby sightings
+    // Variables for nearby sightings
     private String locationPolygon;
     private double latitude;
     private double longitude;
     private double mileage;
     private String[] mileageArray = new String[1];
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION = 0;
-    private static final String TAG = "MapActivity";
+
+    String points = "-91.69000244140625 31.219999313 -90.00507354736328 30.337696075439453 -93.58332824707031 32.58332824707031 -89.84539794921875 30.270082473754883";
+    private double mapLongitude = -96.9583498;
+    private double mapLatitude = 40.7507204;
+    private double mapZoom = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //setTheme(R.style.AppTheme);
-        try {
-            //opens the file to read its contents
-            FileInputStream fis = this.openFileInput("theme");
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader reader = new BufferedReader(isr);
-
-            themeArray[0] = reader.readLine(); //adds the line to the temp array
-            reader.close();
-            isr.close();
-            fis.close();
-        }
-        catch (FileNotFoundException e){
-            e.printStackTrace();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-        if (themeArray[0].equals("Green")){
-            setTheme(R.style.AppTheme);
-        }
-        else if (themeArray[0].equals("Blue")){
-            setTheme(R.style.AppThemeBlue);
-        }
-        else if (themeArray[0].equals("Mono")){
-            setTheme(R.style.AppThemeMono);
-        }
-        else if (themeArray[0].equals("Cherry")){
-            setTheme(R.style.AppThemeCherry);
-        }
-
+        setTheme(ThemeCreator.getTheme(this, themeArray[0]));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
         if (getSupportActionBar() != null) {
             FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_map);
         }
+
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        final ScrollView sv = (ScrollView) findViewById(R.id.scrollview);
+        final ScrollView sv = findViewById(R.id.scrollview);
 
-
-        myWebView = (WebView) findViewById(R.id.webview);
+        myWebView = findViewById(R.id.webview);
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
 
@@ -223,10 +177,9 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
                     stateInput.setVisibility(View.VISIBLE);
                     locationInput.setVisibility(View.INVISIBLE);
                 }
-            } // to close the onItemSelected
+            } // To close the onItemSelected
             public void onNothingSelected(AdapterView<?> parent)
             {
-
             }
         });
 
@@ -281,27 +234,27 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
         stateLocations.put("Wisconsin", new double[] {-89.616508, 44.268543, 4});
         stateLocations.put("Wyoming", new double[] {-107.302490, 42.755966, 5});
 
-        //oncreate methods needed for nearby sightings
+        // onCreate methods needed for nearby sightings
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION);
         }
-        getLocation();
-        getMileage();
-
+        else {
+            getLocation();
+            getMileage();
+        }
     }
 
     public class WebAppInterface {
         Context mContext;
 
-
-        /** Instantiate the interface and set the context */
+        // Instantiate the interface and set the context
         WebAppInterface(Context c) {
             mContext = c;
         }
 
-        /** Get the value */
+        // Get the value
         @JavascriptInterface
         public String getValue() {
             return bisonpoints;
@@ -345,6 +298,7 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
             case R.id.action_home:
                 Intent home_intent = new Intent(MapActivity.this, SearchActivity.class);
                 startActivity(home_intent);
+                return true;
             case R.id.action_recording:
                 Intent recording_intent = new Intent(MapActivity.this, PersonalRecordingsActivity.class);
                 startActivity(recording_intent);
@@ -806,7 +760,7 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
         //myWebView.reload();
     }
 
-    //nearby sightings method
+    // Nearby sightings method
     public void nearbySightings(Context context, String searchType, String species, String polygon){
         AlertDialog alertDialog = new AlertDialog.Builder(MapActivity.this).create();
 
@@ -824,14 +778,14 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
             return;
         }
 
-        //converts min & max points from polygon to double
+        // Converts min & max points from polygon to double
         String[] polygonPoints = polygon.split(",");
         Double[] polygonPointsVal = new Double[4];
         for(int i = 0; i < polygonPoints.length; i++){
             polygonPointsVal[i] = Double.parseDouble(polygonPoints[i]);
         }
 
-        //averages min & max and sets the average as the center of the map
+        // Averages min & max and sets the average as the center of the map
         mapLongitude = (polygonPointsVal[0] + polygonPointsVal[2]) / 2;
         mapLatitude = (polygonPointsVal[1] + polygonPointsVal[3]) / 2;
         mapZoom = 9;
@@ -909,7 +863,7 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
         requestQueue.add(pointsFromBison);
     }
 
-    //methods needed for nearby sightings
+    // Methods needed for nearby sightings
     private void getMileage() {
         try {
             // Opens the file to read its contents
@@ -956,14 +910,9 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-
     }
-
-
-
 }

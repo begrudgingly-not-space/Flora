@@ -12,11 +12,9 @@ import java.io.InputStream;
 
 import static com.asg.florafauna.SpeciesInfoActivity.INTENT_EXTRA_IMAGELINK;
 
-
 /**
  * Created by steven on 4/8/18.
  */
-
 
 public class ImageActivity extends AppCompatActivity
 {
@@ -25,12 +23,14 @@ public class ImageActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
+
         String imageLink = getIntent().getStringExtra(INTENT_EXTRA_IMAGELINK);
         Log.i("image",imageLink);
+
         new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
     }
 
-    //image viewer from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
+    // Image viewer from https://stackoverflow.com/questions/5776851/load-image-from-url#10868126
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
 
