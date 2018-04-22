@@ -517,12 +517,11 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         // if there are existing folders, populate those in the imageDialog spinner
         for(int i = 0; i < listFile.length; i++)
         {
-            if(listFile[i].isDirectory())
+            if(listFile[i].isDirectory() && !defaultDirs.contains(listFile[i]))
             {
                 defaultDirs.add(listFile[i].getName());
             }
         }
-
 
         // add the two default settings
         defaultDirs.add("On Page");
