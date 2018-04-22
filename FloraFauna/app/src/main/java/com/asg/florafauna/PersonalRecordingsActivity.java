@@ -73,6 +73,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     ArrayAdapter<String> spinAdapter;
     ArrayList<File> folderAL = new ArrayList<File>();
     File imageLocation;
+    // using an array list to create entries for the save location spinner
+    final ArrayList<String> defaultDirs = new ArrayList<>();
 
 
     @Override
@@ -510,8 +512,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             }
         });
 
-        // using an array list to create entries for the save location spinner
-        final ArrayList<String> defaultDirs = new ArrayList<>();
+
 
         // if there are existing folders, populate those in the imageDialog spinner
         for(int i = 0; i < listFile.length; i++)
@@ -630,7 +631,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                     if(!folderAL.contains(folderName))
                     {
                         createNewFolder(folderName);
-
+                        folderDialog.dismiss();
                     }
                 }
                 // alert that a name hasn't been entered
@@ -729,6 +730,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         if(newFolder.mkdir())
         {
             folderAL.add(newFolder);
+            defaultDirs.add(newFolder.getName());
+            spinAdapter.notifyDataSetChanged();
         }
         else
         {
@@ -737,6 +740,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
     }
 
+    // returns the folder that the user is intending to save an image in
     protected File getSaveFolder()
     {
         return imageLocation;
