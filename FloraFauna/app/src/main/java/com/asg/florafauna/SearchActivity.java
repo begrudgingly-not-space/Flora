@@ -35,6 +35,7 @@ import android.widget.RadioGroup;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -58,6 +59,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import static com.asg.florafauna.CountyFinder.countyFinder;
+import static com.asg.florafauna.FloraFaunaActionBar.createActionBar;
 import static com.asg.florafauna.StateFinder.stateFinder;
 
 public class SearchActivity extends AppCompatActivity implements LocationListener {
@@ -77,20 +79,15 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private ArrayAdapter<String> adapter;
     private ArrayList<String> history = new ArrayList<>();
     private String[] mileageArray = new String[1];
-    private EditText filterEditText;
     private LinearLayout filterAndRadioButtons;
     private double mileage;
     private RadioButton Kingdom;
     private RadioButton Genus;
     private RadioButton MyLocation;
     private String[] themeArray = new String[1];
-
     private FrameLayout searchBox;
-
     private LinearLayout countyStateInput;
-
-    private EditText countyInput;
-    private EditText stateInput;
+    private EditText countyInput, stateInput, filterEditText;
 
     //load more button
     private Button btnLoadMore;
@@ -154,7 +151,10 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); // Enable hiding/showing keyboard
-        FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_search);
+
+        if (getSupportActionBar() != null) {
+            createActionBar(getSupportActionBar(), R.layout.ab_search);
+        }
 
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
@@ -449,6 +449,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         String scientificName;
         String commonName;
         int speciesListCount = speciesNamesArray.size();
+        Log.d("speciesListCount", Integer.toString(speciesListCount));
         for (int i = 0; i < speciesNamesArray.size(); i++) {
             speciesListCount--;
             if (speciesNamesArray.get(i).contains(",")) {
@@ -486,9 +487,11 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     public void onResponse(JSONObject response) {
                         try {
                             final JSONArray scientificNames = response.getJSONArray("scientificNames");
-                            Log.d("species Array", scientificNames.toString());
+                            Log.d("scientificNames", scientificNames.toString());
                             JSONObject speciesData = scientificNames.getJSONObject(0);
+                            Log.d("speciesData", speciesData.toString());
                             String kingdom = speciesData.getString("kingdom");
+                            Log.d("kingdom", kingdom);
                             String inputKingdom = filterEditText.getText().toString().replaceAll("\\s+","");
                             if (kingdom.equalsIgnoreCase(inputKingdom)) {
                                 filteredArrayList.add(scientificName + commonName);
@@ -522,7 +525,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("onErrorResponse", error.toString());
+                Log.e("onErrorResponseKingdom", error.toString());
                 if (speciesListCount == 0) {
                     if (filteredArrayList.isEmpty()) {
                         dialog.dismiss();
@@ -546,6 +549,22 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             }
         }
         );
+        kingdomRequest.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+        });
 
         // Adds request to queue which is then sent
         requestQueue.add(kingdomRequest);
@@ -1015,7 +1034,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 @Override
                 public void onErrorResponse(VolleyError error)
                 {
-                    Log.e("Error: ", error.toString());
+                    Log.e("SearchError", error.toString());
                     dialog.dismiss();
                 }
             });
@@ -1030,14 +1049,13 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         // base address for searching for a species/genus
         // this will grab any name that contains the text searched by user
         String baseAddress = "https://www.itis.gov/ITISWebService/jsonservice/ITISService/getITISTerms?srchKey=";
-        //final ArrayList<String> speciesList = new ArrayList<>();
 
         // ensure no trailing whitespace for web call
         final String query = baseAddress + speciesName.trim();
         Log.i("final url:", query);
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);
-        JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null, new Response.Listener<JSONObject>()
+        JsonObjectRequest partialSearchRequest = new JsonObjectRequest(Request.Method.GET, query, null, new Response.Listener<JSONObject>()
         {
             @Override
             public void onResponse(JSONObject response)
@@ -1128,13 +1146,38 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             @Override
             public void onErrorResponse(VolleyError error)
             {
-                Log.e("Error: ", error.toString());
+                Log.e("PartialSearchError", error.toString());
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                alertDialog.setTitle("Connection Error");
+                alertDialog.setMessage("Connection may not be available or may be too slow. Please retry search.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
                 dialog.dismiss();
             }
         });
+        partialSearchRequest.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
 
-        requestQueue.add(searchRequest);
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
 
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+        });
+
+        requestQueue.add(partialSearchRequest);
     }
 
     public void whatsAroundMe(View view) {
