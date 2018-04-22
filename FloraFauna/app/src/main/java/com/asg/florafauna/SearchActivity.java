@@ -94,64 +94,9 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        //Sets default theme if none found
-        File themes = new File("theme");
-        if(!themes.exists())
-        {
-            //sets default
-            try{
-                FileOutputStream fOut = openFileOutput("theme", MODE_PRIVATE); //open file 'theme'
-                OutputStreamWriter osw = new OutputStreamWriter(fOut); // required to 'write' to file
-                osw.write("Green");
-                //clean up
-                osw.flush();
-                osw.close();
-                fOut.close();
-            }
-            catch (FileNotFoundException x){
-                x.printStackTrace();
-            }
-            catch (IOException x){
-                Log.e("Exception", "Failed to save history: " + x.toString());
-            }
-        }
-
-        //setTheme(R.style.AppTheme);
-        try {
-            //opens the file to read its contents
-            FileInputStream fis = this.openFileInput("theme");
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader reader = new BufferedReader(isr);
-
-            themeArray[0] = reader.readLine(); //adds the line to the temp array
-            reader.close();
-            isr.close();
-            fis.close();
-        }
-        catch (FileNotFoundException e){
-            e.printStackTrace();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-        if (themeArray[0].equals("Green")){
-            setTheme(R.style.AppTheme);
-        }
-        else if (themeArray[0].equals("Blue")){
-            setTheme(R.style.AppThemeBlue);
-        }
-        else if (themeArray[0].equals("Mono")){
-            setTheme(R.style.AppThemeMono);
-        }
-        else if (themeArray[0].equals("Cherry")){
-            setTheme(R.style.AppThemeCherry);
-        }
-
+        setTheme(ThemeCreator.getTheme(this, themeArray[0]));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); // Enable hiding/showing keyboard
-
         if (getSupportActionBar() != null) {
             createActionBar(getSupportActionBar(), R.layout.ab_search);
         }
@@ -161,21 +106,23 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION},
                         MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION);
         }
-        getLocation();
-        getMileage();
+        else {
+            getLocation();
+            getMileage();
+        }
 
+        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); // Enable hiding/showing keyboard
         searchEditText = findViewById(R.id.SearchEditText);
-        speciesListView = findViewById(R.id.ListSpecies);
         filterEditText = findViewById(R.id.FilterEditText);
+        speciesListView = findViewById(R.id.ListSpecies);
+
         filterAndRadioButtons = findViewById(R.id.FilterAndRadioButtons);
         Kingdom = findViewById(R.id.KingdomButton);
         Genus = findViewById(R.id.GenusButton);
         MyLocation = findViewById(R.id.MyLocationButton);
-
         searchBox = findViewById(R.id.SearchFrame);
 
         countyStateInput = findViewById(R.id.locationInput);
-
         countyInput = findViewById(R.id.countyInput);
         stateInput = findViewById(R.id.stateInput);
 
@@ -285,17 +232,14 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     @Override
     public void onProviderDisabled(String provider) {
-        //Toast.makeText(SearchActivity.this, "Please Enable GPS and Internet", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-
     }
 
     @Override
@@ -338,10 +282,12 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission granted
+                    getLocation();
+                    getMileage();
                 }
-                else {
+                /*else {
                     // Permission denied, What's Around Me functionality disabled
-                }
+                }*/
             }
         }
     }
@@ -350,7 +296,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode==RESULT_OK){
+        if(resultCode == RESULT_OK){
             Intent refresh = new Intent(this, SearchActivity.class);
             startActivity(refresh);
             this.finish();
@@ -377,7 +323,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 filter();
             }
         }, 1000);
-
     }
 
     // SEARCH FUNCTIONS
@@ -441,8 +386,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             filterByKingdomOrLocation(location);
         }
     }
-
-
 
     private void filterByKingdomOrLocation(int filterType) {
         filteredArrayList.clear();

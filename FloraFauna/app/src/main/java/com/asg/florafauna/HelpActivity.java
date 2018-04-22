@@ -6,59 +6,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import static com.asg.florafauna.FloraFaunaActionBar.createActionBar;
 
 /**
  * Created by brada on 2/2/2018.
  */
 
 public class HelpActivity extends AppCompatActivity {
-
     private String[] themeArray = new String[1];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //setTheme(R.style.AppTheme);
-        try {
-            //opens the file to read its contents
-            FileInputStream fis = this.openFileInput("theme");
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader reader = new BufferedReader(isr);
-
-            themeArray[0] = reader.readLine(); //adds the line to the temp array
-            reader.close();
-            isr.close();
-            fis.close();
-        }
-        catch (FileNotFoundException e){
-            e.printStackTrace();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-        if (themeArray[0].equals("Green")){
-            setTheme(R.style.AppTheme);
-        }
-        else if (themeArray[0].equals("Blue")){
-            setTheme(R.style.AppThemeBlue);
-        }
-        else if (themeArray[0].equals("Mono")){
-            setTheme(R.style.AppThemeMono);
-        }
-        else if (themeArray[0].equals("Cherry")){
-            setTheme(R.style.AppThemeCherry);
-        }
-
+        setTheme(ThemeCreator.getTheme(this, themeArray[0]));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_help);
-
-        FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_help);
+        if (getSupportActionBar() != null) {
+            createActionBar(getSupportActionBar(), R.layout.ab_help);
+        }
     }
 
     @Override
@@ -92,20 +57,4 @@ public class HelpActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
-    //opens settings
-    public void openSettings(View view){
-        Intent intent = new Intent(HelpActivity.this, SettingsActivity.class);
-        startActivity(intent);
-    }
-
-    public void openSearch(View view){
-        Intent intent = new Intent(HelpActivity.this, SearchActivity.class);
-        startActivity(intent);
-    }
-
-    public void goBack(View view){
-        finish();
-    }
-
 }
