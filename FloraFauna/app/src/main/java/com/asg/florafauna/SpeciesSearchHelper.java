@@ -9,21 +9,20 @@ import android.text.TextUtils;
 
 class SpeciesSearchHelper
 {
-
     int getNameLength(String name)
     {
         int nameLength;
 
-        // remove trailing whitespace
+        // Remove trailing whitespace
         name = name.trim();
 
-        if(name.isEmpty())
+        if (name.isEmpty())
         {
             return 0;
         }
         else
         {
-            // this should ensure that multiple spaces together in a string are ignored
+            // This should ensure that multiple spaces together in a string are ignored
             nameLength = name.split("\\s+").length;
         }
 
@@ -35,6 +34,7 @@ class SpeciesSearchHelper
     {
         String capitalizedName;
         String arr[] = name.split(" ");
+
         for(int i = 0; i < arr.length; i++)
         {
             arr[i] = arr[i].substring(0, 1).toUpperCase() + arr[i].substring(1);
@@ -43,5 +43,4 @@ class SpeciesSearchHelper
         capitalizedName = TextUtils.join(" ", arr);
         return capitalizedName;
     }
-
 }
