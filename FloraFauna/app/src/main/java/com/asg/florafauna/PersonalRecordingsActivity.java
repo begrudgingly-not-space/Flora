@@ -21,15 +21,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class PersonalRecordingsActivity extends AppCompatActivity {
-
     private ImageView selectedImage;
     private Bitmap currentImage;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE = 0;
@@ -40,47 +34,17 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        //setTheme(R.style.AppTheme);
-        try {
-            //opens the file to read its contents
-            FileInputStream fis = this.openFileInput("theme");
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader reader = new BufferedReader(isr);
-
-            themeArray[0] = reader.readLine(); //adds the line to the temp array
-            reader.close();
-            isr.close();
-            fis.close();
-        }
-        catch (FileNotFoundException e){
-            e.printStackTrace();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-        if (themeArray[0].equals("Green")){
-            setTheme(R.style.AppTheme);
-        }
-        else if (themeArray[0].equals("Blue")){
-            setTheme(R.style.AppThemeBlue);
-        }
-        else if (themeArray[0].equals("Mono")){
-            setTheme(R.style.AppThemeMono);
-        }
-        else if (themeArray[0].equals("Cherry")){
-            setTheme(R.style.AppThemeCherry);
-        }
+        setTheme(ThemeCreator.getTheme(this, themeArray[0]));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_recordings);
+        if (getSupportActionBar() != null) {
+            FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_recordings);
+        }
 
-        FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_recordings);
-
-
-        selectedImage = (ImageView) findViewById(R.id.imageView1);
-        FloatingActionButton openGallery = (FloatingActionButton) findViewById(R.id.floatingUpload);
+        selectedImage = findViewById(R.id.imageView1);
+        FloatingActionButton openGallery = findViewById(R.id.floatingUpload);
 
         openGallery.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
@@ -89,8 +53,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             }
         });
 
-        // open the default camera app to take a picture
-        ImageButton openCamera = (ImageButton) findViewById(R.id.floatingCameraButton);
+        // Open the default camera app to take a picture
+        ImageButton openCamera = findViewById(R.id.floatingCameraButton);
         openCamera.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -102,31 +66,27 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             }
         });
 
-
-        //Create dir for recordings
-        //request for permission to write to storage
+        // Create directory for recordings
+        // Request for permission to write to storage
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE);
         }
 
-        //checks if the recordings dir exists
+        // Checks if the recordings directory exists
         if (!recordings.exists()) {
-            //if directory creation fails, tell the user
+            // If directory creation fails, tell the user
             if (!recordings.mkdirs()) {
                 Log.d("error", "failed to make dir");
                 Toast.makeText(this, "Failed to create directory", Toast.LENGTH_LONG).show();
             }
         }
-        //if the directory exists, make a log
+        // If the directory exists, log error
         else {
-            Log.d("error", "dir. already exists");
+            Log.d("Error", "Directory already exists");
         }
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -160,7 +120,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -168,7 +127,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             Uri photoUri = data.getData();
             if (photoUri != null) {
-                //code to mess with images will be here
+                // Code for images will be here
                 try {
                     currentImage = MediaStore.Images.Media.getBitmap(this.getContentResolver(), photoUri);
                     selectedImage.setImageBitmap(currentImage); //set the image view to the current image
@@ -196,10 +155,9 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     }
 
     public void goBack(View view){
-        /* closes the activity */
+        // Closes the activity
         setResult(RESULT_OK, null);
         finish();
     }
-
 }
 

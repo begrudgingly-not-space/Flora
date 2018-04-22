@@ -45,7 +45,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -88,8 +87,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private FrameLayout searchBox;
     private LinearLayout countyStateInput;
     private EditText countyInput, stateInput, filterEditText;
-
-    //load more button
     private Button btnLoadMore;
 
     @Override
