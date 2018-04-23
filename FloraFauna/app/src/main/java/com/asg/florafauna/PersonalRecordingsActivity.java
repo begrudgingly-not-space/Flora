@@ -72,11 +72,9 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     ArrayAdapter<String> spinAdapter;
     ArrayList<File> folderAL = new ArrayList<File>();
     File imageLocation;
-    // using an array list to create entries for the save location spinner
+    // Using an array list to create entries for the save location spinner
     final ArrayList<String> defaultDirs = new ArrayList<>();
-
     File newFolder;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState)

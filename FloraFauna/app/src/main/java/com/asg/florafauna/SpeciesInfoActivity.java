@@ -87,12 +87,12 @@ public class SpeciesInfoActivity extends AppCompatActivity
                             // Strip ID that EoL uses for that species
                             String ID = eolLink.substring(eolLink.indexOf("org/") + 4, eolLink.indexOf("?"));
 
-                            //make sure data was found or set error message
+                            // Make sure data was found or set error message
                             if (eolLink.trim().equals(""))
                             {
                                 eolLink="No data found";
                             }
-                            //Set link to EoL page on display
+                            // Set link to EoL page on display
                             TextView imageLinkTV = findViewById(R.id.EoLLink);
                             imageLinkTV.setText(eolLink);
 
