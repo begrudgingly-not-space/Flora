@@ -129,6 +129,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE);
+
+            refresh();
         }
         else {
             imagegrid = findViewById(R.id.FileList);
@@ -477,14 +479,14 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 }
             }
         }
+        if(nameGiven) {
+            // add the two default settings
+            defaultDirs.add("On Page");
+            defaultDirs.add("Create New");
 
-        // add the two default settings
-        defaultDirs.add("On Page");
-        defaultDirs.add("Create New");
-
-        spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, defaultDirs);
-        spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
+            spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, defaultDirs);
+            spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        }
         // just a TextView to display words, "Save Location"
         TextView saveLoc = (TextView) dView.findViewById(R.id.saveLocation);
 
@@ -683,9 +685,11 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         // create new folder and store it in the folder array list
         if(newFolder.mkdir())
         {
+
             folderAL.add(newFolder);
             defaultDirs.add(newFolder.getName());
             spinAdapter.notifyDataSetChanged();
+
         }
         else
         {
