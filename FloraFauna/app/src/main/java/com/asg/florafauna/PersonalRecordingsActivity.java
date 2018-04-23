@@ -329,7 +329,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage); //thumbnail
                 holder.fileName = (TextView) convertView.findViewById(R.id.fileName); //name of text
                 holder.checkBox = (CheckBox) convertView.findViewById(R.id.itemCheckBox); //checkbox of item
-                holder.delete = (TextView) convertView.findViewById(R.id.delete); //delete button
+                holder.delete = (ImageButton) convertView.findViewById(R.id.delete); //delete button
                 holder.imgDescription = (TextView) convertView.findViewById(R.id.description); // image description
 
                 convertView.setTag(holder);
@@ -407,7 +407,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             // set text name
             // both file name and description come as one string, split by '!'
             // name is first, description is second
-            String[] nameDescr = list.get(list.size() - 1).split("!");
+            String[] nameDescr = list.get(list.size() - 1).split("!<>!");
             if(nameDescr.length > 0) {
                 holder.fileName.setText(nameDescr[0]);
             }
@@ -433,7 +433,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         ImageView imageview;
         TextView fileName;
         CheckBox checkBox;
-        TextView delete;
+        ImageButton delete;
         TextView imgDescription;
     }
 
@@ -487,7 +487,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                             try {
                                 currentImage = MediaStore.Images.Media.getBitmap(cr, photoUri);
                                 //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
-                                FileOutputStream output = new FileOutputStream(getSaveFolder() + "/" + imageName.getText() + "!" + description.getText());
+                                FileOutputStream output = new FileOutputStream(getSaveFolder() + "/" + imageName.getText() + "!<>!" + description.getText());
                                 currentImage.compress(Bitmap.CompressFormat.PNG, 75, output); //save file
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -520,17 +520,18 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
 
         // if there are existing folders, populate those in the imageDialog spinner
-        for(int i = 0; i < listFile.length; i++)
-        {
-            if(listFile[i].isDirectory() && !defaultDirs.contains(listFile[i]))
-            {
-                defaultDirs.add(listFile[i].getName());
+        if(nameGiven) {
+            for (int i = 0; i < listFile.length; i++) {
+                if (listFile[i].isDirectory() && !defaultDirs.contains(listFile[i])) {
+                    defaultDirs.add(listFile[i].getName());
+                }
             }
+            // add the two default settings
+            defaultDirs.add("On Page");
+            defaultDirs.add("Create New");
         }
 
-        // add the two default settings
-        defaultDirs.add("On Page");
-        defaultDirs.add("Create New");
+
 
         spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, defaultDirs);
         spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
