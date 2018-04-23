@@ -27,13 +27,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -43,7 +48,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -55,9 +59,9 @@ import java.util.ArrayList;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import static com.asg.florafauna.CountyFinder.countyFinder;
+import static com.asg.florafauna.FloraFaunaActionBar.createActionBar;
 import static com.asg.florafauna.StateFinder.stateFinder;
 
 public class SearchActivity extends AppCompatActivity implements LocationListener {
@@ -67,81 +71,57 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private InputMethodManager imm;
     private ProgressDialog dialog;
     private String locationPolygon;
-    private double latitude;
-    private double longitude;
+    private double latitude, longitude, mileage;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION = 0;
-    private int searchType = 0;
     public static final String INTENT_EXTRA_SPECIES_NAME = "speciesName";
-    private int offset = 0;
-    private ArrayList<String> speciesNamesArray = new ArrayList<>(), filteredArrayList = new ArrayList<>();
+    private int offset = 0, searchType = 0;
+    private ArrayList<String> speciesNamesArray = new ArrayList<>(), filteredArrayList = new ArrayList<>(), history = new ArrayList<>();
     private ArrayAdapter<String> adapter;
-    private ArrayList<String> history = new ArrayList<>();
     private String[] mileageArray = new String[1];
-    private EditText filterEditText;
     private LinearLayout filterAndRadioButtons;
-    private double mileage;
-    private RadioButton Kingdom;
-    private RadioButton Genus;
-    private RadioButton MyLocation;
-    private String[] themeArray = new String[1];
+    private RadioButton Kingdom, Genus, MyLocation;
+    private FrameLayout searchBox;
+    private LinearLayout countyStateInput;
+    private EditText countyInput, stateInput, filterEditText;
+    private TextView myLocationBlackout;
+    private Button btnLoadMore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //setTheme(R.style.AppTheme);
-        try {
-            //opens the file to read its contents
-            FileInputStream fis = this.openFileInput("theme");
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader reader = new BufferedReader(isr);
-
-            themeArray[0] = reader.readLine(); //adds the line to the temp array
-            reader.close();
-            isr.close();
-            fis.close();
-        }
-        catch (FileNotFoundException e){
-            e.printStackTrace();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-        if (themeArray[0].equals("Green")){
-            setTheme(R.style.AppTheme);
-        }
-        else if (themeArray[0].equals("Blue")){
-            setTheme(R.style.AppThemeBlue);
-        }
-        else if (themeArray[0].equals("Mono")){
-            setTheme(R.style.AppThemeMono);
-        }
-        else if (themeArray[0].equals("Cherry")){
-            setTheme(R.style.AppThemeCherry);
-        }
-
+        setTheme(ThemeCreator.getTheme(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); // Enable hiding/showing keyboard
-        FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_search);
+        if (getSupportActionBar() != null) {
+            createActionBar(getSupportActionBar(), R.layout.ab_search);
+        }
 
         if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this,
                         new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION},
                         MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION);
         }
-        getLocation();
-        getMileage();
+        else {
+            getLocation();
+            getMileage();
+        }
 
+        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); // Enable hiding/showing keyboard
+        searchBox = findViewById(R.id.SearchFrame);
         searchEditText = findViewById(R.id.SearchEditText);
-        speciesListView = findViewById(R.id.ListSpecies);
         filterEditText = findViewById(R.id.FilterEditText);
+        speciesListView = findViewById(R.id.ListSpecies);
+
         filterAndRadioButtons = findViewById(R.id.FilterAndRadioButtons);
         Kingdom = findViewById(R.id.KingdomButton);
         Genus = findViewById(R.id.GenusButton);
         MyLocation = findViewById(R.id.MyLocationButton);
 
+        countyStateInput = findViewById(R.id.locationInput);
+        countyInput = findViewById(R.id.countyInput);
+        stateInput = findViewById(R.id.stateInput);
 
         // Setup for load more button
-        Button btnLoadMore = new Button(this);
+        btnLoadMore = new Button(this);
         btnLoadMore.setText("Load More");
         speciesListView.addFooterView(btnLoadMore);
 
@@ -156,6 +136,15 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         });
 
         searchEditText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    search();
+                }
+                return false;
+            }
+        });
+
+        countyInput.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
                     search();
@@ -185,14 +174,46 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 RadioButton rb = findViewById(checkedId);
                 String selection = (String) rb.getText();
 
-                if (selection.equals("Scientific/Common Name")) {
-                    searchEditText.setHint("Scientific/Common Name");
+                if (selection.equals("Species")) {
+                    searchEditText.setHint("Scientific OR Common Name");
+                    searchBox.setVisibility(View.VISIBLE);
+                    countyStateInput.setVisibility(View.INVISIBLE);
                 }
-                else if (selection.equals("County, State")) {
-                    searchEditText.setHint("County, State");
+                else if (selection.equals("County")) {
+                    countyInput.requestFocus();
+                    countyInput.setHint("County");
+                    stateInput.setHint("State");
+                    searchBox.setVisibility(View.INVISIBLE);
+                    countyStateInput.setVisibility(View.VISIBLE);
                 }
                 else {
                     searchEditText.setHint("State");
+                    searchBox.setVisibility(View.VISIBLE);
+                    countyStateInput.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
+        RadioGroup filterRadioButtons = findViewById(R.id.FilterRadioButtons);
+        myLocationBlackout = findViewById(R.id.MyLocationBlackout);
+        filterRadioButtons.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton rb = findViewById(checkedId);
+                String selection = (String) rb.getText();
+
+                if (selection.equals("Kingdom")) {
+                    filterEditText.setHint("Kingdom");
+                    myLocationBlackout.setVisibility(View.INVISIBLE);
+                }
+                else if (selection.equals("Genus")) {
+                    filterEditText.setHint("Genus");
+                    myLocationBlackout.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    filterEditText.setHint("My Location");
+                    myLocationBlackout.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -239,49 +260,14 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     @Override
     public void onProviderDisabled(String provider) {
-        //Toast.makeText(SearchActivity.this, "Please Enable GPS and Internet", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.search_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                Intent settings_intent = new Intent(SearchActivity.this, SettingsActivity.class);
-                startActivityForResult(settings_intent, 1);
-                return true;
-            case R.id.action_help:
-                Intent help_intent = new Intent(SearchActivity.this, HelpActivity.class);
-                startActivity(help_intent);
-                return true;
-            case R.id.action_map:
-                Intent map_intent = new Intent(SearchActivity.this, MapActivity.class);
-                startActivity(map_intent);
-                return true;
-            case R.id.action_recording:
-                Intent recordings_intent = new Intent(SearchActivity.this, PersonalRecordingsActivity.class);
-                startActivity(recordings_intent);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     @Override
@@ -292,10 +278,12 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission granted
+                    getLocation();
+                    getMileage();
                 }
-                else {
+                /*else {
                     // Permission denied, What's Around Me functionality disabled
-                }
+                }*/
             }
         }
     }
@@ -304,51 +292,36 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode==RESULT_OK){
+        if(resultCode == RESULT_OK){
             Intent refresh = new Intent(this, SearchActivity.class);
             startActivity(refresh);
             this.finish();
         }
     }
 
-    @Override
-    public void onBackPressed()
-    {
-        // Disables going back by manually pressing the back button
-    }
-
+    // OnClick method for search
     public void search(View view) {
         search();
     }
 
-    public void filter(View view) {
-        Log.d("Filter", "Click");
-        dialog = ProgressDialog.show(this, "", "Loading. Please wait...", true);
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                filter();
-            }
-        }, 1000);
-
-    }
-
     // SEARCH FUNCTIONS
     public void search() {
+        dialog = ProgressDialog.show(this, "", "Loading. Please wait...", true);
         filterAndRadioButtons.setVisibility(View.VISIBLE);
         String searchInput = searchEditText.getText().toString();
+
+        String county = countyInput.getText().toString();
+        String state = stateInput.getText().toString();
+
         speciesNamesArray = new ArrayList<>();
         offset = 0;
-
-        dialog = ProgressDialog.show(this, "", "Loading. Please wait...", true);
 
         // Create links to radio buttons
         RadioButton Species = findViewById(R.id.SpeciesButton);
         RadioButton County = findViewById(R.id.CountyButton);
         RadioButton State = findViewById(R.id.StateButton);
 
-        //Checks which button (search type) is checked
+        // Checks which button (search type) is checked
         if (State.isChecked())
         {
             // Search by State
@@ -356,13 +329,13 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         }
         else if (Species.isChecked())
         {
-            // Search by Species/common name
+            // Search by Scientific/Common Name
             searchRequestWithSpecies(this, searchInput);
         }
         else if (County.isChecked())
         {
             // Search by County
-            searchRequestWithCounty(this, searchInput);
+            searchRequestWithCounty(this, state, county);
         }
 
         // Save history to file
@@ -374,37 +347,14 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         setHistory();
     }
 
-    private void filter() {
-        //Checks which button (search type) is checked
-        if (Kingdom.isChecked())
-        {
-        }
-        else if (Genus.isChecked())
-        {
-            filterByGenus();
-        }
-        else if (MyLocation.isChecked())
-        {
-            filterByLocation();
-        }
-    }
+    private void searchRequestWithState(final Context context, final String state) {
+        btnLoadMore.setVisibility(View.VISIBLE);
 
-    private void filterByGenus() {
-        filteredArrayList.clear();
-        for (int i = 0; i < speciesNamesArray.size(); i++) {
-            String scientificName = speciesNamesArray.get(i);
-            String genus = scientificName.substring(0, scientificName.indexOf(" "));
-            if (genus.equals(filterEditText.getText().toString())) {
-                filteredArrayList.add(speciesNamesArray.get(i));
-            }
-            Log.d("Genus", genus);
-        }
+        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
 
-        if (filteredArrayList.isEmpty()) {
-            dialog.dismiss();
-            AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-            alertDialog.setTitle("No matches found.");
-            alertDialog.setMessage("Please check the spelling of your entry.");
+        if (state.equals("")){
+            alertDialog.setTitle("No state entered.");
+            alertDialog.setMessage("Please enter a state in the search box.");
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface alertDialog, int which) {
@@ -412,112 +362,10 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                         }
                     });
             alertDialog.show();
-        }
-        else {
             dialog.dismiss();
-            adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
-            speciesListView.setAdapter(adapter);
+            return;
         }
-    }
 
-    private void filterByLocation() {
-        filteredArrayList.clear();
-        String scientificName;
-        String commonName;
-        int speciesListCount = speciesNamesArray.size();
-        for (int i = 0; i < speciesNamesArray.size(); i++) {
-            speciesListCount--;
-            if (speciesNamesArray.get(i).contains(",")) {
-                scientificName = speciesNamesArray.get(i).substring(0, speciesNamesArray.get(i).indexOf(","));
-                commonName = speciesNamesArray.get(i).substring(speciesNamesArray.get(i).indexOf(","), speciesNamesArray.get(i).length());
-            }
-            else {
-                scientificName = speciesNamesArray.get(i).substring(0, speciesNamesArray.get(i).length());
-                commonName = "";
-            }
-
-            Log.d("Check location", scientificName);
-            locationRequest(this, scientificName, commonName, speciesListCount);
-        }
-    }
-
-    private void locationRequest(Context context, final String scientificName, final String commonName, final int speciesListCount){
-        String locationPolygon = setAOIBbox(latitude, longitude, mileage);
-        final String url = "https://bison.usgs.gov/api/search.json?species=" + scientificName + "&type=scientific_name&aoibbox=" + locationPolygon + "&start=0&count=1";
-        Log.d("url", url);
-
-        // Initialize request queue
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-
-        JsonObjectRequest locationRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            final JSONArray speciesArray = response.getJSONArray("data");
-                            Log.d("species Array", speciesArray.toString());
-                            if (speciesArray.length() > 0) {
-                                filteredArrayList.add(scientificName + commonName);
-                            }
-                        }
-                        catch (JSONException error) {
-                            Log.e("Species not in location", error.toString());
-                        }
-
-                        if (speciesListCount == 0) {
-                            if (filteredArrayList.isEmpty()) {
-                                dialog.dismiss();
-                                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                                alertDialog.setTitle("No matches found.");
-                                alertDialog.setMessage("There are no species by that name near you.");
-                                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface alertDialog, int which) {
-                                                alertDialog.dismiss();
-                                            }
-                                        });
-                                alertDialog.show();
-                            }
-                            else {
-                                dialog.dismiss();
-                                adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
-                                speciesListView.setAdapter(adapter);
-                            }
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("onErrorResponse", error.toString());
-                if (speciesListCount == 0) {
-                    if (filteredArrayList.isEmpty()) {
-                        dialog.dismiss();
-                        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                        alertDialog.setTitle("No matches found.");
-                        alertDialog.setMessage("There are no species by that name near you.");
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface alertDialog, int which) {
-                                        alertDialog.dismiss();
-                                    }
-                                });
-                        alertDialog.show();
-                    }
-                    else {
-                        dialog.dismiss();
-                        adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
-                        speciesListView.setAdapter(adapter);
-                    }
-                }
-            }
-        }
-        );
-
-        // Adds request to queue which is then sent
-        requestQueue.add(locationRequest);
-    }
-
-    private void searchRequestWithState(final Context context, final String state) {
         // stateInput capitalizes the state
         // Bison produces an error if you input a state in all lowercase letters
         final int position = speciesNamesArray.size();
@@ -540,7 +388,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
         stateInput = stateInput.replaceAll(" ", "%20");
 
-        final String url = "https://bison.usgs.gov/api/search.json?state=" + stateInput + "&start=" + offset + "&count=50";
+        final String url = "https://bison.usgs.gov/api/search.json?state=" + stateInput + "&start=" + offset + "&count=500";
         Log.d("url", url);
 
         // Initialize request queue
@@ -601,16 +449,41 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             public void onErrorResponse(VolleyError error) {
                 Log.e("onErrorResponse", error.toString());
                 dialog.dismiss();
+
                 AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                alertDialog.setTitle("Invalid State");
-                alertDialog.setMessage("Please input the full name of a state.");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface alertDialog, int which) {
-                                alertDialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
+
+                if (error instanceof NoConnectionError){
+                    alertDialog.setTitle("No internet connection");
+                    alertDialog.setMessage("Device must be connected to internet to retrieve results.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else if (error instanceof TimeoutError) {
+                    alertDialog.setTitle("Cannot connect to BISON servers at this time.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else {
+                    alertDialog.setTitle("Invalid State");
+                    alertDialog.setMessage("Please input the full name of a state.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
             }
         }
         );
@@ -619,22 +492,52 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         requestQueue.add(searchRequestWithState);
     }
 
-    private void searchRequestWithCounty(final Context context, final String searchInput) {
-        final int position = speciesNamesArray.size();
+    private void searchRequestWithCounty(final Context context, String state, String county) {
+        btnLoadMore.setVisibility(View.VISIBLE);
 
-        String searchTerms[];
-        String county = "";
-        String state = "";
+        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
 
-        if (searchInput.contains(",") && searchInput.length() >= 3) {
-            searchTerms = searchInput.split(",");
-
-            if (searchTerms.length == 2) {
-                county = searchTerms[0];
-                state = searchTerms[1];
-                state = state.substring(1, state.length());
-            }
+        if (state.equals("") && county.equals("")){
+            alertDialog.setTitle("No county nor state entered");
+            alertDialog.setMessage("Please enter a county in the first search box and a state in the second search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
         }
+        else if (state.equals("")){
+            alertDialog.setTitle("No state entered");
+            alertDialog.setMessage("Please enter a state in the second search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+        else if (county.equals("")){
+            alertDialog.setTitle("No county entered");
+            alertDialog.setMessage("Please enter a county in the first search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+
+        final int position = speciesNamesArray.size();
 
         if (state.length() > 2) {
             state = state.substring(0, 1).toUpperCase() + state.substring(1);
@@ -651,7 +554,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             state = stateFinder(context, state);
         }
 
-        //capitalizes first char in county
+        // Capitalizes first char in county
         if (county.length() > 0){
             county = county.substring(0, 1).toUpperCase() + county.substring(1);
         }
@@ -663,7 +566,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
         state = state.replaceAll(" ", "%20");
 
-        final String url = "https://bison.usgs.gov/api/search.json?state=" + state + "&countyFips=" + countyFips + "&start=" + offset + "&count=50";
+        final String url = "https://bison.usgs.gov/api/search.json?state=" + state + "&countyFips=" + countyFips + "&start=" + offset + "&count=500";
         Log.d("url", url);
 
         // Initialize request queue
@@ -722,15 +625,39 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 Log.e("onErrorResponse", error.toString());
                 dialog.dismiss();
                 AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                alertDialog.setTitle("Invalid County, State");
-                alertDialog.setMessage("Please input the name of a county followed by a comma and then the name of the state");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface alertDialog, int which) {
-                                alertDialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
+
+                if (error instanceof NoConnectionError){
+                    alertDialog.setTitle("No internet connection");
+                    alertDialog.setMessage("Device must be connected to internet to retrieve results.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else if (error instanceof TimeoutError) {
+                    alertDialog.setTitle("Cannot connect to BISON servers at this time.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else {
+                    alertDialog.setTitle("Invalid County, State");
+                    alertDialog.setMessage("Please input a county in the first search box and a state in the second search box.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
             }
         }
         );
@@ -741,17 +668,35 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     private void searchRequestWithSpecies(final Context context, final String speciesName)
     {
+        btnLoadMore.setVisibility(View.GONE);
+
+        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+
+        if (speciesName.equals("")){
+            alertDialog.setTitle("No species entered");
+            alertDialog.setMessage("Please enter a species name in the search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+
         final SpeciesSearchHelper helper = new SpeciesSearchHelper();
         int length = helper.getNameLength(speciesName);
 
-        // just a space entered
+        // Just a space entered
         if (length < 1)
         {
-            // dialog -- please enter a species name
+            // Dialog -- please enter a species name
         }
         else if (length == 1)
         {
-            // throw species name to partial search
+            // Throw species name to partial search
             searchPartialName(this, speciesName);
             return;
         }
@@ -759,9 +704,9 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         Log.i("species input", speciesName);
 
 
-        // base address for searching for a species
+        // Base address for searching for a species
         String baseAddress = "https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchForAnyMatch?srchKey=";
-        // url for searching
+        // Url for searching
         String formattedName = speciesName.replaceAll(" ", "%20");
         final String query = baseAddress + formattedName;
 
@@ -778,7 +723,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 String commonName = null;
                 boolean match = false;
 
-                // closes the loading, please wait dialog
+                // Closes the loading, please wait dialog
                 dialog.dismiss();
 
                 try
@@ -786,17 +731,17 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     searchType = 4;
                     Log.i("response", response.toString());
 
-                    // all of the possible results from the search
+                    // All of the possible results from the search
                     JSONArray arr = response.getJSONArray("anyMatchList");
 
-                    // go through each index
+                    // Go through each index
                     for(int i = 0; i < arr.length(); i++)
                     {
                         JSONObject results = arr.getJSONObject(i);
                         JSONArray commonNames = results.getJSONObject("commonNameList").getJSONArray("commonNames");
 
-                        // if the resulting scientific name is not two words long, then incorrect results
-                        // could be a genus, family, or no results at all
+                        // If the resulting scientific name is not two words long, then incorrect results
+                        // Could be a genus, family, or no results at all
                         String[] sciName = results.getString("sciName").split(" ");
                         if(sciName.length == 2)
                         {
@@ -806,12 +751,12 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                         int j = 0;
                         while(!match && j < commonNames.length())
                         {
-                            // each species result may have multiple common names for one or many languages
-                            // go through all of the common names and find the English common name
+                            // Each species result may have multiple common names for one or many languages
+                            // Go through all of the common names and find the English common name
                             JSONObject comm = commonNames.getJSONObject(j);
                             String[] commName = comm.getString("commonName").split(" ");
 
-                            if(comm.getString("language").equalsIgnoreCase("English"))
+                            if (comm.getString("language").equalsIgnoreCase("English"))
                             {
                                 // a common name can't be one word, scientific name must be two words
                                 // and one of the names should match what the user entered
@@ -822,7 +767,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                                     commonName = comm.getString("commonName");
                                 }
                             }
-
                             j++;
                         }
                         if (match)
@@ -831,8 +775,8 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                         }
                     }
 
-                    // if no results for at least one of the names, throw an exception
-                    if(commonName == null || scientificName == null)
+                    // If no results for at least one of the names, throw an exception
+                    if (commonName == null || scientificName == null)
                     {
                         throw new Exception("No species results: Null name");
                     }
@@ -841,15 +785,15 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     speciesNamesArray.add(scientificName + ", " + commonName);
                     Log.i("Names", speciesNamesArray.get(0));
 
-                    // throw species name in ListView and display
+                    // Throw species name in ListView and display
                     adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesNamesArray);
                     speciesListView.setAdapter(adapter);
                     speciesListView.setVisibility(View.VISIBLE);
 
-                    // hide the keyboard
+                    // Hide the keyboard
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
-                    // on clicking species name listview, user should be sent to species info page
+                    // On clicking species name listview, user should be sent to species info page
                     speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
                     {
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id)
@@ -881,8 +825,31 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 @Override
                 public void onErrorResponse(VolleyError error)
                 {
-                    Log.e("Error: ", error.toString());
+                    Log.e("SearchError", error.toString());
                     dialog.dismiss();
+                    AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+
+                    if (error instanceof NoConnectionError){
+                        alertDialog.setTitle("No internet connection");
+                        alertDialog.setMessage("Device must be connected to internet to retrieve results.");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface alertDialog, int which) {
+                                        alertDialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                    }
+                    else if (error instanceof TimeoutError) {
+                        alertDialog.setTitle("Cannot connect to ITIS servers at this time.");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface alertDialog, int which) {
+                                        alertDialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                    }
                 }
             });
 
@@ -893,22 +860,21 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     {
         Log.i("partial", "partial search");
         final SpeciesSearchHelper helper = new SpeciesSearchHelper();
-        // base address for searching for a species/genus
-        // this will grab any name that contains the text searched by user
+        // Base address for searching for a species/genus
+        // This will grab any name that contains the text searched by user
         String baseAddress = "https://www.itis.gov/ITISWebService/jsonservice/ITISService/getITISTerms?srchKey=";
-        //final ArrayList<String> speciesList = new ArrayList<>();
 
-        // ensure no trailing whitespace for web call
+        // Ensure no trailing whitespace for web call
         final String query = baseAddress + speciesName.trim();
         Log.i("final url:", query);
 
         RequestQueue requestQueue = Volley.newRequestQueue(context);
-        JsonObjectRequest searchRequest = new JsonObjectRequest(Request.Method.GET, query, null, new Response.Listener<JSONObject>()
+        JsonObjectRequest partialSearchRequest = new JsonObjectRequest(Request.Method.GET, query, null, new Response.Listener<JSONObject>()
         {
             @Override
             public void onResponse(JSONObject response)
             {
-                // closes the loading, please wait dialog
+                // Closes the loading, please wait dialog
                 dialog.dismiss();
 
                 String scientificName = null;
@@ -919,10 +885,9 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     searchType = 4;
                     Log.i("response", response.toString());
 
-                    // get the list
+                    // Get the list
                     JSONArray arr = response.getJSONArray("itisTerms");
                     JSONArray commonNames = null;
-                    //String[] speciesArr = new String[arr.length()];
                     /* the web call will produce all kinds of results, including the genus in
                      addition to specific species names
                      to ensure we only get species names, the resulting scientific name
@@ -954,15 +919,15 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                     }
 
-                    // throw all names in ListView and display
+                    // Throw all names in ListView and display
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesNamesArray);
                     speciesListView.setAdapter(adapter);
                     speciesListView.setVisibility(View.VISIBLE);
 
-                    // hide the keyboard
+                    // Hide the keyboard
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
-                    // on clicking species name listview, user should be sent to species info page
+                    // On clicking species name listview, user should be sent to species info page
                     speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
                     {
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id)
@@ -994,15 +959,65 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             @Override
             public void onErrorResponse(VolleyError error)
             {
-                Log.e("Error: ", error.toString());
+                Log.e("PartialSearchError", error.toString());
                 dialog.dismiss();
+
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+
+                if (error instanceof NoConnectionError){
+                    alertDialog.setTitle("No internet connection");
+                    alertDialog.setMessage("Device must be connected to internet to retrieve results.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else if (error instanceof TimeoutError) {
+                    alertDialog.setTitle("Cannot connect to ITIS servers at this time.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else if (error instanceof ParseError) {
+                    alertDialog.setTitle("Cannot connect to ITIS servers at this time.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
             }
         });
+        /*partialSearchRequest.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
 
-        requestQueue.add(searchRequest);
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
 
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+        });*/
+
+        requestQueue.add(partialSearchRequest);
     }
 
+    // OnClick method for whatsAroundMe
     public void whatsAroundMe(View view) {
         filterAndRadioButtons.setVisibility(View.VISIBLE);
         speciesNamesArray = new ArrayList<>();
@@ -1030,7 +1045,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         }
     }
 
-    private String setAOIBbox(double latitude, double longitude, double mileage) {
+    public static String setAOIBbox(double latitude, double longitude, double mileage) {
         double milesPerDegreeOfLatitude = 69;
         double milesPerDegreeOfLongitude = Math.cos(Math.toRadians(latitude)) * 69.172;
 
@@ -1046,10 +1061,12 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         return minLong + "," + minLat + "," + maxLong + "," + maxLat;
     }
 
-    // What's Around Me? webcall
+    // What's Around Me webcall
     private void whatsAroundMeRequest(final Context context, final String polygon)
     {
-        final String url = "https://bison.usgs.gov/api/search.json?aoibbox=" + polygon + "&start=" + offset + "&count=50";;
+        btnLoadMore.setVisibility(View.VISIBLE);
+
+        final String url = "https://bison.usgs.gov/api/search.json?aoibbox=" + polygon + "&start=" + offset + "&count=500";
         Log.d("url", url);
         final int position = speciesNamesArray.size();
 
@@ -1109,15 +1126,39 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 Log.e("onErrorResponse", error.toString());
                 dialog.dismiss();
                 AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                alertDialog.setTitle("What's Around Me Error Description");
-                alertDialog.setMessage(error.toString());
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface alertDialog, int which) {
-                                alertDialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
+
+                if (error instanceof NoConnectionError){
+                    alertDialog.setTitle("No internet connection");
+                    alertDialog.setMessage("Device must be connected to internet to retrieve results.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else if (error instanceof TimeoutError) {
+                    alertDialog.setTitle("Cannot connect to BISON servers at this time.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else {
+                    alertDialog.setTitle("What's Around Me Error Description");
+                    alertDialog.setMessage(error.toString());
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
             }
         }
         );
@@ -1132,8 +1173,12 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 "Loading. Please wait...", true);
         offset += 500;
         String searchInput = searchEditText.getText().toString();
+
+        String county = countyInput.getText().toString();
+        String state = stateInput.getText().toString();
+
         if (searchType == 1) {
-            searchRequestWithCounty(this, searchInput);
+            searchRequestWithCounty(this, state, county);
         }
         else if (searchType == 2) {
             searchRequestWithState(this, searchInput);
@@ -1144,7 +1189,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         else if (searchType == 4) {
             searchRequestWithSpecies(this, searchInput);
         }
-
     }
 
     // Save history method
@@ -1195,11 +1239,355 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         searchEditText.setAdapter(adapter);
     }
 
+    // OnClick method for filter
+    public void filter(View view) {
+        dialog = ProgressDialog.show(this, "", "Loading. Please wait...", true);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                filter();
+            }
+        }, 1000);
+    }
+
+    private void filter() {
+        int kingdom = 0;
+        int location = 1;
+
+        // Checks which button (search type) is checked
+        if (Kingdom.isChecked())
+        {
+            if (filterEditText.getText().toString().equals("")) {
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                alertDialog.setTitle("No filter entered.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
+            filterByKingdomOrLocation(kingdom);
+        }
+        else if (Genus.isChecked())
+        {
+            if (filterEditText.getText().toString().equals("")) {
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                alertDialog.setTitle("No filter entered.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
+            filterByGenus();
+        }
+        else if (MyLocation.isChecked())
+        {
+            filterByKingdomOrLocation(location);
+        }
+    }
+
+    private void filterByKingdomOrLocation(int filterType) {
+        filteredArrayList.clear();
+        String scientificName;
+        String commonName;
+        int speciesListCount = speciesNamesArray.size();
+        Log.d("speciesListCount", Integer.toString(speciesListCount));
+
+        if (speciesListCount != 0) {
+            for (int i = 0; i < speciesNamesArray.size(); i++) {
+                speciesListCount--;
+                if (speciesNamesArray.get(i).contains(",")) {
+                    scientificName = speciesNamesArray.get(i).substring(0, speciesNamesArray.get(i).indexOf(","));
+                    commonName = speciesNamesArray.get(i).substring(speciesNamesArray.get(i).indexOf(","), speciesNamesArray.get(i).length());
+                }
+                else {
+                    scientificName = speciesNamesArray.get(i).substring(0, speciesNamesArray.get(i).length());
+                    commonName = "";
+                }
+
+                Log.d("Check location", scientificName);
+
+                if (filterType == 0) {
+                    kingdomRequest(this, scientificName, commonName, speciesListCount);
+                }
+                else {
+                    locationRequest(this, scientificName, commonName, speciesListCount);
+                }
+            }
+        }
+        else {
+            AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+            alertDialog.setTitle("No results to filter by.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+        }
+    }
+
+    private void kingdomRequest(Context context, final String scientificName, final String commonName, final int speciesListCount){
+        String formattedName = scientificName.replaceAll(" ", "%20");
+        final String url = "https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=" + formattedName;
+        Log.d("url", url);
+
+        // Initialize request queue
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+        JsonObjectRequest kingdomRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            final JSONArray scientificNames = response.getJSONArray("scientificNames");
+                            Log.d("scientificNames", scientificNames.toString());
+                            JSONObject speciesData = scientificNames.getJSONObject(0);
+                            Log.d("speciesData", speciesData.toString());
+                            String kingdom = speciesData.getString("kingdom");
+                            Log.d("kingdom", kingdom);
+                            String inputKingdom = filterEditText.getText().toString().replaceAll("\\s+","");
+                            if (kingdom.equalsIgnoreCase(inputKingdom)) {
+                                filteredArrayList.add(scientificName + commonName);
+                            }
+                        }
+                        catch (JSONException error) {
+                            Log.e("No kingdom data.", error.toString());
+                        }
+
+                        if (speciesListCount == 0) {
+                            if (filteredArrayList.isEmpty()) {
+                                dialog.dismiss();
+                                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                                alertDialog.setTitle("No matches found.");
+                                alertDialog.setMessage("There are no species with the input name in that kingdom.");
+                                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface alertDialog, int which) {
+                                                alertDialog.dismiss();
+                                            }
+                                        });
+                                alertDialog.show();
+                            }
+                            else {
+                                dialog.dismiss();
+                                adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
+                                speciesListView.setAdapter(adapter);
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("onErrorResponseKingdom", error.toString());
+                if (speciesListCount == 0) {
+                    if (filteredArrayList.isEmpty()) {
+                        dialog.dismiss();
+                        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                        alertDialog.setTitle("No matches found.");
+                        alertDialog.setMessage("There are no species with the input name in that kingdom.");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface alertDialog, int which) {
+                                        alertDialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                    }
+                    else {
+                        dialog.dismiss();
+                        adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
+                        speciesListView.setAdapter(adapter);
+                    }
+                }
+            }
+        }
+        );
+        kingdomRequest.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+        });
+
+        // Adds request to queue which is then sent
+        requestQueue.add(kingdomRequest);
+    }
+
+    private void locationRequest(Context context, final String scientificName, final String commonName, final int speciesListCount){
+        String locationPolygon = setAOIBbox(latitude, longitude, mileage);
+        final String url = "https://bison.usgs.gov/api/search.json?species=" + scientificName + "&type=scientific_name&aoibbox=" + locationPolygon + "&start=0&count=1";
+        Log.d("url", url);
+
+        // Initialize request queue
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+        JsonObjectRequest locationRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            final JSONArray speciesArray = response.getJSONArray("data");
+                            Log.d("species Array", speciesArray.toString());
+                            if (speciesArray.length() > 0) {
+                                filteredArrayList.add(scientificName + commonName);
+                            }
+                        }
+                        catch (JSONException error) {
+                            Log.e("Species not in location", error.toString());
+                        }
+
+                        if (speciesListCount == 0) {
+                            if (filteredArrayList.isEmpty()) {
+                                dialog.dismiss();
+                                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                                alertDialog.setTitle("No matches found.");
+                                alertDialog.setMessage("There are no species by that name near you.");
+                                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface alertDialog, int which) {
+                                                alertDialog.dismiss();
+                                            }
+                                        });
+                                alertDialog.show();
+                            }
+                            else {
+                                dialog.dismiss();
+                                adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
+                                speciesListView.setAdapter(adapter);
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("onErrorResponse", error.toString());
+
+                if (speciesListCount == 0) {
+                    if (filteredArrayList.isEmpty()) {
+                        dialog.dismiss();
+                        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                        alertDialog.setTitle("No matches found.");
+                        alertDialog.setMessage("There are no species by that name near you.");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface alertDialog, int which) {
+                                        alertDialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                    }
+                    else {
+                        dialog.dismiss();
+                        adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
+                        speciesListView.setAdapter(adapter);
+                    }
+                }
+            }
+        }
+        );
+
+        // Adds request to queue which is then sent
+        requestQueue.add(locationRequest);
+    }
+
+    private void filterByGenus() {
+        filteredArrayList.clear();
+        for (int i = 0; i < speciesNamesArray.size(); i++) {
+            String scientificName = speciesNamesArray.get(i);
+            String genus = scientificName.substring(0, scientificName.indexOf(" "));
+            String inputGenus = filterEditText.getText().toString().replaceAll("\\s+","");
+            if (genus.equalsIgnoreCase(inputGenus)) {
+                filteredArrayList.add(speciesNamesArray.get(i));
+            }
+            Log.d("Genus", genus);
+        }
+
+        if (filteredArrayList.isEmpty()) {
+            dialog.dismiss();
+            AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+            alertDialog.setTitle("No matches found.");
+            alertDialog.setMessage("Please check the spelling of your entry.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+        }
+        else {
+            dialog.dismiss();
+            adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
+            speciesListView.setAdapter(adapter);
+        }
+    }
+
     private void openSpeciesInfoPage(int position) {
         String speciesName = speciesListView.getItemAtPosition(position).toString();
-        String scientificName = speciesName.substring(0, speciesName.indexOf(","));
+        String scientificName;
+        if (speciesName.contains(",")) {
+            scientificName = speciesName.substring(0, speciesName.indexOf(","));
+        }
+        else {
+            scientificName = speciesName;
+        }
         Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
         intent.putExtra(INTENT_EXTRA_SPECIES_NAME, scientificName);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.search_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent settings_intent = new Intent(SearchActivity.this, SettingsActivity.class);
+                startActivityForResult(settings_intent, 1);
+                return true;
+            case R.id.action_help:
+                Intent help_intent = new Intent(SearchActivity.this, HelpActivity.class);
+                startActivity(help_intent);
+                return true;
+            case R.id.action_map:
+                Intent map_intent = new Intent(SearchActivity.this, MapActivity.class);
+                startActivity(map_intent);
+                return true;
+            case R.id.action_recording:
+                Intent recordings_intent = new Intent(SearchActivity.this, PersonalRecordingsActivity.class);
+                startActivity(recordings_intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Disables going back by manually pressing the back button
     }
 }

@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:padding="8dp"
-            android:text="The search page allows you to search for species by typing the common name or scientific name of the species into the search bar. You can also search for species by state and county/parish by typing this information into the search bar. The radio buttons allow you to select your search method. After performing a search, you can filter results by location, taxonomy, habitat, and date."
+            android:text="The search page allows you to search for species by typing the common name or scientific name of the species into the search bar. You can also search for species by state and county/parish by typing this information into the search bar. The radio buttons allow you to select your search method. After performing a search, you can filter results by location, genus, and kingdom."
             android:textColor="?attr/colorPrimary"/>
         <TextView
             android:layout_width="match_parent"
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:padding="8dp"
-            android:text="By clicking &quot;What's Around Me?&quot;, you can view information about different species that are near your location."
+            android:text="By clicking &quot;What's Around Me?&quot;, you can view information about different species that are near your location. You can change the search radius of the &quot;What's Around Me?&quot; feature in the settings page. "
             android:textColor="?attr/colorPrimary"/>
 
         <TextView
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:padding="8dp"
-            android:text="The map page allows you to view the occurrences of a species by typing the common name or scientific name of the species into a search bar. You can view the occurrences of a species in a state, county/parish, or a certain radius from your position."
+            android:text="The map page allows you to view the occurrences of a species on a map by typing the common name or scientific name of the species into a search bar. You can view the occurrences of a species in a state, county/parish, or a certain radius from your position. The search radius can be changed in the settings page."
             android:textColor="?attr/colorPrimary"/>
         <TextView
             android:layout_width="match_parent"
@@ -71,14 +71,15 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:padding="8dp"
-            android:text="The personal recordings page allows you to record your own sighting of a species. You can record the location that you saw the species as well as an image and/or sound recording of the sighting. This feature is helpful if you would like to remember where you say a species for future reference."
-            android:textColor="?attr/colorPrimary"/>
+            android:text="The personal-recordings page allows you to upload images of species from either your personal storage or taking a picture directly using your phone's camera. These images can then be given a name and a description. You can group similar images into folders."
+            android:textColor="?attr/colorPrimary" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Image Recognition"
-            android:textColor="?attr/colorBackgroundFloating"
+            android:text="Settings Page"
             android:padding="10dp"
+            android:textColor="?attr/colorBackgroundFloating"
             android:textSize="20sp"
             android:textStyle="bold"
             android:background="?attr/colorPrimary"/>
@@ -87,8 +88,10 @@
             android:layout_height="wrap_content"
             android:textSize="15sp"
             android:padding="8dp"
-            android:text="You can upload an image of an unknown species and the application will determine the scientific and common name of the species."
-            android:textColor="?attr/colorPrimary"/>
+            android:text="The settings page allows you to clear your search history, change the color scheme of the application, and change the search radius of the &quot;What's Around Me?&quot; and nearby sightings features."
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginBottom="20dp"/>
+
     </LinearLayout>
 </ScrollView>
 

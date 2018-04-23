@@ -8,9 +8,8 @@ import android.support.v7.widget.Toolbar;
  * Created by kkey on 2/16/2018.
  */
 
-public class FloraFaunaActionBar {
-
-    public static void createActionBar(ActionBar actionBar, @LayoutRes int resource) {
+class FloraFaunaActionBar {
+    static void createActionBar(ActionBar actionBar, @LayoutRes int resource) {
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         actionBar.setCustomView(resource);
 

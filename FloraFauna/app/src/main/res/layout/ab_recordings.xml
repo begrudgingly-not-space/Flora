@@ -12,7 +12,6 @@
         android:layout_marginStart="5dp"
         android:src="@drawable/back_arrow"
         android:onClick="goBack"/>
-
     <TextView
         android:id="@+id/recordings_ab_text"
         android:layout_width="wrap_content"
@@ -23,20 +22,4 @@
         android:text="@string/Recordings"
         android:textColor="@color/white"
         android:textSize="25sp" />
-    <!--<ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_help_action_white"
-        android:layout_centerVertical="true"
-        android:layout_toStartOf="@id/HomeButton"
-        android:onClick="openHelp"/>
-    <ImageView
-        android:id="@+id/HomeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_home_white"
-        android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="5dp"
-        android:onClick="openSearch"/>-->
 </RelativeLayout>

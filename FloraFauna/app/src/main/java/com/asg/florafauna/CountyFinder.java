@@ -10,12 +10,10 @@ import java.util.Scanner;
  * Created by brada on 3/2/2018.
  */
 
-public class CountyFinder {
-
-    public static String countyFinder(Context context, String state, String county){
+class CountyFinder {
+    static String countyFinder(Context context, String state, String county){
         InputStream in = context.getResources().openRawResource(R.raw.countyfips);
         Scanner s = new Scanner(in);
-
         String countyFips = "";
 
         while (s.hasNextLine()) {

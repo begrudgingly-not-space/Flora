@@ -10,11 +10,10 @@ import java.util.Scanner;
  * Created by brada on 3/17/2018.
  */
 
-public class StateFinder {
-    public static String stateFinder(Context context, String state){
+class StateFinder {
+    static String stateFinder(Context context, String state){
         InputStream in = context.getResources().openRawResource(R.raw.stateabbr);
         Scanner s = new Scanner(in);
-
         String stateName = "";
 
         while (s.hasNextLine()) {

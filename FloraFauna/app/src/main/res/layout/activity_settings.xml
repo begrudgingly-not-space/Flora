@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorBackgroundFloating">
-
     <LinearLayout
         android:id="@+id/Images"
         android:layout_width="wrap_content"
@@ -11,7 +10,6 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:orientation="vertical">
-
         <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
@@ -21,7 +19,6 @@
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
-
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
@@ -31,18 +28,16 @@
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
-
         <TextView
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="Style"
+            android:text="Theme"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
-
     <LinearLayout
         android:id="@+id/ClearSearchHistory"
         android:layout_width="130dp"
@@ -50,7 +45,6 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:orientation="vertical">
-
         <Button
             android:id="@+id/button3"
             android:layout_width="wrap_content"
@@ -59,15 +53,13 @@
             android:onClick="clearHistory"
             android:text="@string/Clear"
             android:theme="@style/Button.Dark" />
-
         <Spinner
             android:id="@+id/miles"
-            android:layout_width="80dp"
+            android:layout_width="90dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="3dp"
             android:layout_marginTop="10dp"
             android:entries="@array/millage" />
-
         <Spinner
             android:id="@+id/Style"
             android:layout_width="match_parent"
@@ -75,7 +67,5 @@
             android:layout_marginStart="3dp"
             android:layout_marginTop="25dp"
             android:entries="@array/themes" />
-
     </LinearLayout>
-
 </RelativeLayout>
