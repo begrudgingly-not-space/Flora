@@ -75,9 +75,12 @@ public class FullScreenImage extends AppCompatActivity {
         // Set the decoded bitmap into ImageView
         imageview.setImageBitmap(bmp);
 
+        String[] name = filename.get(position).split("!");
+
+
         //sets the title of the page to the name of the image (with capital first letter)
-        setTitle(filename.get(position).substring(0,1).toUpperCase()
-                + filename.get(position).substring(1).toLowerCase());
+        setTitle(name[0].substring(0,1).toUpperCase()
+                + name[0].substring(1).toLowerCase());
 
     }
 
