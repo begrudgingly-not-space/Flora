@@ -42,7 +42,7 @@ public class FullScreenImage extends AppCompatActivity {
         // Set the decoded bitmap into ImageView
         imageview.setImageBitmap(bmp);
 
-        String[] name = filename.get(position).split("!");
+        String[] name = filename.get(position).split("!<>!");
 
         if (name[1] != null) {
             textView.setText(name[1]);

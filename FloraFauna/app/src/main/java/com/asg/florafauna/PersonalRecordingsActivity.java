@@ -437,7 +437,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                             try {
                                 currentImage = MediaStore.Images.Media.getBitmap(cr, photoUri);
                                 //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
-                                FileOutputStream output = new FileOutputStream(getSaveFolder() + "/" + imageName.getText() + "!" + description.getText());
+                                FileOutputStream output = new FileOutputStream(getSaveFolder() + "/" + imageName.getText() + "!<>!" + description.getText());
                                 currentImage.compress(Bitmap.CompressFormat.PNG, 100, output); //save file
                             } catch (Exception e) {
                                 e.printStackTrace();
