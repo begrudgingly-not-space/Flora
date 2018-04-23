@@ -32,9 +32,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 
+import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.TimeoutError;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -475,7 +477,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         }
         else {
             AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-            alertDialog.setTitle("No list to filter.");
+            alertDialog.setTitle("No results to filter by.");
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface alertDialog, int which) {
@@ -631,6 +633,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("onErrorResponse", error.toString());
+
                 if (speciesListCount == 0) {
                     if (filteredArrayList.isEmpty()) {
                         dialog.dismiss();
@@ -693,6 +696,22 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     private void searchRequestWithState(final Context context, final String state) {
         btnLoadMore.setVisibility(View.VISIBLE);
+
+        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+
+        if (state.equals("")){
+            alertDialog.setTitle("No state entered");
+            alertDialog.setMessage("Please enter a state in the search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
 
         // stateInput capitalizes the state
         // Bison produces an error if you input a state in all lowercase letters
@@ -777,16 +796,41 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             public void onErrorResponse(VolleyError error) {
                 Log.e("onErrorResponse", error.toString());
                 dialog.dismiss();
+
                 AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                alertDialog.setTitle("Invalid State");
-                alertDialog.setMessage("Please input the full name of a state.");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface alertDialog, int which) {
-                                alertDialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
+
+                if (error instanceof NoConnectionError){
+                    alertDialog.setTitle("No internet connection");
+                    alertDialog.setMessage("Device must be connected to internet to retrieve results.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else if (error instanceof TimeoutError) {
+                    alertDialog.setTitle("Cannot connect to BISON servers at this time.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else {
+                    alertDialog.setTitle("Invalid State");
+                    alertDialog.setMessage("Please input the full name of a state.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
             }
         }
         );
@@ -797,6 +841,48 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     private void searchRequestWithCounty(final Context context, String state, String county) {
         btnLoadMore.setVisibility(View.VISIBLE);
+
+        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+
+        if (state.equals("") && county.equals("")){
+            alertDialog.setTitle("No county nor state entered");
+            alertDialog.setMessage("Please enter a county in the first search box and a state in the second search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+        else if (state.equals("")){
+            alertDialog.setTitle("No state entered");
+            alertDialog.setMessage("Please enter a state in the second search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
+        else if (county.equals("")){
+            alertDialog.setTitle("No county entered");
+            alertDialog.setMessage("Please enter a county in the first search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
 
         final int position = speciesNamesArray.size();
 
@@ -886,15 +972,39 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 Log.e("onErrorResponse", error.toString());
                 dialog.dismiss();
                 AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                alertDialog.setTitle("Invalid County, State");
-                alertDialog.setMessage("Please input the name of a county followed by a comma and then the name of the state");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface alertDialog, int which) {
-                                alertDialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
+
+                if (error instanceof NoConnectionError){
+                    alertDialog.setTitle("No internet connection");
+                    alertDialog.setMessage("Device must be connected to internet to retrieve results.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else if (error instanceof TimeoutError) {
+                    alertDialog.setTitle("Cannot connect to BISON servers at this time.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else {
+                    alertDialog.setTitle("Invalid County, State");
+                    alertDialog.setMessage("Please input a county in the first search box and a state in the second search box.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
             }
         }
         );
@@ -906,6 +1016,22 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private void searchRequestWithSpecies(final Context context, final String speciesName)
     {
         btnLoadMore.setVisibility(View.GONE);
+
+        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+
+        if (speciesName.equals("")){
+            alertDialog.setTitle("No species entered");
+            alertDialog.setMessage("Please enter a species name in the search box.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+            dialog.dismiss();
+            return;
+        }
 
         final SpeciesSearchHelper helper = new SpeciesSearchHelper();
         int length = helper.getNameLength(speciesName);
@@ -1049,6 +1175,29 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 {
                     Log.e("SearchError", error.toString());
                     dialog.dismiss();
+                    AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+
+                    if (error instanceof NoConnectionError){
+                        alertDialog.setTitle("No internet connection");
+                        alertDialog.setMessage("Device must be connected to internet to retrieve results.");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface alertDialog, int which) {
+                                        alertDialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                    }
+                    else if (error instanceof TimeoutError) {
+                        alertDialog.setTitle("Cannot connect to ITIS servers at this time.");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface alertDialog, int which) {
+                                        alertDialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                    }
                 }
             });
 
@@ -1160,17 +1309,31 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             public void onErrorResponse(VolleyError error)
             {
                 Log.e("PartialSearchError", error.toString());
-                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                alertDialog.setTitle("Connection Error");
-                alertDialog.setMessage("Connection may not be available or may be too slow. Please retry search.");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface alertDialog, int which) {
-                                alertDialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
                 dialog.dismiss();
+
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+
+                if (error instanceof NoConnectionError){
+                    alertDialog.setTitle("No internet connection");
+                    alertDialog.setMessage("Device must be connected to internet to retrieve results.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else if (error instanceof TimeoutError) {
+                    alertDialog.setTitle("Cannot connect to ITIS servers at this time.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
             }
         });
         partialSearchRequest.setRetryPolicy(new RetryPolicy() {
@@ -1301,15 +1464,39 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 Log.e("onErrorResponse", error.toString());
                 dialog.dismiss();
                 AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                alertDialog.setTitle("What's Around Me Error Description");
-                alertDialog.setMessage(error.toString());
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface alertDialog, int which) {
-                                alertDialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
+
+                if (error instanceof NoConnectionError){
+                    alertDialog.setTitle("No internet connection");
+                    alertDialog.setMessage("Device must be connected to internet to retrieve results.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else if (error instanceof TimeoutError) {
+                    alertDialog.setTitle("Cannot connect to BISON servers at this time.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else {
+                    alertDialog.setTitle("What's Around Me Error Description");
+                    alertDialog.setMessage(error.toString());
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
             }
         }
         );
