@@ -68,24 +68,20 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private InputMethodManager imm;
     private ProgressDialog dialog;
     private String locationPolygon;
-    private double latitude;
-    private double longitude;
+    private double latitude, longitude, mileage;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION = 0;
-    private int searchType = 0;
     public static final String INTENT_EXTRA_SPECIES_NAME = "speciesName";
-    private int offset = 0;
+    private int offset = 0, searchType = 0;
     private ArrayList<String> speciesNamesArray = new ArrayList<>(), filteredArrayList = new ArrayList<>();
     private ArrayAdapter<String> adapter;
     private ArrayList<String> history = new ArrayList<>();
     private String[] mileageArray = new String[1];
     private LinearLayout filterAndRadioButtons;
-    private double mileage;
-    private RadioButton Kingdom;
-    private RadioButton Genus;
-    private RadioButton MyLocation;
+    private RadioButton Kingdom, Genus, MyLocation;
     private FrameLayout searchBox;
     private LinearLayout countyStateInput;
     private EditText countyInput, stateInput, filterEditText;
+    private TextView myLocationBlackout;
     private Button btnLoadMore;
 
     @Override
@@ -108,6 +104,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         }
 
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); // Enable hiding/showing keyboard
+        searchBox = findViewById(R.id.SearchFrame);
         searchEditText = findViewById(R.id.SearchEditText);
         filterEditText = findViewById(R.id.FilterEditText);
         speciesListView = findViewById(R.id.ListSpecies);
@@ -116,7 +113,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         Kingdom = findViewById(R.id.KingdomButton);
         Genus = findViewById(R.id.GenusButton);
         MyLocation = findViewById(R.id.MyLocationButton);
-        searchBox = findViewById(R.id.SearchFrame);
 
         countyStateInput = findViewById(R.id.locationInput);
         countyInput = findViewById(R.id.countyInput);
@@ -138,6 +134,24 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         });
 
         searchEditText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    search();
+                }
+                return false;
+            }
+        });
+
+        countyInput.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    search();
+                }
+                return false;
+            }
+        });
+
+        stateInput.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
                     search();
@@ -173,6 +187,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     countyStateInput.setVisibility(View.INVISIBLE);
                 }
                 else if (selection.equals("County")) {
+                    countyInput.requestFocus();
                     countyInput.setHint("County");
                     stateInput.setHint("State");
                     searchBox.setVisibility(View.INVISIBLE);
@@ -182,6 +197,30 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     searchEditText.setHint("State");
                     searchBox.setVisibility(View.VISIBLE);
                     countyStateInput.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
+        RadioGroup filterRadioButtons = findViewById(R.id.FilterRadioButtons);
+        myLocationBlackout = findViewById(R.id.MyLocationBlackout);
+        filterRadioButtons.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton rb = findViewById(checkedId);
+                String selection = (String) rb.getText();
+
+                if (selection.equals("Kingdom")) {
+                    filterEditText.setHint("Kingdom");
+                    myLocationBlackout.setVisibility(View.INVISIBLE);
+                }
+                else if (selection.equals("Genus")) {
+                    filterEditText.setHint("Genus");
+                    myLocationBlackout.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    filterEditText.setHint("My Location");
+                    myLocationBlackout.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -371,10 +410,32 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         //Checks which button (search type) is checked
         if (Kingdom.isChecked())
         {
+            if (filterEditText.getText().toString().equals("")) {
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                alertDialog.setTitle("No filter entered");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
             filterByKingdomOrLocation(kingdom);
         }
         else if (Genus.isChecked())
         {
+            if (filterEditText.getText().toString().equals("")) {
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                alertDialog.setTitle("No filter entered");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
             filterByGenus();
         }
         else if (MyLocation.isChecked())
@@ -389,26 +450,39 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         String commonName;
         int speciesListCount = speciesNamesArray.size();
         Log.d("speciesListCount", Integer.toString(speciesListCount));
-        for (int i = 0; i < speciesNamesArray.size(); i++) {
-            speciesListCount--;
-            if (speciesNamesArray.get(i).contains(",")) {
-                scientificName = speciesNamesArray.get(i).substring(0, speciesNamesArray.get(i).indexOf(","));
-                commonName = speciesNamesArray.get(i).substring(speciesNamesArray.get(i).indexOf(","), speciesNamesArray.get(i).length());
-            }
-            else {
-                scientificName = speciesNamesArray.get(i).substring(0, speciesNamesArray.get(i).length());
-                commonName = "";
-            }
 
-            Log.d("Check location", scientificName);
+        if (speciesListCount != 0) {
+            for (int i = 0; i < speciesNamesArray.size(); i++) {
+                speciesListCount--;
+                if (speciesNamesArray.get(i).contains(",")) {
+                    scientificName = speciesNamesArray.get(i).substring(0, speciesNamesArray.get(i).indexOf(","));
+                    commonName = speciesNamesArray.get(i).substring(speciesNamesArray.get(i).indexOf(","), speciesNamesArray.get(i).length());
+                }
+                else {
+                    scientificName = speciesNamesArray.get(i).substring(0, speciesNamesArray.get(i).length());
+                    commonName = "";
+                }
 
-            if (filterType == 0) {
-                kingdomRequest(this, scientificName, commonName, speciesListCount);
-            }
-            else {
-                locationRequest(this, scientificName, commonName, speciesListCount);
-            }
+                Log.d("Check location", scientificName);
 
+                if (filterType == 0) {
+                    kingdomRequest(this, scientificName, commonName, speciesListCount);
+                }
+                else {
+                    locationRequest(this, scientificName, commonName, speciesListCount);
+                }
+            }
+        }
+        else {
+            AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+            alertDialog.setTitle("No list to filter.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface alertDialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
         }
     }
 
