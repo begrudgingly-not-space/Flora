@@ -1422,9 +1422,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             }
 
             @Override
-            public void retry(VolleyError error) throws VolleyError {
-
-            }
+            public void retry(VolleyError error) throws VolleyError {}
         });
 
         // Adds request to queue which is then sent
