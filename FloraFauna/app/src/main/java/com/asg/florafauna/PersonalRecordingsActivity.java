@@ -76,6 +76,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     // using an array list to create entries for the save location spinner
     final ArrayList<String> defaultDirs = new ArrayList<>();
 
+    File newFolder;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -251,8 +253,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             Log.i("result okay",  "okay");
 
             createImageDialog(data);
-
-
         }
     }
 
@@ -437,6 +437,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         TextView imgDescription;
     }
 
+
+
     // function to create the custom alert dialog
     protected void createImageDialog(final Intent data)
     {
@@ -509,6 +511,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 imageDialog.dismiss();
+                newFolder.delete();
             }
         });
 
@@ -551,6 +554,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 if(selectedDir.equals("Create New"))
                 {
                     createFolderDialog();
+                    int compareVal = spinAdapter.getPosition(folderName);
+                    dirSelector.setSelection(compareVal);
 
                 }
                 // root personal recordings page
@@ -665,7 +670,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         View dView = getLayoutInflater().inflate(R.layout.dialog_confirmdelete, null);
 
 
-        // this should result in an image being placed in a directory or on the page
+        // this should result in an image or directory being removed from storage and page
         Button okayButton = (Button) dView.findViewById(R.id.yesButton);
         okayButton.setOnClickListener(new View.OnClickListener()
         {
@@ -723,7 +728,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     {
         String folderPath = dirName + pathname;
         Log.i("root directory", folderPath);
-        File newFolder = new File(folderPath);
+        newFolder = new File(folderPath);
 
         // create new folder and store it in the folder array list
         if(newFolder.mkdir())
