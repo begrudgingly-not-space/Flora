@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -92,8 +94,10 @@ public class SpeciesInfoActivity extends AppCompatActivity
                                 eolLink="No data found";
                             }
                             //Set link to EoL page on display
-                            TextView imageLinkTV = findViewById(R.id.EoLLink);
-                            imageLinkTV.setText(eolLink);
+                            TextView imageLinkTV = (TextView)findViewById(R.id.EoLLink);
+                            imageLinkTV.setText(
+                                    Html.fromHtml("<a href=\"www.google.com\">View on Encyclopedia of Life</a>"));
+                            //imageLinkTV.setMovementMethod(LinkMovementMethod.getInstance());
 
                             //Get rest of the data
                             getData(context, ID);
@@ -258,8 +262,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
             imageLink="No data found";
         }
         //Set link to image on display
-        TextView imageLinkTV = findViewById(R.id.ImageLink);
-        imageLinkTV.setText(imageLink.trim());
+        //TextView imageLinkTV = findViewById(R.id.ImageLink);
+        //imageLinkTV.setText(imageLink.trim());
         //Display the actual image
         new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
     }
