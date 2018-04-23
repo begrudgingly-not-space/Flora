@@ -14,7 +14,6 @@ import static com.asg.florafauna.FloraFaunaActionBar.createActionBar;
  */
 
 public class HelpActivity extends AppCompatActivity {
-    private String[] themeArray = new String[1];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

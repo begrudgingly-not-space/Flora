@@ -135,7 +135,7 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
                 String selectedItem = parent.getItemAtPosition(position).toString();
-                if(selectedItem.equals("Common name by state"))
+                if (selectedItem.equals("Common name by state"))
                 {
                     speciesInput.setHint("Common Name");
                     locationInput.setHint("State");
@@ -978,7 +978,6 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
 
     @Override
     public void onProviderDisabled(String provider) {
-        //Toast.makeText(SearchActivity.this, "Please Enable GPS and Internet", Toast.LENGTH_SHORT).show();
     }
 
     @Override

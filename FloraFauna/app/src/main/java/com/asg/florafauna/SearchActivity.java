@@ -33,6 +33,7 @@ import android.widget.ListView;
 import android.widget.RadioGroup;
 
 import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -1325,6 +1326,16 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     alertDialog.show();
                 }
                 else if (error instanceof TimeoutError) {
+                    alertDialog.setTitle("Cannot connect to ITIS servers at this time.");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface alertDialog, int which) {
+                                    alertDialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else if (error instanceof ParseError) {
                     alertDialog.setTitle("Cannot connect to ITIS servers at this time.");
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                             new DialogInterface.OnClickListener() {
