@@ -94,11 +94,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
                             {
                                 eolLink="No data found";
                             }
-                            // Set link to EoL page on display
-                            TextView imageLinkTV = findViewById(R.id.EoLLink);
-                            imageLinkTV.setText(eolLink);
                             //Set link to EoL page on display
-                            TextView imageLinkTV = (TextView)findViewById(R.id.EoLLink);
+                            TextView imageLinkTV = findViewById(R.id.EoLLink);
                             imageLinkTV.setText(
                                     Html.fromHtml("<a href=\"www.google.com\">View on Encyclopedia of Life</a>"));
                             //imageLinkTV.setMovementMethod(LinkMovementMethod.getInstance());
@@ -269,6 +266,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         //imageLinkTV.setText(imageLink.trim());
         //Display the actual image
         new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
+        log();
     }
 
 /*Small Helper functions */
