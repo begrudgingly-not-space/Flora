@@ -73,17 +73,6 @@
                 android:textColor="@color/black"
                 android:layout_marginBottom="15dp"
                 android:textSize="15sp" />
-
-            <!-- <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
-                android:text="in"
-                android:textColor="@color/black"
-                android:textSize="15sp"
-                android:textStyle="bold" /> -->
-
             <EditText
                 android:id="@+id/SearchEditTextRegion"
                 android:layout_width="match_parent"
@@ -152,23 +141,6 @@
 
         </LinearLayout>
 
-
-
-        <!-- <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="30dip"
-            android:orientation="horizontal"
-            android:layout_below="@id/linearLayout"
-            android:id="@+id/linearLayout2">
-
-            <Spinner
-                android:id="@+id/search_selection"
-                android:layout_width="225dp"
-                android:layout_height="wrap_content"
-                android:entries="@array/map_search_options" />
-
-        </LinearLayout> -->
-
         <TextView
             android:id="@+id/textView6"
             android:layout_width="match_parent"
@@ -180,7 +152,7 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/rounded_black_box"
             android:gravity="center"
-            android:text="Search"
+            android:text="GO"
             android:onClick="sightingsSearch"
             android:textColor="@color/white"
             android:textSize="15sp"

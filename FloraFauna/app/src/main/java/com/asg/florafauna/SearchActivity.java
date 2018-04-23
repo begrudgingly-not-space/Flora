@@ -1580,7 +1580,13 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     private void openSpeciesInfoPage(int position) {
         String speciesName = speciesListView.getItemAtPosition(position).toString();
-        String scientificName = speciesName.substring(0, speciesName.indexOf(","));
+        String scientificName;
+        if (speciesName.contains(",")) {
+            scientificName = speciesName.substring(0, speciesName.indexOf(","));
+        }
+        else {
+            scientificName = speciesName;
+        }
         Intent intent = new Intent(SearchActivity.this, SpeciesInfoActivity.class);
         intent.putExtra(INTENT_EXTRA_SPECIES_NAME, scientificName);
         startActivity(intent);

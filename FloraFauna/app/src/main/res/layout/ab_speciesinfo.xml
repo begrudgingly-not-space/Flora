@@ -21,29 +21,4 @@
         android:layout_width="wrap_content"
         android:layout_marginStart="15dp"
         android:text="Species Info" />
-    <!--<ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_help_action_white"
-        android:layout_centerVertical="true"
-        android:layout_toStartOf="@id/SettingsButton"
-        android:layout_margin="5dp"
-        android:onClick="openHelp"/>
-    <ImageView
-        android:id="@+id/SettingsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_settings_white"
-        android:layout_centerVertical="true"
-        android:layout_toStartOf="@id/HomeButton"
-        android:onClick="openSettings"/>
-    <ImageView
-        android:id="@+id/HomeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_home_white"
-        android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="5dp"
-        android:onClick="openSearch"/>-->
 </RelativeLayout>
