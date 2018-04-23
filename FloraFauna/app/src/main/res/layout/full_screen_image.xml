@@ -8,18 +8,17 @@
         android:id="@+id/fullImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="20dp"
-        android:contentDescription="User_Image" />
+        android:contentDescription="User_Image"
+        android:paddingBottom="3dp" />
 
     <TextView
         android:id="@+id/desc_Full_Screen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="false"
-        android:layout_alignBottom="@id/fullImage"
-        android:text="No description"
+        android:layout_below="@+id/fullImage"
         android:paddingStart="5dp"
+        android:text="No description"
         android:textColor="@color/black"
         android:textSize="20sp" />
 
