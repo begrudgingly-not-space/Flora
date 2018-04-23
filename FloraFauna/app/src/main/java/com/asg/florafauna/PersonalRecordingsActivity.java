@@ -511,7 +511,9 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 imageDialog.dismiss();
-                newFolder.delete();
+                if(!(folderName == null)) {
+                    newFolder.delete();
+                }
             }
         });
 
@@ -554,8 +556,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 if(selectedDir.equals("Create New"))
                 {
                     createFolderDialog();
-                    int compareVal = spinAdapter.getPosition(folderName);
-                    dirSelector.setSelection(compareVal);
 
                 }
                 // root personal recordings page
