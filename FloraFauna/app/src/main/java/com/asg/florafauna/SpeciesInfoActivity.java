@@ -49,25 +49,26 @@ public class SpeciesInfoActivity extends AppCompatActivity
         if (getSupportActionBar() != null) {
             FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
         }
-        /*not setup*/
-        //get scientific name sent by search
+
+        /* Data population */
+        // Get scientific name sent by search
         scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
 
-        //Set scientific name on display
+        // Set scientific name on display
         TextView scientificNameTV = findViewById(R.id.ScientificName);
         scientificNameTV.setText(title(scientificName));
 
         getID(this);
     }
 
-    //pull relevant info from the search page and from the eol information page
+    // Pull relevant info from the search page and from the eol information page
     private void getID(final Context context)
     {
-        //build query that contains the name from search, and set default options
+        // Build query that contains the name from search, and set default options
         String query = "http://eol.org/api/search/1.0.json?q=" + scientificName.replaceAll(" ", "+") + "&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=";
         Log.i("ID", query);
 
-        //everything until next try block is taken from search activity
+        // Everything until next try block is taken from search activity
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         JsonObjectRequest pageRequest = new JsonObjectRequest(Request.Method.GET, query, null,
                 new Response.Listener<JSONObject>()
@@ -77,13 +78,13 @@ public class SpeciesInfoActivity extends AppCompatActivity
                     {
                         try
                         {
-                            //take results, all objects have same link, so take first
+                            // Take results, all objects have same link, so take first
                             JSONObject results = response.getJSONArray("results").getJSONObject(0);
 
-                            //initial link (will be redirected)
+                            // Initial link (will be redirected)
                             eolLink = results.getString("link").trim();
 
-                            //strip ID that EoL uses for that species
+                            // Strip ID that EoL uses for that species
                             String ID = eolLink.substring(eolLink.indexOf("org/") + 4, eolLink.indexOf("?"));
 
                             //make sure data was found or set error message

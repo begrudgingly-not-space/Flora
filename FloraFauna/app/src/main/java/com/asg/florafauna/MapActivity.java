@@ -574,11 +574,6 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
 
         // Adds request to queue which is then sent
         requestQueue.add(pointsFromBison);
-
-        //bisonpoints = bisonpoints.substring(0, bisonpoints.length() - 1);
-        //Log.d("bisonpoints", bisonpoints.length() + "a");
-
-        //myWebView.reload();
     }
 
     public void sightingsByCounty(Context context, String searchType, String species, String state, String county) {
@@ -692,7 +687,7 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
             state = stateFinder(context, state);
         }
 
-        //capitalizes first char in county
+        // Capitalizes first char in county
         if (county.length() > 0){
             county = county.substring(0, 1).toUpperCase() + county.substring(1);
         }
@@ -802,11 +797,6 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
 
         // Adds request to queue which is then sent
         requestQueue.add(pointsFromBison);
-
-        //bisonpoints = bisonpoints.substring(0, bisonpoints.length() - 1);
-        //Log.d("bisonpoints", bisonpoints.length() + "a");
-
-        //myWebView.reload();
     }
 
     // Nearby sightings method
