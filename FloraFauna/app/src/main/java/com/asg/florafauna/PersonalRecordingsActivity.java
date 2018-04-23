@@ -289,9 +289,11 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                         if (isChecked){ // If item is checked
+
                         }
                         else // If item is unchecked from being checked
                         {
+
                         }
 
                     }
@@ -355,7 +357,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             // set text name
             // both file name and description come as one string, split by '!'
             // name is first, description is second
-            String[] nameDescr = list.get(list.size() - 1).split("!");
+            String[] nameDescr = list.get(list.size() - 1).split("!<>!");
             if(nameDescr.length > 0) {
                 holder.fileName.setText(nameDescr[0]);
             }
@@ -381,7 +383,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         ImageView imageview;
         TextView fileName;
         CheckBox checkBox;
-        TextView delete;
+        ImageButton delete;
         TextView imgDescription;
     }
 
@@ -435,7 +437,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                             try {
                                 currentImage = MediaStore.Images.Media.getBitmap(cr, photoUri);
                                 //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
-                                FileOutputStream output = new FileOutputStream(getSaveFolder() + "/" + imageName.getText() + "!" + description.getText());
+                                FileOutputStream output = new FileOutputStream(getSaveFolder() + "/" + imageName.getText() + "!<>!" + description.getText());
                                 currentImage.compress(Bitmap.CompressFormat.PNG, 100, output); //save file
                             } catch (Exception e) {
                                 e.printStackTrace();

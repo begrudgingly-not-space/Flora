@@ -43,4 +43,9 @@
         <item>Location</item>
     </string-array>
 
+    <string-array name="PR_Locations">
+        <item>On Page</item>
+        <item>Create New</item>
+    </string-array>
+
 </resources>
