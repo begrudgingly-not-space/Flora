@@ -8,6 +8,7 @@ import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -69,6 +70,8 @@ public class FullScreenImage extends AppCompatActivity {
         // Locate the ImageView in full_screen_image.xml
         ImageView imageview = (ImageView) findViewById(R.id.fullImage);
 
+        TextView textView = (TextView) findViewById(R.id.desc_Full_Screen);
+
         // Decode the filepath with BitmapFactory followed by the position
         Bitmap bmp = BitmapFactory.decodeFile(filepath.get(position));
 
@@ -77,6 +80,7 @@ public class FullScreenImage extends AppCompatActivity {
 
         String[] name = filename.get(position).split("!");
 
+        textView.setText(name[1]);
 
         //sets the title of the page to the name of the image (with capital first letter)
         setTitle(name[0].substring(0,1).toUpperCase()
