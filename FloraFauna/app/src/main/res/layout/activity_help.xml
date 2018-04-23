@@ -72,6 +72,23 @@
             android:textSize="15sp"
             android:padding="8dp"
             android:text="The personal-recordings page allows you to upload images of species from either your personal storage or taking a picture directly using your phone's camera. These images can then be given a name and a description. You can group similar images into folders."
+            android:textColor="?attr/colorPrimary" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Settings Page"
+            android:padding="10dp"
+            android:textColor="?attr/colorBackgroundFloating"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:background="?attr/colorPrimary"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:padding="8dp"
+            android:text="The settings page allows you to clear your search history, change the color scheme of the application, and change the search radius of the &quot;What's Around Me?&quot; and nearby sightings features."
             android:textColor="?attr/colorPrimary"
             android:layout_marginBottom="20dp"/>
 
