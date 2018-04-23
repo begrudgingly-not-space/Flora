@@ -106,7 +106,5 @@
             android:textColor="@color/black"
             android:autoLink="web"
             android:linksClickable="true"/>
-
-
     </LinearLayout>
 </ScrollView>
