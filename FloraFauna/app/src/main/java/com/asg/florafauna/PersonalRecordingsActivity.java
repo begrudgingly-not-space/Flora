@@ -36,33 +36,25 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import static android.widget.Toast.LENGTH_LONG;
 
 public class PersonalRecordingsActivity extends AppCompatActivity {
-
     private Bitmap currentImage;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE = 0;
-
     private Intent PR_Directory;
-    private String dirName;// = Environment.getExternalStorageDirectory().toString() + "/FloraFauna/Recordings/";
-    private File recordings;// = new File(dirName);
-    private String[] themeArray = new String[1];
+    private String dirName; // = Environment.getExternalStorageDirectory().toString() + "/FloraFauna/Recordings/";
+    private File recordings; // = new File(dirName);
 
     // List Files
     GridView imagegrid;
-    ArrayList<String> FilePathStrings = new ArrayList<String>();// list of file paths
+    ArrayList<String> FilePathStrings = new ArrayList<String>(); // List of file paths
     File[] listFile;
     ArrayList<String> FileNameStrings = new ArrayList<String>();
     AlertDialog imageDialog;
@@ -86,32 +78,29 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_recordings);
         }
 
-        //traverse directories-------------------------------------------------------
+        // Traverse directories
         PR_Directory = getIntent();
-        //-------------------------------------
+
         //Toast.makeText(this, PR_Directory.getStringExtra("RDIR"), Toast.LENGTH_LONG).show();
         if (PR_Directory.getStringExtra("RDIR") == null) {
             dirName = Environment.getExternalStorageDirectory().toString() + "/FloraFauna/Recordings/";
-            this.setTitle("YESSS");
-
         }
-        else{
+        else {
             dirName = PR_Directory.getStringExtra("RDIR");
 
-            //split the directory path into an array
+            // Split the directory path into an array
             String[] name = dirName.split("/");
 
-            //call the textView on the action bar .xml file
-            TextView textView = (TextView)findViewById(R.id.recordings_ab_text);
+            // Call the textView on the action bar .xml file
+            TextView textView = findViewById(R.id.recordings_ab_text);
 
-            //set the actionbar title text to current directory
+            // Set the actionbar title text to current directory
             textView.setText(name[name.length - 1].substring(0,1).toUpperCase()
                     + name[name.length - 1].substring(1).toLowerCase());
         }
 
-        //--------------------------------------------------------------------------------------
-        //gallery button
-        FloatingActionButton openGallery = (FloatingActionButton) findViewById(R.id.floatingUpload);
+        // Gallery button
+        FloatingActionButton openGallery = findViewById(R.id.floatingUpload);
         openGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,36 +130,38 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE);
         }
-
-        //set the directory to be read
-        recordings = new File(dirName);
-
-        // Checks if the recordings directory exists
-        if (!recordings.exists()) {
-            // If directory creation fails, tell the user
-            if (!recordings.mkdirs()) {
-                Log.d("error", "failed to make dir");
-                Toast.makeText(this, "Failed to create directory", LENGTH_LONG).show();
-            }
-        }
-        // If the directory exists, log error
         else {
-            Log.d("Error", "Directory already exists");
+            imagegrid = findViewById(R.id.FileList);
+            // Set the directory to be read
+            recordings = new File(dirName);
+
+            // Checks if the recordings directory exists
+            if (!recordings.exists()) {
+                // If directory creation fails, tell the user
+                if (!recordings.mkdirs()) {
+                    Log.d("error", "failed to make dir");
+                    Toast.makeText(this, "Failed to create directory", LENGTH_LONG).show();
+                }
+            }
+            // If the directory exists, log error
+            else {
+                Log.d("Error", "Directory already exists");
+            }
+
+            GetFiles();
+            imagegrid.setAdapter(new ImageAdapter());
         }
 
-        imagegrid = (GridView) findViewById(R.id.FileList);
-
-        //Check if write storage has permission
+        /*// Check if write storage has permission
         PackageManager pm = this.getPackageManager();
         int hasPerm = pm.checkPermission(
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 this.getPackageName());
         if (hasPerm == PackageManager.PERMISSION_GRANTED) {
-            //list files
+            // List files
             GetFiles();
             imagegrid.setAdapter(new ImageAdapter());
-        }
-
+        }*/
     }
 
     @Override
@@ -212,10 +203,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (resultCode == RESULT_OK) {
             Log.i("result okay",  "okay");
-
             createImageDialog(data);
         }
     }
@@ -250,20 +239,17 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         {
             listFile = recordings.listFiles();
 
-
             for (int i = 0; i < listFile.length; i++)
             {
                 // Get the path of the image file
                 FilePathStrings.add(listFile[i].getAbsolutePath());
                 // Get the name image file
                 FileNameStrings.add(listFile[i].getName());
-
             }
         }
     }
 
     public class ImageAdapter extends BaseAdapter {
-
         private LayoutInflater mInflater;
 
         public ImageAdapter() {
@@ -288,32 +274,30 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             if (convertView == null) {
                 holder = new ViewHolder(); //create new ViewHolder (custom class)
 
-                //inflates the galleryitem.xml layout to be used and populate the gridview
+                // Inflates the galleryitem.xml layout to be used and populate the gridview
                 convertView = mInflater.inflate(R.layout.galleryitem, null);
-                holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage); //thumbnail
-                holder.fileName = (TextView) convertView.findViewById(R.id.fileName); //name of text
-                holder.checkBox = (CheckBox) convertView.findViewById(R.id.itemCheckBox); //checkbox of item
-                holder.delete = (TextView) convertView.findViewById(R.id.delete); //delete button
-                holder.imgDescription = (TextView) convertView.findViewById(R.id.description); // image description
+                holder.imageview = convertView.findViewById(R.id.thumbImage); //thumbnail
+                holder.fileName = convertView.findViewById(R.id.fileName); //name of text
+                holder.checkBox = convertView.findViewById(R.id.itemCheckBox); //checkbox of item
+                holder.delete = convertView.findViewById(R.id.delete); //delete button
+                holder.imgDescription = convertView.findViewById(R.id.description); // image description
 
                 convertView.setTag(holder);
 
-                //set onCheckListerner for each item
+                // Set onCheckListener for each item
                 holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                        if(isChecked){ //if item is checked
-
+                        if (isChecked){ // If item is checked
                         }
-                        else //if item is unchecked from being checked
+                        else // If item is unchecked from being checked
                         {
-
                         }
 
                     }
                 });
 
-                //set onclicklistener for delete for each item
+                // Set onclicklistener for delete for each item
                 holder.delete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -452,7 +436,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                                 currentImage = MediaStore.Images.Media.getBitmap(cr, photoUri);
                                 //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
                                 FileOutputStream output = new FileOutputStream(getSaveFolder() + "/" + imageName.getText() + "!" + description.getText());
-                                currentImage.compress(Bitmap.CompressFormat.PNG, 75, output); //save file
+                                currentImage.compress(Bitmap.CompressFormat.PNG, 100, output); //save file
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -481,14 +465,14 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             }
         });
 
-
-
-        // if there are existing folders, populate those in the imageDialog spinner
-        for(int i = 0; i < listFile.length; i++)
-        {
-            if(listFile[i].isDirectory() && !defaultDirs.contains(listFile[i]))
+        if (listFile != null) {
+            // If there are existing folders, populate those in the imageDialog spinner
+            for (int i = 0; i < listFile.length; i++)
             {
-                defaultDirs.add(listFile[i].getName());
+                if(listFile[i].isDirectory() && !defaultDirs.contains(listFile[i]))
+                {
+                    defaultDirs.add(listFile[i].getName());
+                }
             }
         }
 
@@ -687,7 +671,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
     }
 
-    // create a folder in the root path /FloraFauna/Recordings
+    // Create a folder in the root path /FloraFauna/Recordings
     protected void createNewFolder(String pathname)
     {
         String folderPath = dirName + pathname;
@@ -705,14 +689,12 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         {
             Toast.makeText(getBaseContext(), "Couldn't create folder", LENGTH_LONG).show();
         }
-
     }
 
-    // returns the folder that the user is intending to save an image in
+    // Returns the folder that the user is intending to save an image in
     protected File getSaveFolder()
     {
         return imageLocation;
     }
-
 }
 
