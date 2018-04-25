@@ -416,7 +416,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 //loading dialog
-               // dialog = ProgressDialog.show(PersonalRecordingsActivity.this, "", "Loading. Please wait...", true);
+                dialog = ProgressDialog.show(PersonalRecordingsActivity.this, "", "Loading. Please wait...", true);
 
 
                 //if name is empty, tell user
@@ -675,12 +675,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     protected void refresh(){
         Intent refresh = new Intent(PersonalRecordingsActivity.this, PersonalRecordingsActivity.class);
         refresh.putExtra("RDIR", dirName);
-        finish();
-        startActivity(refresh);
-
-    }
-    protected void initialRefresh(){
-        Intent refresh = new Intent(PersonalRecordingsActivity.this, PersonalRecordingsActivity.class);
         finish();
         startActivity(refresh);
 
