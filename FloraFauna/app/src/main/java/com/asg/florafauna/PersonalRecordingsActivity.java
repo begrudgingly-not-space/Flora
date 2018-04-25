@@ -1,6 +1,7 @@
 package com.asg.florafauna;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -67,6 +68,9 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     // Using an array list to create entries for the save location spinner
     final ArrayList<String> defaultDirs = new ArrayList<>();
     File newFolder;
+
+    //testing for loading
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -414,6 +418,10 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         {
             public void onClick(View v)
             {
+                //loading dialog
+                dialog = ProgressDialog.show(PersonalRecordingsActivity.this, "", "Loading. Please wait...", true);
+
+
                 //if name is empty, tell user
                 if(imageName.getText().toString().equalsIgnoreCase("")){
                     Toast.makeText(getBaseContext(), "Please Input a File Name..", LENGTH_LONG).show();
@@ -446,12 +454,12 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                             }
 
                             refresh();
-
                         }
                     }
 
                     imageDialog.dismiss();
                 }
+
             }
         });
 
