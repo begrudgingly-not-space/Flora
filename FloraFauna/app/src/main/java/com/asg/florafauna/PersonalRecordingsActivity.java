@@ -75,7 +75,9 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        Log.i("here", "onCreate");
         setTheme(ThemeCreator.getTheme(this));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_recordings);
         if (getSupportActionBar() != null) {
@@ -128,13 +130,18 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         });
 
         // Create directory for recordings
-        // Request for permission to write to storage
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE);
+//        // Request for permission to write to storage
+//        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                    MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE);
+//        }
+        //Test for permission granted
+        PackageManager pm = this.getPackageManager();
+        int hasPerm = pm.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this.getPackageName());
 
-            refresh();
+        if(!(hasPerm == PackageManager.PERMISSION_GRANTED)) {
+            //do something
         }
         else {
             imagegrid = findViewById(R.id.FileList);
@@ -158,16 +165,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             imagegrid.setAdapter(new ImageAdapter());
         }
 
-        /*// Check if write storage has permission
-        PackageManager pm = this.getPackageManager();
-        int hasPerm = pm.checkPermission(
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                this.getPackageName());
-        if (hasPerm == PackageManager.PERMISSION_GRANTED) {
-            // List files
-            GetFiles();
-            imagegrid.setAdapter(new ImageAdapter());
-        }*/
     }
 
     @Override
@@ -419,7 +416,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 //loading dialog
-                dialog = ProgressDialog.show(PersonalRecordingsActivity.this, "", "Loading. Please wait...", true);
+               // dialog = ProgressDialog.show(PersonalRecordingsActivity.this, "", "Loading. Please wait...", true);
 
 
                 //if name is empty, tell user
@@ -678,6 +675,12 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     protected void refresh(){
         Intent refresh = new Intent(PersonalRecordingsActivity.this, PersonalRecordingsActivity.class);
         refresh.putExtra("RDIR", dirName);
+        finish();
+        startActivity(refresh);
+
+    }
+    protected void initialRefresh(){
+        Intent refresh = new Intent(PersonalRecordingsActivity.this, PersonalRecordingsActivity.class);
         finish();
         startActivity(refresh);
 

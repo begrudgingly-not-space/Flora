@@ -73,6 +73,9 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     private String locationPolygon;
     private double latitude, longitude, mileage;
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_COARSE_LOCATION = 0;
+
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE = 0;
+
     public static final String INTENT_EXTRA_SPECIES_NAME = "speciesName";
     private int offset = 0, searchType = 0;
     private ArrayList<String> speciesNamesArray = new ArrayList<>(), filteredArrayList = new ArrayList<>(), history = new ArrayList<>();
@@ -103,6 +106,12 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         else {
             getLocation();
             getMileage();
+        }
+        // Request for permission to write to storage
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE);
         }
 
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); // Enable hiding/showing keyboard
