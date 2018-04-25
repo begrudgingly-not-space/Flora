@@ -140,8 +140,9 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         PackageManager pm = this.getPackageManager();
         int hasPerm = pm.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this.getPackageName());
 
+        //check for permissions, if false tell user
         if(!(hasPerm == PackageManager.PERMISSION_GRANTED)) {
-            //do something
+            Toast.makeText(this, "Permision not granted",LENGTH_LONG).show();
         }
         else {
             imagegrid = findViewById(R.id.FileList);
