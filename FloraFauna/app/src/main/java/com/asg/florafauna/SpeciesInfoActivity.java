@@ -215,7 +215,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
             Log.e("Error GetDescription", e.toString());
         }
 
-        int start, stop;
+        /*int start, stop;
         //removes tacked on links to more info
         if (description.contains("<br>"))
         {
@@ -234,7 +234,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
             description = description.substring(0, start) + " " + description.substring(stop + 1);
         }
         description = description.replaceAll(" +", " ").trim();
-
+*/
         //make sure data was found or set error message
         if (description.equals(""))
         {
@@ -242,7 +242,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         }
         //Set description on display
         TextView descriptionTV = findViewById(R.id.Description);
-        descriptionTV.setText(description.trim());
+        descriptionTV.setText(Html.fromHtml(description));
     }
 
     private void getImageLink(JSONObject response)
