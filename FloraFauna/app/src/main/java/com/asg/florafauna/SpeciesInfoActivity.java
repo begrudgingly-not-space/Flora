@@ -52,6 +52,11 @@ public class SpeciesInfoActivity extends AppCompatActivity
             FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
         }
 
+        // SSL Certification for webcalls
+        if (BuildConfig.DEBUG) {
+            SSLCertificates.trustAll();
+        }
+
         /* Data population */
         // Get scientific name sent by search
         scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);

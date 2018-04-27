@@ -67,6 +67,7 @@ import static com.asg.florafauna.StateFinder.stateFinder;
 public class SearchActivity extends AppCompatActivity implements LocationListener {
     private static final String TAG = "SearchActivity";
     private AutoCompleteTextView searchEditText;
+    private boolean inKingdom;
     private ListView speciesListView;
     private InputMethodManager imm;
     private ProgressDialog dialog;
@@ -91,6 +92,12 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         setTheme(ThemeCreator.getTheme(this));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        // SSL Certification for webcalls
+        if (BuildConfig.DEBUG) {
+            SSLCertificates.trustAll();
+        }
+
         if (getSupportActionBar() != null) {
             createActionBar(getSupportActionBar(), R.layout.ab_search);
         }
@@ -108,6 +115,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE); // Enable hiding/showing keyboard
         searchBox = findViewById(R.id.SearchFrame);
         searchEditText = findViewById(R.id.SearchEditText);
+        searchEditText.requestFocus();
         filterEditText = findViewById(R.id.FilterEditText);
         speciesListView = findViewById(R.id.ListSpecies);
 
@@ -144,7 +152,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             }
         });
 
-        countyInput.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+        stateInput.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
                     search();
@@ -181,6 +189,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 }
                 else if (selection.equals("County")) {
                     countyInput.requestFocus();
+                    imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
                     countyInput.setHint("County");
                     stateInput.setHint("State");
                     searchBox.setVisibility(View.INVISIBLE);
@@ -215,6 +224,14 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     filterEditText.setHint("My Location");
                     myLocationBlackout.setVisibility(View.VISIBLE);
                 }
+            }
+        });
+
+        speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                openSpeciesInfoPage(position);
             }
         });
     }
@@ -431,14 +448,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             speciesListView.setSelection(position);
 
                             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-
-                            speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-                            {
-                                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-                                {
-                                    openSpeciesInfoPage(position);
-                                }
-                            });
                         }
                         catch (JSONException error) {
                             Log.e("searchResponseException", error.toString());
@@ -606,14 +615,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             speciesListView.setSelection(position);
 
                             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-
-                            speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-                            {
-                                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-                                {
-                                    openSpeciesInfoPage(position);
-                                }
-                            });
                         }
                         catch (JSONException error) {
                             Log.e("searchResponseException", error.toString());
@@ -792,17 +793,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                     // Hide the keyboard
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-
-                    // On clicking species name listview, user should be sent to species info page
-                    speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-                    {
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-                        {
-                            openSpeciesInfoPage(position);
-                        }
-                    });
-
-
                 }
                 catch(Exception exception)
                 {
@@ -926,17 +916,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                     // Hide the keyboard
                     imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-
-                    // On clicking species name listview, user should be sent to species info page
-                    speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-                    {
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-                        {
-                            openSpeciesInfoPage(position);
-                        }
-                    });
-
-
                 }
                 catch(Exception exception)
                 {
@@ -1107,14 +1086,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             speciesListView.setSelection(position);
 
                             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-
-                            speciesListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-                            {
-                                public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-                                {
-                                    openSpeciesInfoPage(position);
-                                }
-                            });
                         }
                         catch (JSONException error) {
                             Log.e("whatsAroundMeRespExcept", error.toString());
@@ -1299,9 +1270,9 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         int speciesListCount = speciesNamesArray.size();
         Log.d("speciesListCount", Integer.toString(speciesListCount));
 
-        if (speciesListCount != 0) {
+        if (speciesNamesArray.size() != 0) {
             for (int i = 0; i < speciesNamesArray.size(); i++) {
-                speciesListCount--;
+                //speciesListCount--;
                 if (speciesNamesArray.get(i).contains(",")) {
                     scientificName = speciesNamesArray.get(i).substring(0, speciesNamesArray.get(i).indexOf(","));
                     commonName = speciesNamesArray.get(i).substring(speciesNamesArray.get(i).indexOf(","), speciesNamesArray.get(i).length());
@@ -1314,7 +1285,12 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 Log.d("Check location", scientificName);
 
                 if (filterType == 0) {
-                    kingdomRequest(this, scientificName, commonName, speciesListCount);
+                    if (i == speciesNamesArray.size() - 1) {
+                        kingdomRequest(this, scientificName, commonName, true);
+                    }
+                    else {
+                        kingdomRequest(this, scientificName, commonName, false);
+                    }
                 }
                 else {
                     locationRequest(this, scientificName, commonName, speciesListCount);
@@ -1334,20 +1310,27 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         }
     }
 
-    private void kingdomRequest(Context context, final String scientificName, final String commonName, final int speciesListCount){
+    private void kingdomRequest(Context context, final String scientificName, final String commonName, final boolean lastItem){
         String formattedName = scientificName.replaceAll(" ", "%20");
         final String url = "https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=" + formattedName;
+        final String url2 = "http://eol.org/api/search/1.0.json?q=" + formattedName + "&page=1&exact=true&filter_by_string=" + filterEditText.getText().toString();
         Log.d("url", url);
+        Log.d("url2", url2);
 
         // Initialize request queue
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
-        JsonObjectRequest kingdomRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+        JsonObjectRequest kingdomRequest = new JsonObjectRequest(Request.Method.GET, url2, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            final JSONArray scientificNames = response.getJSONArray("scientificNames");
+                            Log.d("response", response.getJSONArray("results").toString());
+                            if (!response.getJSONArray("results").toString().equals("[]")) {
+                                filteredArrayList.add(scientificName + commonName);
+                                Log.d("response", "Add to list");
+                            }
+                            /*final JSONArray scientificNames = response.getJSONArray("scientificNames");
                             Log.d("scientificNames", scientificNames.toString());
                             JSONObject speciesData = scientificNames.getJSONObject(0);
                             Log.d("speciesData", speciesData.toString());
@@ -1356,13 +1339,13 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             String inputKingdom = filterEditText.getText().toString().replaceAll("\\s+","");
                             if (kingdom.equalsIgnoreCase(inputKingdom)) {
                                 filteredArrayList.add(scientificName + commonName);
-                            }
+                            }*/
                         }
                         catch (JSONException error) {
                             Log.e("No kingdom data.", error.toString());
                         }
 
-                        if (speciesListCount == 0) {
+                        if (lastItem) {
                             if (filteredArrayList.isEmpty()) {
                                 dialog.dismiss();
                                 AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
@@ -1387,7 +1370,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("onErrorResponseKingdom", error.toString());
-                if (speciesListCount == 0) {
+                if (lastItem) {
                     if (filteredArrayList.isEmpty()) {
                         dialog.dismiss();
                         AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
@@ -1501,16 +1484,39 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             }
         }
         );
+        locationRequest.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 50000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 50000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {}
+        });
 
         // Adds request to queue which is then sent
         requestQueue.add(locationRequest);
     }
 
     private void filterByGenus() {
+        String genus;
         filteredArrayList.clear();
         for (int i = 0; i < speciesNamesArray.size(); i++) {
-            String scientificName = speciesNamesArray.get(i);
-            String genus = scientificName.substring(0, scientificName.indexOf(" "));
+            String speciesName = speciesNamesArray.get(i);
+            Log.d("scientificName", speciesName);
+
+            if (speciesName.contains(" ")) {
+                genus = speciesName.substring(0, speciesName.indexOf(" "));
+            }
+            else {
+                genus = speciesName;
+            }
+
             String inputGenus = filterEditText.getText().toString().replaceAll("\\s+","");
             if (genus.equalsIgnoreCase(inputGenus)) {
                 filteredArrayList.add(speciesNamesArray.get(i));

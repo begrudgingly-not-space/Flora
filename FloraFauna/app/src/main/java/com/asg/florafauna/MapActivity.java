@@ -92,6 +92,11 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
             FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_map);
         }
 
+        // SSL Certification for webcalls
+        if (BuildConfig.DEBUG) {
+            SSLCertificates.trustAll();
+        }
+
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         final ScrollView sv = findViewById(R.id.scrollview);
 

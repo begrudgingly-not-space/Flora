@@ -78,6 +78,11 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_recordings);
         }
 
+        // SSL Certification for webcalls
+        if (BuildConfig.DEBUG) {
+            SSLCertificates.trustAll();
+        }
+
         // Traverse directories
         PR_Directory = getIntent();
 
