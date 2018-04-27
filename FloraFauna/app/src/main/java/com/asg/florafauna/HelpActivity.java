@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import static com.asg.florafauna.FloraFaunaActionBar.createActionBar;
 
@@ -55,5 +56,10 @@ public class HelpActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+
+    public void goBack(View view){
+        finish();
     }
 }

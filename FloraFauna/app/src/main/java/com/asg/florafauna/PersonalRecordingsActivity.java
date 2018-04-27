@@ -1,6 +1,7 @@
 package com.asg.florafauna;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -68,10 +69,15 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     final ArrayList<String> defaultDirs = new ArrayList<>();
     File newFolder;
 
+    //testing for loading
+    private ProgressDialog dialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        Log.i("here", "onCreate");
         setTheme(ThemeCreator.getTheme(this));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_recordings);
         if (getSupportActionBar() != null) {
@@ -129,11 +135,19 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         });
 
         // Create directory for recordings
-        // Request for permission to write to storage
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE);
+//        // Request for permission to write to storage
+//        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+//                    MY_PERMISSIONS_REQUEST_ACCESS_WRITE_EXTERNAL_STORAGE);
+//        }
+        //Test for permission granted
+        PackageManager pm = this.getPackageManager();
+        int hasPerm = pm.checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this.getPackageName());
+
+        //check for permissions, if false tell user
+        if(!(hasPerm == PackageManager.PERMISSION_GRANTED)) {
+            Toast.makeText(this, "Permission not granted",LENGTH_LONG).show();
         }
         else {
             imagegrid = findViewById(R.id.FileList);
@@ -157,16 +171,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             imagegrid.setAdapter(new ImageAdapter());
         }
 
-        /*// Check if write storage has permission
-        PackageManager pm = this.getPackageManager();
-        int hasPerm = pm.checkPermission(
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                this.getPackageName());
-        if (hasPerm == PackageManager.PERMISSION_GRANTED) {
-            // List files
-            GetFiles();
-            imagegrid.setAdapter(new ImageAdapter());
-        }*/
     }
 
     @Override
@@ -417,6 +421,10 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         {
             public void onClick(View v)
             {
+                //loading dialog
+                dialog = ProgressDialog.show(PersonalRecordingsActivity.this, "", "Loading. Please wait...", true);
+
+
                 //if name is empty, tell user
                 if(imageName.getText().toString().equalsIgnoreCase("")){
                     Toast.makeText(getBaseContext(), "Please Input a File Name..", LENGTH_LONG).show();
@@ -449,12 +457,12 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                             }
 
                             refresh();
-
                         }
                     }
 
                     imageDialog.dismiss();
                 }
+
             }
         });
 
@@ -482,14 +490,14 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 }
             }
         }
+        if(nameGiven) {
+            // add the two default settings
+            defaultDirs.add("On Page");
+            defaultDirs.add("Create New");
 
-        // add the two default settings
-        defaultDirs.add("On Page");
-        defaultDirs.add("Create New");
-
-        spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, defaultDirs);
-        spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
+            spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, defaultDirs);
+            spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        }
         // just a TextView to display words, "Save Location"
         TextView saveLoc = (TextView) dView.findViewById(R.id.saveLocation);
 
@@ -688,9 +696,11 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         // create new folder and store it in the folder array list
         if(newFolder.mkdir())
         {
+
             folderAL.add(newFolder);
             defaultDirs.add(newFolder.getName());
             spinAdapter.notifyDataSetChanged();
+
         }
         else
         {
