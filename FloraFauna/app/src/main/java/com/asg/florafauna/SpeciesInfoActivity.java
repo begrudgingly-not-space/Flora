@@ -16,10 +16,7 @@ import android.widget.TextView;
 import android.widget.ImageView;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -28,9 +25,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.net.*;
 
 import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
 
@@ -126,7 +121,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
     private void getData(final Context context, String ID)
     {
         //create query with ID from previous call, and default options
-        String query = "http://eol.org/api/pages/1.0.json?batch=false&id=" + ID + "&images_per_page=1&images_page=1&videos_per_page=0&videos_page=0&sounds_per_page=0&sounds_page=0&maps_per_page=0&maps_page=0&texts_per_page=1&texts_page=1&subjects=overview&licenses=all&details=true&common_names=true&synonyms=false&references=false&taxonomy=false&vetted=1&cache_ttl=&language=en";
+        String query = "http://eol.org/api/pages/1.0.json?batch=false&id=" + ID + "&images_per_page=100&images_page=1&videos_per_page=0&videos_page=0&sounds_per_page=0&sounds_page=0&maps_per_page=0&maps_page=0&texts_per_page=1&texts_page=1&subjects=overview&licenses=all&details=true&common_names=true&synonyms=false&references=false&taxonomy=false&vetted=1&cache_ttl=&language=en";
         Log.i("Data", query);
 
         //everything until get statements taken from search activity
@@ -220,7 +215,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
             Log.e("Error GetDescription", e.toString());
         }
 
-        int start, stop;
+        /*int start, stop;
         //removes tacked on links to more info
         if (description.contains("<br>"))
         {
@@ -239,7 +234,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
             description = description.substring(0, start) + " " + description.substring(stop + 1);
         }
         description = description.replaceAll(" +", " ").trim();
-
+*/
         //make sure data was found or set error message
         if (description.equals(""))
         {
@@ -247,14 +242,26 @@ public class SpeciesInfoActivity extends AppCompatActivity
         }
         //Set description on display
         TextView descriptionTV = findViewById(R.id.Description);
-        descriptionTV.setText(description.trim());
+        descriptionTV.setText(Html.fromHtml(description));
+        descriptionTV.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private void getImageLink(JSONObject response)
     {
         try
         {
-            imageLink = response.getJSONArray("dataObjects").getJSONObject(1).getString("mediaURL");
+            imageLink="upload.wikimedia";
+            //works (mostly) - mediaURL
+            //thumbnails - eolThumbnailURL
+            //no response - eolMediaURL
+            JSONArray imageArray=response.getJSONArray("dataObjects");
+            //imageLink = response.getJSONArray("dataObjects").getJSONObject(1).getString("mediaURL");
+            int i=1;
+            while(imageLink.contains("upload.wikimedia"))
+            {
+                imageLink=imageArray.getJSONObject(i).getString("mediaURL");
+                i++;
+            }
         }
         catch(Exception e)
         {
@@ -290,11 +297,11 @@ public class SpeciesInfoActivity extends AppCompatActivity
     //log values
     private void log()
     {
-        Log.i("sciName",scientificName);
-        Log.i("commonName",commonName);
-        Log.i("description",description);
-        Log.i("eolLink",eolLink);
-        Log.i("imageLink",imageLink);
+        Log.i("TsciName",scientificName);
+        Log.i("TcommonName",commonName);
+        Log.i("Tdescription",description);
+        Log.i("TeolLink",eolLink);
+        Log.i("TimageLink",imageLink);
     }
 /*Image downloader and display*/
     //https://stackoverflow.com/a/10868126
@@ -310,11 +317,16 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
         protected Bitmap doInBackground(String... urls)
         {
-            String url = urls[0];
+            String urlPath = urls[0];
             Bitmap mIcon11 = null;
             try
             {
-                InputStream in = new java.net.URL(url).openStream();
+                //InputStream in = new java.net.URL(url).openStream();
+                URL url = new URL(urlPath);
+                URLConnection con = url.openConnection();
+                //con.setConnectTimeout(10000);
+                //con.setReadTimeout(10000);
+                InputStream in = con.getInputStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
             }
             catch (Exception e)
@@ -326,7 +338,17 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
         protected void onPostExecute(Bitmap result)
         {
-            bmImage.setImageBitmap(result);
+
+            if (result==null)
+            {
+                Log.i("TimageTest","null");
+            }
+            //else if(result.getByteCount()>=)
+            else
+            {
+                Log.i("TimageSize", result.getByteCount() + "");
+                bmImage.setImageBitmap(result);
+            }
         }
     }
 
