@@ -32,6 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -473,7 +474,8 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     alertDialog.show();
                 }
                 else if (error instanceof TimeoutError) {
-                    alertDialog.setTitle("Cannot connect to BISON servers at this time.");
+                    alertDialog.setTitle("Request timed out");
+                    alertDialog.setMessage("BISON servers may be down at this time. Please retry search.");
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface alertDialog, int which) {
@@ -639,7 +641,8 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     alertDialog.show();
                 }
                 else if (error instanceof TimeoutError) {
-                    alertDialog.setTitle("Cannot connect to BISON servers at this time.");
+                    alertDialog.setTitle("Request timed out");
+                    alertDialog.setMessage("BISON servers may be down at this time. Please retry search.");
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface alertDialog, int which) {
@@ -831,7 +834,8 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                         alertDialog.show();
                     }
                     else if (error instanceof TimeoutError) {
-                        alertDialog.setTitle("Cannot connect to ITIS servers at this time.");
+                        alertDialog.setTitle("Request timed out");
+                        alertDialog.setMessage("ITIS servers may be down at this time. Please retry search.");
                         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface alertDialog, int which) {
@@ -955,7 +959,8 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     alertDialog.show();
                 }
                 else if (error instanceof TimeoutError) {
-                    alertDialog.setTitle("Cannot connect to ITIS servers at this time.");
+                    alertDialog.setTitle("Request timed out");
+                    alertDialog.setMessage("ITIS servers may be down at this time. Please retry search.");
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface alertDialog, int which) {
@@ -1110,7 +1115,8 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     alertDialog.show();
                 }
                 else if (error instanceof TimeoutError) {
-                    alertDialog.setTitle("Cannot connect to BISON servers at this time.");
+                    alertDialog.setTitle("Request timed out");
+                    alertDialog.setMessage("BISON servers may be down at this time. Please retry search.");
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface alertDialog, int which) {
@@ -1267,12 +1273,11 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         filteredArrayList.clear();
         String scientificName;
         String commonName;
-        int speciesListCount = speciesNamesArray.size();
-        Log.d("speciesListCount", Integer.toString(speciesListCount));
+        boolean isLastItem;
+        adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
 
         if (speciesNamesArray.size() != 0) {
             for (int i = 0; i < speciesNamesArray.size(); i++) {
-                //speciesListCount--;
                 if (speciesNamesArray.get(i).contains(",")) {
                     scientificName = speciesNamesArray.get(i).substring(0, speciesNamesArray.get(i).indexOf(","));
                     commonName = speciesNamesArray.get(i).substring(speciesNamesArray.get(i).indexOf(","), speciesNamesArray.get(i).length());
@@ -1284,16 +1289,13 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                 Log.d("Check location", scientificName);
 
+                isLastItem = (i == speciesNamesArray.size() - 1);
+
                 if (filterType == 0) {
-                    if (i == speciesNamesArray.size() - 1) {
-                        kingdomRequest(this, scientificName, commonName, true);
-                    }
-                    else {
-                        kingdomRequest(this, scientificName, commonName, false);
-                    }
+                    kingdomRequest(this, scientificName, commonName, isLastItem);
                 }
                 else {
-                    locationRequest(this, scientificName, commonName, speciesListCount);
+                    locationRequest(this, scientificName, commonName, isLastItem);
                 }
             }
         }
@@ -1312,40 +1314,31 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
     private void kingdomRequest(Context context, final String scientificName, final String commonName, final boolean lastItem){
         String formattedName = scientificName.replaceAll(" ", "%20");
-        final String url = "https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchByScientificName?srchKey=" + formattedName;
-        final String url2 = "http://eol.org/api/search/1.0.json?q=" + formattedName + "&page=1&exact=true&filter_by_string=" + filterEditText.getText().toString();
+        final String url = "http://eol.org/api/search/1.0.json?q=" + formattedName + "&page=1&exact=true&filter_by_string=" + filterEditText.getText().toString();
         Log.d("url", url);
-        Log.d("url2", url2);
 
         // Initialize request queue
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
-        JsonObjectRequest kingdomRequest = new JsonObjectRequest(Request.Method.GET, url2, null,
+        JsonObjectRequest kingdomRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            Log.d("response", response.getJSONArray("results").toString());
-                            if (!response.getJSONArray("results").toString().equals("[]")) {
+                            final JSONArray speciesArray = response.getJSONArray("results");
+                            Log.d("response", speciesArray.toString());
+                            if (speciesArray.length() > 0) {
                                 filteredArrayList.add(scientificName + commonName);
+                                Log.d("filteredArrayList", filteredArrayList.toString());
                                 Log.d("response", "Add to list");
                             }
-                            /*final JSONArray scientificNames = response.getJSONArray("scientificNames");
-                            Log.d("scientificNames", scientificNames.toString());
-                            JSONObject speciesData = scientificNames.getJSONObject(0);
-                            Log.d("speciesData", speciesData.toString());
-                            String kingdom = speciesData.getString("kingdom");
-                            Log.d("kingdom", kingdom);
-                            String inputKingdom = filterEditText.getText().toString().replaceAll("\\s+","");
-                            if (kingdom.equalsIgnoreCase(inputKingdom)) {
-                                filteredArrayList.add(scientificName + commonName);
-                            }*/
                         }
                         catch (JSONException error) {
                             Log.e("No kingdom data.", error.toString());
                         }
 
                         if (lastItem) {
+                            Log.d("filteredArrayList", filteredArrayList.toString());
                             if (filteredArrayList.isEmpty()) {
                                 dialog.dismiss();
                                 AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
@@ -1361,7 +1354,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             }
                             else {
                                 dialog.dismiss();
-                                adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
                                 speciesListView.setAdapter(adapter);
                             }
                         }
@@ -1370,7 +1362,17 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("onErrorResponseKingdom", error.toString());
-                if (lastItem) {
+                dialog.dismiss();
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                alertDialog.setTitle("Error with input/response.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+                /*if (lastItem) {
                     if (filteredArrayList.isEmpty()) {
                         dialog.dismiss();
                         AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
@@ -1386,14 +1388,13 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     }
                     else {
                         dialog.dismiss();
-                        adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
                         speciesListView.setAdapter(adapter);
                     }
-                }
+                }*/
             }
         }
         );
-        kingdomRequest.setRetryPolicy(new RetryPolicy() {
+        kingdomRequest.setRetryPolicy(/*new DefaultRetryPolicy(50000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)*/new RetryPolicy() {
             @Override
             public int getCurrentTimeout() {
                 return 50000;
@@ -1412,7 +1413,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         requestQueue.add(kingdomRequest);
     }
 
-    private void locationRequest(Context context, final String scientificName, final String commonName, final int speciesListCount){
+    private void locationRequest(Context context, final String scientificName, final String commonName, final boolean lastItem){
         String locationPolygon = setAOIBbox(latitude, longitude, mileage);
         final String url = "https://bison.usgs.gov/api/search.json?species=" + scientificName + "&type=scientific_name&aoibbox=" + locationPolygon + "&start=0&count=1";
         Log.d("url", url);
@@ -1435,7 +1436,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             Log.e("Species not in location", error.toString());
                         }
 
-                        if (speciesListCount == 0) {
+                        if (lastItem) {
                             if (filteredArrayList.isEmpty()) {
                                 dialog.dismiss();
                                 AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
@@ -1461,7 +1462,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             public void onErrorResponse(VolleyError error) {
                 Log.e("onErrorResponse", error.toString());
 
-                if (speciesListCount == 0) {
+                if (lastItem) {
                     if (filteredArrayList.isEmpty()) {
                         dialog.dismiss();
                         AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
