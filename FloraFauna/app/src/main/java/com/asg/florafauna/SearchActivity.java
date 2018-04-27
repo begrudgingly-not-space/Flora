@@ -68,7 +68,6 @@ import static com.asg.florafauna.StateFinder.stateFinder;
 public class SearchActivity extends AppCompatActivity implements LocationListener {
     private static final String TAG = "SearchActivity";
     private AutoCompleteTextView searchEditText;
-    private boolean inKingdom;
     private ListView speciesListView;
     private InputMethodManager imm;
     private ProgressDialog dialog;
@@ -308,10 +307,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     getLocation();
                     getMileage();
                 }
-                /*else {
-                    // Permission denied, What's Around Me functionality disabled
-                }*/
-            }
+        }
         }
     }
 
@@ -716,7 +712,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
         Log.i("species input", speciesName);
 
-
         // Base address for searching for a species
         String baseAddress = "https://www.itis.gov/ITISWebService/jsonservice/ITISService/searchForAnyMatch?srchKey=";
         // Url for searching
@@ -741,7 +736,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                 try
                 {
-                    searchType = 4;
+                    //searchType = 4;
                     Log.i("response", response.toString());
 
                     // All of the possible results from the search
@@ -990,22 +985,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                 }
             }
         });
-        /*partialSearchRequest.setRetryPolicy(new RetryPolicy() {
-            @Override
-            public int getCurrentTimeout() {
-                return 50000;
-            }
-
-            @Override
-            public int getCurrentRetryCount() {
-                return 50000;
-            }
-
-            @Override
-            public void retry(VolleyError error) throws VolleyError {
-
-            }
-        });*/
 
         requestQueue.add(partialSearchRequest);
     }
@@ -1172,9 +1151,9 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         else if (searchType == 3) {
             whatsAroundMeRequest(this, locationPolygon);
         }
-        else if (searchType == 4) {
+        /*else if (searchType == 4) {
             searchRequestWithSpecies(this, searchInput);
-        }
+        }*/
     }
 
     // Save history method
@@ -1283,6 +1262,8 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         String scientificName;
         String commonName;
         boolean isLastItem;
+        adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
+        speciesListView.setAdapter(adapter);
 
         if (speciesNamesArray.size() != 0) {
             for (int i = 0; i < speciesNamesArray.size(); i++) {
@@ -1364,6 +1345,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                                 dialog.dismiss();
                                 adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
                                 speciesListView.setAdapter(adapter);
+                                adapter.notifyDataSetChanged();
                             }
                         }
                     }
@@ -1451,27 +1433,16 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("onErrorResponse", error.toString());
-
-                if (lastItem) {
-                    if (filteredArrayList.isEmpty()) {
-                        dialog.dismiss();
-                        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                        alertDialog.setTitle("No matches found.");
-                        alertDialog.setMessage("There are no species by that name near you.");
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface alertDialog, int which) {
-                                        alertDialog.dismiss();
-                                    }
-                                });
-                        alertDialog.show();
-                    }
-                    else {
-                        dialog.dismiss();
-                        adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
-                        speciesListView.setAdapter(adapter);
-                    }
-                }
+                dialog.dismiss();
+                AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
+                alertDialog.setTitle("Error with input/response.");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface alertDialog, int which) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
             }
         }
         );
@@ -1532,6 +1503,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             dialog.dismiss();
             adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
             speciesListView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
         }
     }
 
