@@ -92,7 +92,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
                             // Make sure data was found or set error message
                             if (eolLink.trim().equals(""))
                             {
-                                eolLink="No data found";
+                                eolLink="No EoL link found.";
                             }
                             //Set link to EoL page on display
                             TextView imageLinkTV = findViewById(R.id.EoLLink);
@@ -195,7 +195,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         //make sure data was found or set error message
         if (commonName.equals(""))
         {
-            commonName="No data found";
+            commonName="";
         }
         //set common name on display
         TextView commonNameTV = findViewById(R.id.CommonName);
@@ -238,7 +238,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         //make sure data was found or set error message
         if (description.equals(""))
         {
-            description="No data found";
+            description="No description found.";
         }
         //Set description on display
         TextView descriptionTV = findViewById(R.id.Description);
@@ -271,7 +271,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         //make sure data was found or set error message
         if (imageLink.trim().equals(""))
         {
-            imageLink="No data found";
+            imageLink="No image link found.";
         }
         //Set link to image on display
         //TextView imageLinkTV = findViewById(R.id.ImageLink);

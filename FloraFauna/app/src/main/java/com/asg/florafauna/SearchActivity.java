@@ -1475,7 +1475,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             }
         }
         );
-        locationRequest.setRetryPolicy(new RetryPolicy() {
+        /*locationRequest.setRetryPolicy(new RetryPolicy() {
             @Override
             public int getCurrentTimeout() {
                 return 50000;
@@ -1488,7 +1488,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
             @Override
             public void retry(VolleyError error) throws VolleyError {}
-        });
+        });*/
 
         // Adds request to queue which is then sent
         requestQueue.add(locationRequest);
