@@ -142,7 +142,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
         //check for permissions, if false tell user
         if(!(hasPerm == PackageManager.PERMISSION_GRANTED)) {
-            Toast.makeText(this, "Permision not granted",LENGTH_LONG).show();
+            Toast.makeText(this, "Permission not granted",LENGTH_LONG).show();
         }
         else {
             imagegrid = findViewById(R.id.FileList);
