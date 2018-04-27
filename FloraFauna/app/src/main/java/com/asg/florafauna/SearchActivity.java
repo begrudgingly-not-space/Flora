@@ -1274,7 +1274,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         String scientificName;
         String commonName;
         boolean isLastItem;
-        adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
 
         if (speciesNamesArray.size() != 0) {
             for (int i = 0; i < speciesNamesArray.size(); i++) {
@@ -1354,6 +1353,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             }
                             else {
                                 dialog.dismiss();
+                                adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
                                 speciesListView.setAdapter(adapter);
                             }
                         }
@@ -1372,25 +1372,6 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             }
                         });
                 alertDialog.show();
-                /*if (lastItem) {
-                    if (filteredArrayList.isEmpty()) {
-                        dialog.dismiss();
-                        AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
-                        alertDialog.setTitle("No matches found.");
-                        alertDialog.setMessage("There are no species with the input name in that kingdom.");
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface alertDialog, int which) {
-                                        alertDialog.dismiss();
-                                    }
-                                });
-                        alertDialog.show();
-                    }
-                    else {
-                        dialog.dismiss();
-                        speciesListView.setAdapter(adapter);
-                    }
-                }*/
             }
         }
         );
