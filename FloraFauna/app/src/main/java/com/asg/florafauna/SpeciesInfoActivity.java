@@ -50,6 +50,11 @@ public class SpeciesInfoActivity extends AppCompatActivity
             FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
         }
 
+        // SSL Certification for webcalls
+        if (BuildConfig.DEBUG) {
+            SSLCertificates.trustAll();
+        }
+
         /* Data population */
         // Get scientific name sent by search
         scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
@@ -90,7 +95,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
                             // Make sure data was found or set error message
                             if (eolLink.trim().equals(""))
                             {
-                                eolLink="No data found";
+                                eolLink="No EoL link found.";
                             }
                             //Set link to EoL page on display
                             TextView eolLinkTV = findViewById(R.id.EoLLink);
@@ -194,7 +199,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         //make sure data was found or set error message
         if (commonName.equals(""))
         {
-            commonName="No data found";
+            commonName="";
         }
         //set common name on display
         TextView commonNameTV = findViewById(R.id.CommonName);
@@ -218,7 +223,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         //make sure data was found or set error message
         if (description.equals(""))
         {
-            description="No data found";
+            description="No description found.";
         }
         //Set description on display
         TextView descriptionTV = findViewById(R.id.Description);
@@ -251,7 +256,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         //make sure data was found or set error message
         if (imageLink.trim().equals(""))
         {
-            imageLink="No data found";
+            imageLink="No image link found.";
         }
 
 

@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/CommonName"
             android:padding="8dp"
-            android:text="Loading description name"
+            android:text="Loading description"
             android:textColor="@color/black"
             android:textSize="15sp"
             android:linksClickable="true"/>
