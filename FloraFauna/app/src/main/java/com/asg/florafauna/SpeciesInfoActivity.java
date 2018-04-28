@@ -218,8 +218,10 @@ public class SpeciesInfoActivity extends AppCompatActivity
         {
             Log.e("Error GetDescription", e.toString());
         }
-
-        description=description.substring(0,description.indexOf("Links:<br>"));
+        if(description.contains("Links:<br>"))
+        {
+            description=description.substring(0,description.indexOf("Links:<br>"));
+        }
         //make sure data was found or set error message
         if (description.equals(""))
         {
