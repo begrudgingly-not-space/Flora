@@ -27,7 +27,7 @@
             android:layout_below="@id/imageView1"
             android:translationZ="1dp"
             android:padding="8dp"
-            android:text="Loading common name"
+            android:text=""
             android:textColor="@color/white"
             android:background="?attr/colorPrimary"
             android:textSize="20sp"
@@ -40,14 +40,16 @@
             android:layout_below="@id/imageView1"
             android:baselineAligned="false"
             android:padding="8dp"
-            android:text="Loading scientific name."
+            android:text=""
             android:textAlignment="textEnd"
             android:textColor="@color/white"
             android:background="?attr/colorPrimary"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_alignParentRight="true"
+            android:scrollHorizontally="true"
             />
+
 
         <TextView
             android:id="@+id/Description"
@@ -73,6 +75,19 @@
             android:linksClickable="true"/>
 
         <!--
+        <TextView
+            android:id="@+id/Description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/CommonName"
+            android:padding="8dp"
+            android:text="Loading description"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:linksClickable="true"/>
+
+
+
         <TextView
             android:id="@+id/ImageLinkBar"
             android:layout_width="match_parent"

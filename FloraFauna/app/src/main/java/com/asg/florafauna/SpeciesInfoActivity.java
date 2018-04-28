@@ -235,18 +235,17 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
     private void getImageLink(JSONObject response)
     {
+        JSONArray imageArray;
+        imageLink="upload.wikimedia";
         try
         {
-            imageLink="upload.wikimedia";
-            //works (mostly) - mediaURL
-            //thumbnails - eolThumbnailURL
-            //no response - eolMediaURL
-            JSONArray imageArray=response.getJSONArray("dataObjects");
-            //imageLink = response.getJSONArray("dataObjects").getJSONObject(1).getString("mediaURL");
+            imageArray=response.getJSONArray("dataObjects");
             int i=1;
-            while(imageLink.contains("upload.wikimedia"))
+            while(imageLink.contains("upload.wikimedia")||imageLink.contains("calphotos")||imageLink.contains("biolib.cz")||imageLink.contains(".exe")||imageLink.contains(" ")||imageLink.contains(" "))
             {
-                imageLink=imageArray.getJSONObject(i).getString("mediaURL");
+                if(imageArray.getJSONObject(i).has("mediaURL")) {
+                    imageLink = imageArray.getJSONObject(i).getString("mediaURL");
+                }
                 i++;
             }
         }
@@ -261,12 +260,15 @@ public class SpeciesInfoActivity extends AppCompatActivity
             imageLink="No image link found.";
         }
 
-
         //Set link to image on display
         //TextView imageLinkTV = findViewById(R.id.ImageLink);
         //imageLinkTV.setText(imageLink.trim());
+
         //Display the actual image
-        new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
+        else
+        {
+            new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
+        }
         log();
     }
 
