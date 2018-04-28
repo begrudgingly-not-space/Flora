@@ -16,6 +16,9 @@ import android.widget.TextView;
 import android.widget.ImageView;
 import android.os.AsyncTask;
 import android.os.Bundle;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -90,10 +93,11 @@ public class SpeciesInfoActivity extends AppCompatActivity
                                 eolLink="No data found";
                             }
                             //Set link to EoL page on display
-                            TextView imageLinkTV = findViewById(R.id.EoLLink);
-                            imageLinkTV.setText(
-                                    Html.fromHtml("<a href=\"www.google.com\">View on Encyclopedia of Life</a>"));
-                            //imageLinkTV.setMovementMethod(LinkMovementMethod.getInstance());
+                            TextView eolLinkTV = findViewById(R.id.EoLLink);
+                            String html="<A href=\""+eolLink+"\" target=_blank>View on Encyclopedia of Life</A>";
+                            Log.i("Thtml",html);
+                            eolLinkTV.setText(Html.fromHtml(html));
+                            eolLinkTV.setMovementMethod(LinkMovementMethod.getInstance());
 
                             //Get rest of the data
                             getData(context, ID);
@@ -210,26 +214,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
             Log.e("Error GetDescription", e.toString());
         }
 
-        /*int start, stop;
-        //removes tacked on links to more info
-        if (description.contains("<br>"))
-        {
-            description = description.substring(0, description.indexOf("<br>"));
-        }
-        //format list of basic characteristics
-        description = description.replaceAll("<p>", "\n");
-        //removes remaining HTML markup
-        while (description.contains("<"))
-        {
-            //find start of tag
-            start = description.indexOf("<");
-            //find end of tag(after the start)
-            stop = description.indexOf(">", start);
-            //use everything from the beginning to the start of the tag, and everything after the end of the tag
-            description = description.substring(0, start) + " " + description.substring(stop + 1);
-        }
-        description = description.replaceAll(" +", " ").trim();
-*/
+        description=description.substring(0,description.indexOf("Links:<br>"));
         //make sure data was found or set error message
         if (description.equals(""))
         {
@@ -268,6 +253,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
         {
             imageLink="No data found";
         }
+
+
         //Set link to image on display
         //TextView imageLinkTV = findViewById(R.id.ImageLink);
         //imageLinkTV.setText(imageLink.trim());
@@ -341,8 +328,25 @@ public class SpeciesInfoActivity extends AppCompatActivity
             //else if(result.getByteCount()>=)
             else
             {
-                Log.i("TimageSize", result.getByteCount() + "");
-                bmImage.setImageBitmap(result);
+                Log.i("TimageSize", result.getWidth() + ","+result.getWidth());
+                int height=result.getHeight();
+                int width=result.getWidth();
+
+                if(height>5000 || width>5000);
+                {
+                    width=width/2;
+                    height=height/2;
+                }
+                result=Bitmap.createScaledBitmap(result,width,height,false);
+                try
+                {
+                    bmImage.setImageBitmap(result);
+                }
+                catch (Exception e)
+                {
+                    Log.e("Error","Can't set bitmap "+e);
+                }
+
             }
         }
     }
