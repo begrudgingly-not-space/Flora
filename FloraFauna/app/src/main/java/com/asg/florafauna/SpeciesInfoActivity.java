@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -62,7 +63,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         // Get scientific name sent by search
         scientificName = title(getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME));
 
-        //hack to get scietific name bold when common name isn't available
+        //hack to get scientific name bold when common name isn't available
         //declare both common and scientific name Text views
         TextView scientificNameTV = findViewById(R.id.ScientificName);
         TextView commonNameTV = findViewById(R.id.CommonName);
@@ -83,7 +84,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
     {
         // Build query that contains the name from search, and set default options
         String query = "http://eol.org/api/search/1.0.json?q=" + scientificName.replaceAll(" ", "+") + "&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=";
-        Log.i("ID", query);
+        Log.i("NameQuery", query);
 
         // Everything until next try block is taken from search activity
         RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -112,7 +113,6 @@ public class SpeciesInfoActivity extends AppCompatActivity
                             //Set link to EoL page on display
                             TextView eolLinkTV = findViewById(R.id.EoLLink);
                             String html="<A href=\""+eolLink+"\" target=_blank>View on Encyclopedia of Life</A>";
-                            Log.i("Thtml",html);
                             eolLinkTV.setText(Html.fromHtml(html));
                             eolLinkTV.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -138,7 +138,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
     {
         //create query with ID from previous call, and default options
         String query = "http://eol.org/api/pages/1.0.json?batch=false&id=" + ID + "&images_per_page=100&images_page=1&videos_per_page=0&videos_page=0&sounds_per_page=0&sounds_page=0&maps_per_page=0&maps_page=0&texts_per_page=1&texts_page=1&subjects=overview&licenses=all&details=true&common_names=true&synonyms=false&references=false&taxonomy=false&vetted=1&cache_ttl=&language=en";
-        Log.i("Data", query);
+        Log.i("IDquery", query);
 
         //everything until get statements taken from search activity
         RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -340,7 +340,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
             //so make sure an image exists (~2/3 images are null)
             if (result==null)
             {
-                Log.i("TimageTest","null");
+                Log.i("ImageTest","null");
             }
             else
             {
@@ -370,9 +370,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
                     public void onClick(View v) {
 
                         Toast toast=new Toast(getApplicationContext());
-                        //toast.setGravity(Gravity.CENTER_HORIZONTAL, 0,0);
+                        toast.setGravity(Gravity.TOP, 0,0);
                         toast.makeText(v.getContext(), rights,LENGTH_LONG).show();
-                       //Toast.makeText(v.getContext(), rights,LENGTH_LONG).show();
                     }
                 });
 
