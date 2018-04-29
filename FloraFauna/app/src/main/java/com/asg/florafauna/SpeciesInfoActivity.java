@@ -4,37 +4,31 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.util.DisplayMetrics;
-import android.view.Display;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import android.util.Log;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-//import android.widget.LinearLayout.LayoutParams;
-import android.widget.TextView;
 import android.widget.ImageView;
-import android.os.AsyncTask;
-import android.os.Bundle;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.android.volley.VolleyError;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.net.*;
+
 
 import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
 
@@ -44,8 +38,7 @@ import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
 
 public class SpeciesInfoActivity extends AppCompatActivity
 {
-    private String scientificName = "", commonName = "", description = "", eolLink = "", imageLink = "";
-    private int devWidth;
+    //must be global because it has to be set in onCreate, but used in downloadImageTask
     private int devHeight;
 
     @Override
@@ -65,21 +58,20 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
         /* Data population */
         // Get scientific name sent by search
-        scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
+        String scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
 
         // Set scientific name on display
         TextView scientificNameTV = findViewById(R.id.ScientificName);
         scientificNameTV.setText(title(scientificName));
 
-        //set device width and height so they can be used later for scaling images to the right size
-        devWidth=this.getResources().getDisplayMetrics().widthPixels;
+        //set device  height so it can be used later for scaling images to the right size
         devHeight=this.getResources().getDisplayMetrics().heightPixels;
 
-        getID(this);
+        getID(this, scientificName);
     }
 
     // Pull relevant info from the search page and from the eol information page
-    private void getID(final Context context)
+    private void getID(final Context context,String scientificName)
     {
         // Build query that contains the name from search, and set default options
         String query = "http://eol.org/api/search/1.0.json?q=" + scientificName.replaceAll(" ", "+") + "&page=1&exact=true&filter_by_taxon_concept_id=&filter_by_hierarchy_entry_id=&filter_by_string=&cache_ttl=";
@@ -99,7 +91,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
                             JSONObject results = response.getJSONArray("results").getJSONObject(0);
 
                             // Initial link (will be redirected)
-                            eolLink = results.getString("link").trim();
+                            String eolLink = results.getString("link").trim();
 
                             // Strip ID that EoL uses for that species
                             String ID = eolLink.substring(eolLink.indexOf("org/") + 4, eolLink.indexOf("?"));
@@ -169,6 +161,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
     private void getCommonName(JSONObject response)
     {
         Boolean pref, en;
+        String commonName="";
         try
         {
             //get list of common names, language for that name, and if it is the preferred name
@@ -176,7 +169,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
             //loop through each record in the array
             //for each doesn't work with JSONArray
-            for (int i = 0; i < names.length(); i++)
+            for (int i = 0; i < names.length()-1; i++)
             {
                 JSONObject record = names.getJSONObject(i);
 
@@ -186,32 +179,27 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
                 //EoL doesn't load eol_preferred with false, just leaves it off
                 //so if it isn't preferred, i am setting it to false
-                try
+                if(record.has("eol_preferred"))
                 {
                     pref = record.getBoolean("eol_preferred");
                 }
-                catch (Exception e)
+                else
                 {
                     pref = false;
                 }
-
                 //if this is an english name and a preferred name, its what we want
                 //could remove pref to get a list of possible names
                 if (en && pref)
                 {
                     commonName = record.getString("vernacularName").trim();
+                    TextView commonNameTV = findViewById(R.id.CommonName);
+                    commonNameTV.setText(title(commonName));
                 }
             }
         }
         catch (Exception e)
         {
             Log.e("Error GetCommonName", e.toString());
-        }
-
-        //make sure data was found or set error message
-        if (commonName.equals(""))
-        {
-            commonName="";
         }
         //set common name on display
         TextView commonNameTV = findViewById(R.id.CommonName);
@@ -221,6 +209,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
     //fetches and then cleans up descriptions, adds newlines, removes HTML
     private void getDescription(JSONObject response)
     {
+        String description="";
         //pull description from JSON
         try
         {
@@ -230,15 +219,16 @@ public class SpeciesInfoActivity extends AppCompatActivity
         {
             Log.e("Error GetDescription", e.toString());
         }
-        if(description.contains("Links:<br>"))
-        {
-            description=description.substring(0,description.indexOf("Links:<br>"));
-        }
-        //make sure data was found or set error message
         if (description.equals(""))
         {
             description="No description found.";
         }
+        else if(description.contains("Links:<br>"))
+        {
+            description=description.substring(0,description.indexOf("Links:<br>"));
+        }
+        //make sure data was found or set error message
+
         //Set description on display
         TextView descriptionTV = findViewById(R.id.Description);
         descriptionTV.setText(Html.fromHtml(description));
@@ -247,6 +237,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
     private void getImageLink(JSONObject response)
     {
+        String imageLink;
         try
         {
             JSONArray imageArray=response.getJSONArray("dataObjects");
@@ -272,7 +263,6 @@ public class SpeciesInfoActivity extends AppCompatActivity
         {
             Log.e("Error GetImageLink",e.toString());
         }
-        log();
     }
 
 /*Small Helper functions */
@@ -288,17 +278,9 @@ public class SpeciesInfoActivity extends AppCompatActivity
         return output.trim();
     }
 
-    //log values
-    private void log()
-    {
-        Log.i("TsciName",scientificName);
-        Log.i("TcommonName",commonName);
-        Log.i("Tdescription",description);
-        Log.i("TeolLink",eolLink);
-        Log.i("TimageLink",imageLink);
-    }
+
 /*Image downloader and display*/
-    //https://stackoverflow.com/a/10868126
+    //Extreme thanks to https://stackoverflow.com/a/10868126 for solving this
     //download and display an image given a URL
     //DO NOT MAKE THIS STATIC - breaks findViewByID
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
@@ -313,10 +295,13 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
         protected Bitmap doInBackground(String... urls)
         {
+            //only sending 1 image at a time but this was breaking if I just used String url
             String urlPath = urls[0];
             Bitmap mIcon11 = null;
             try
             {
+                //connect and download bitmap of the desired image
+                //these 4 lines are why this has to be an AsyncTask
                 URL url = new URL(urlPath);
                 URLConnection con = url.openConnection();
                 InputStream in = con.getInputStream();
@@ -331,24 +316,32 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
         protected void onPostExecute(Bitmap result)
         {
-
+            //some images (upload.wikimedia being the most common offender) don't download through the app
+            //so make sure an image exists (~2/3 images are null)
             if (result==null)
             {
                 Log.i("TimageTest","null");
             }
             else
             {
-                Log.i("TimageSize", result.getWidth() + ","+result.getWidth());
                 //values for calculating the scaling for the image
+
+                //height and width of the raw image from EoL
                 int oldHeight=result.getHeight();
                 int oldWidth=result.getWidth();
+
+                //what percent of the height of the screen should be filled
                 int percent=30;
+
+                //do math to make the new height that percent of the screen
                 int newHeight=devHeight/(100/percent);
+                //more math to preserve ratio
                 int newWidth=oldWidth*newHeight/oldHeight;
-                //scale the image
+                //scale the image to set height and width
                 result=Bitmap.createScaledBitmap(result,newWidth,newHeight,false);
                 try
                 {
+                    //add bitmap to imageView, not on the screen yet
                     bmImage.setImageBitmap(result);
                     //add to the "album" at the top of the page
                     layout.addView(bmImage);
