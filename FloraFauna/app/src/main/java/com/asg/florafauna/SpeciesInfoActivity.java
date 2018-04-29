@@ -70,8 +70,11 @@ public class SpeciesInfoActivity extends AppCompatActivity
         // Set scientific name on display
         TextView scientificNameTV = findViewById(R.id.ScientificName);
         scientificNameTV.setText(title(scientificName));
+
+        //set device width and height so they can be used later for scaling images to the right size
         devWidth=this.getResources().getDisplayMetrics().widthPixels;
         devHeight=this.getResources().getDisplayMetrics().heightPixels;
+
         getID(this);
     }
 
@@ -244,41 +247,30 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
     private void getImageLink(JSONObject response)
     {
-        JSONArray imageArray;
-        imageLink="upload.wikimedia";
         try
         {
-            imageArray=response.getJSONArray("dataObjects");
-            int i=1;
-            while(imageLink.contains("upload.wikimedia")||imageLink.contains("calphotos")||imageLink.contains("biolib.cz")||imageLink.contains(".exe")||imageLink.contains(" ")||imageLink.contains(" "))
+            JSONArray imageArray=response.getJSONArray("dataObjects");
+            //loop through array, object 0 was description
+            //imageArray is a bad name, but that's what most of the data is
+            for(int i=1;i<imageArray.length()-1;i++)
             {
-                if(imageArray.getJSONObject(i).has("mediaURL")) {
+                if(imageArray.getJSONObject(i).has("mediaURL"))
+                {
                     imageLink = imageArray.getJSONObject(i).getString("mediaURL");
+
+                    //create view to place image in
+                    ImageView imageView = new ImageView(this);
+
+                    //pass that view and the link to the image to have the downloader download and fill
+                    //has to be set because it needs to be async or will never get filled
+                    new DownloadImageTask(imageView).execute(imageLink);
                 }
-                i++;
+
             }
         }
         catch(Exception e)
         {
             Log.e("Error GetImageLink",e.toString());
-        }
-
-        //make sure data was found or set error message
-        if (imageLink.trim().equals(""))
-        {
-            imageLink="No image link found.";
-        }
-
-        //Set link to image on display
-        //TextView imageLinkTV = findViewById(R.id.ImageLink);
-        //imageLinkTV.setText(imageLink.trim());
-
-        //Display the actual image
-        else
-        {
-            //ImageView imageView=findViewById(R.id.imageView1);
-            ImageView imageView=new ImageView(this);
-            new DownloadImageTask(imageView).execute(imageLink);
         }
         log();
     }
@@ -308,6 +300,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
 /*Image downloader and display*/
     //https://stackoverflow.com/a/10868126
     //download and display an image given a URL
+    //DO NOT MAKE THIS STATIC - breaks findViewByID
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
     {
         ImageView bmImage;
@@ -324,11 +317,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
             Bitmap mIcon11 = null;
             try
             {
-                //InputStream in = new java.net.URL(url).openStream();
                 URL url = new URL(urlPath);
                 URLConnection con = url.openConnection();
-                //con.setConnectTimeout(10000);
-                //con.setReadTimeout(10000);
                 InputStream in = con.getInputStream();
                 mIcon11 = BitmapFactory.decodeStream(in);
             }
@@ -346,32 +336,21 @@ public class SpeciesInfoActivity extends AppCompatActivity
             {
                 Log.i("TimageTest","null");
             }
-            //else if(result.getByteCount()>=)
             else
             {
                 Log.i("TimageSize", result.getWidth() + ","+result.getWidth());
+                //values for calculating the scaling for the image
                 int oldHeight=result.getHeight();
                 int oldWidth=result.getWidth();
-                /*
-                if(imgheight>5000 || imgwidth>5000);
-                {
-                    imgwidth=imgwidth/2;
-                    imgheight=imgheight/2;
-                }*/
-                int newHeight=devHeight/3;
+                int percent=30;
+                int newHeight=devHeight/(100/percent);
                 int newWidth=oldWidth*newHeight/oldHeight;
+                //scale the image
                 result=Bitmap.createScaledBitmap(result,newWidth,newHeight,false);
                 try
                 {
                     bmImage.setImageBitmap(result);
-                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(newWidth, newHeight);
-                    layout.setLayoutParams(layoutParams);
-                    //bmImage.getLayoutParams().height=20;
-                    //LayoutParams params = layout.getLayoutParams();
-                    // Changes the height and width to the specified *pixels*
-                    //params.height = 100;
-                    //params.width = 100;
-                    //layout.setLayoutParams(params);
+                    //add to the "album" at the top of the page
                     layout.addView(bmImage);
                 }
                 catch (Exception e)

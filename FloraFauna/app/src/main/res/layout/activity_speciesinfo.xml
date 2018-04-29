@@ -13,30 +13,22 @@
             android:id="@+id/horizontal_scroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
+
             <LinearLayout
                 android:id="@+id/linear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
                 android:orientation="horizontal" >
             </LinearLayout>
 
         </HorizontalScrollView>
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/horizontal_scroll"
-            android:layout_marginBottom="0dp"
-            android:adjustViewBounds="true"
-            android:gravity="bottom|center_horizontal"
-            android:paddingBottom="0dp"
-            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/CommonName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/imageView1"
+            android:layout_below="@id/horizontal_scroll"
             android:translationZ="1dp"
             android:padding="8dp"
             android:text=""
@@ -49,7 +41,7 @@
             android:id="@+id/ScientificName"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/imageView1"
+            android:layout_below="@id/horizontal_scroll"
             android:baselineAligned="false"
             android:padding="8dp"
             android:text=""
