@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.util.Log;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.os.AsyncTask;
@@ -267,7 +268,9 @@ public class SpeciesInfoActivity extends AppCompatActivity
         //Display the actual image
         else
         {
-            new DownloadImageTask((ImageView) findViewById(R.id.imageView1)).execute(imageLink);
+            ImageView imageView=findViewById(R.id.imageView1);
+            //layout.addView(imageView);
+            new DownloadImageTask(imageView).execute(imageLink);
         }
         log();
     }
@@ -300,6 +303,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
     private static class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
     {
         ImageView bmImage;
+
 
         private DownloadImageTask(ImageView bmImage)
         {
