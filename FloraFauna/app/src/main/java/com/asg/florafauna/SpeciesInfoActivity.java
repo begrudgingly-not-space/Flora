@@ -40,6 +40,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
 {
     //must be global because it has to be set in onCreate, but used in downloadImageTask
     private int devHeight;
+    private String scientificName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -58,11 +59,17 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
         /* Data population */
         // Get scientific name sent by search
-        String scientificName = getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME);
+        scientificName = title(getIntent().getStringExtra(INTENT_EXTRA_SPECIES_NAME));
 
-        // Set scientific name on display
+        //hack to get scietific name bold when common name isn't available
+        //declare both common and scientific name Text views
         TextView scientificNameTV = findViewById(R.id.ScientificName);
-        scientificNameTV.setText(Html.fromHtml("<i>"+scientificName+"</i>"));
+        TextView commonNameTV = findViewById(R.id.CommonName);
+        //hide the scientific name text view
+        //will be unhidden when a common name is found
+        scientificNameTV.setMaxHeight(0);
+        //put scientific name in the common name text view(configured for larger text and bold)
+        commonNameTV.setText(scientificName);
 
         //set device  height so it can be used later for scaling images to the right size
         devHeight=this.getResources().getDisplayMetrics().heightPixels;
@@ -191,9 +198,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
                 //could remove pref to get a list of possible names
                 if (en && pref)
                 {
-                    commonName = record.getString("vernacularName").trim();
-                    TextView commonNameTV = findViewById(R.id.CommonName);
-                    commonNameTV.setText(title(commonName));
+                    commonName = title(record.getString("vernacularName").trim());
                 }
             }
         }
@@ -201,9 +206,21 @@ public class SpeciesInfoActivity extends AppCompatActivity
         {
             Log.e("Error GetCommonName", e.toString());
         }
-        //set common name on display
+
         TextView commonNameTV = findViewById(R.id.CommonName);
-        commonNameTV.setText(title(commonName));
+        TextView scientificNameTV = findViewById(R.id.ScientificName);
+
+        if(commonName.equals(""))
+        {
+            Log.i("commonName","not found");
+        }
+        else
+        {
+            scientificNameTV.setText(scientificName);
+            commonNameTV.setText(commonName);
+            scientificNameTV.setMaxHeight(100);
+        }
+        //set common name on display
     }
 
     //fetches and then cleans up descriptions, adds newlines, removes HTML
