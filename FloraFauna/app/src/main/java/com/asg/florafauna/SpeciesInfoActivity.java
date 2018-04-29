@@ -261,17 +261,21 @@ public class SpeciesInfoActivity extends AppCompatActivity
             JSONArray imageArray=response.getJSONArray("dataObjects");
             //loop through array, object 0 was description
             //imageArray is a bad name, but that's what most of the data is
+            //may want to lower the number of images possible
             for(int i=1;i<imageArray.length()-1;i++)
             {
                 JSONObject imageObject=imageArray.getJSONObject(i);
                 if(imageObject.has("mediaURL")&&imageObject.has("rightsHolder"))
                 {
-                    imageLink = imageObject.getString("mediaURL");
+                    //name of image owner
                     String rights="Rights Holder: "+imageObject.getString("rightsHolder");
+
+                    imageLink = imageObject.getString("mediaURL");
                     //create view to place image in
                     ImageView imageView = new ImageView(this);
 
                     //pass that view and the link to the image to have the downloader download and fill
+                    //also pass the information for the rights holder
                     //has to be set because it needs to be async or will never get filled
                     new DownloadImageTask(imageView).execute(imageLink,rights);
                 }
