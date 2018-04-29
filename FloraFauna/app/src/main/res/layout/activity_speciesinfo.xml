@@ -12,25 +12,26 @@
         <HorizontalScrollView
             android:id="@+id/horizontal_scroll"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary">
 
             <LinearLayout
                 android:id="@+id/linear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorPrimary"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
             </LinearLayout>
 
         </HorizontalScrollView>
 
         <TextView
             android:id="@+id/CommonName"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/horizontal_scroll"
-            android:translationZ="1dp"
-            android:padding="8dp"
+
+            android:paddingStart="8dp"
             android:text=""
             android:textColor="@color/white"
             android:background="?attr/colorPrimary"
@@ -41,16 +42,15 @@
             android:id="@+id/ScientificName"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/horizontal_scroll"
+            android:layout_below="@id/CommonName"
             android:baselineAligned="false"
-            android:padding="8dp"
+            android:paddingStart="8dp"
+            android:paddingBottom="4dp"
             android:text=""
-            android:textAlignment="textEnd"
             android:textColor="@color/white"
             android:background="?attr/colorPrimary"
-            android:textSize="20sp"
+            android:textSize="15sp"
             android:textStyle="bold"
-            android:layout_alignParentRight="true"
             android:scrollHorizontally="true"
             />
 
@@ -59,7 +59,7 @@
             android:id="@+id/Description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/CommonName"
+            android:layout_below="@id/ScientificName"
             android:padding="8dp"
             android:text="Loading description"
             android:textColor="@color/black"
@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/Description"
             android:padding="8dp"
-            android:text="Loading EoL Link"
+            android:text=""
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="15sp"

@@ -62,7 +62,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
         // Set scientific name on display
         TextView scientificNameTV = findViewById(R.id.ScientificName);
-        scientificNameTV.setText(title(scientificName));
+        scientificNameTV.setText(Html.fromHtml("<i>"+scientificName+"</i>"));
 
         //set device  height so it can be used later for scaling images to the right size
         devHeight=this.getResources().getDisplayMetrics().heightPixels;
@@ -343,6 +343,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
                 {
                     //add bitmap to imageView, not on the screen yet
                     bmImage.setImageBitmap(result);
+                    bmImage.setPadding(8,0,8,0);
                     //add to the "album" at the top of the page
                     layout.addView(bmImage);
                 }
