@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -29,7 +30,7 @@ import java.net.URLConnection;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
+import static android.widget.Toast.LENGTH_LONG;
 import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
 
 /**
@@ -262,16 +263,17 @@ public class SpeciesInfoActivity extends AppCompatActivity
             //imageArray is a bad name, but that's what most of the data is
             for(int i=1;i<imageArray.length()-1;i++)
             {
-                if(imageArray.getJSONObject(i).has("mediaURL"))
+                JSONObject imageObject=imageArray.getJSONObject(i);
+                if(imageObject.has("mediaURL")&&imageObject.has("rightsHolder"))
                 {
-                    imageLink = imageArray.getJSONObject(i).getString("mediaURL");
-
+                    imageLink = imageObject.getString("mediaURL");
+                    String rights="Rights Holder: "+imageObject.getString("rightsHolder");
                     //create view to place image in
                     ImageView imageView = new ImageView(this);
 
                     //pass that view and the link to the image to have the downloader download and fill
                     //has to be set because it needs to be async or will never get filled
-                    new DownloadImageTask(imageView).execute(imageLink);
+                    new DownloadImageTask(imageView).execute(imageLink,rights);
                 }
 
             }
@@ -304,7 +306,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
     {
         ImageView bmImage;
         LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
-
+        String rights;
         private DownloadImageTask(ImageView bmImage)
         {
             this.bmImage = bmImage;
@@ -314,6 +316,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         {
             //only sending 1 image at a time but this was breaking if I just used String url
             String urlPath = urls[0];
+            rights=urls[1];
             Bitmap mIcon11 = null;
             try
             {
@@ -356,19 +359,25 @@ public class SpeciesInfoActivity extends AppCompatActivity
                 int newWidth=oldWidth*newHeight/oldHeight;
                 //scale the image to set height and width
                 result=Bitmap.createScaledBitmap(result,newWidth,newHeight,false);
-                try
-                {
-                    //add bitmap to imageView, not on the screen yet
-                    bmImage.setImageBitmap(result);
-                    bmImage.setPadding(8,0,8,0);
-                    //add to the "album" at the top of the page
-                    layout.addView(bmImage);
-                }
-                catch (Exception e)
-                {
-                    Log.e("Error","Can't set bitmap "+e);
-                }
 
+                //add bitmap to imageView, not on the screen yet
+                bmImage.setImageBitmap(result);
+                bmImage.setPadding(8,0,8,0);
+
+                bmImage.setClickable(true);
+                bmImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Toast toast=new Toast(getApplicationContext());
+                        //toast.setGravity(Gravity.CENTER_HORIZONTAL, 0,0);
+                        toast.makeText(v.getContext(), rights,LENGTH_LONG).show();
+                       //Toast.makeText(v.getContext(), rights,LENGTH_LONG).show();
+                    }
+                });
+
+                //add to the "album" at the top of the page
+                layout.addView(bmImage);
             }
         }
     }
