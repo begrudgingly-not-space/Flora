@@ -7,12 +7,17 @@ import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.util.Log;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+//import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.ImageView;
 import android.os.AsyncTask;
@@ -40,6 +45,8 @@ import static com.asg.florafauna.SearchActivity.INTENT_EXTRA_SPECIES_NAME;
 public class SpeciesInfoActivity extends AppCompatActivity
 {
     private String scientificName = "", commonName = "", description = "", eolLink = "", imageLink = "";
+    private int devWidth;
+    private int devHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -63,7 +70,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
         // Set scientific name on display
         TextView scientificNameTV = findViewById(R.id.ScientificName);
         scientificNameTV.setText(title(scientificName));
-
+        devWidth=this.getResources().getDisplayMetrics().widthPixels;
+        devHeight=this.getResources().getDisplayMetrics().heightPixels;
         getID(this);
     }
 
@@ -268,8 +276,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
         //Display the actual image
         else
         {
-            ImageView imageView=findViewById(R.id.imageView1);
-            //layout.addView(imageView);
+            //ImageView imageView=findViewById(R.id.imageView1);
+            ImageView imageView=new ImageView(this);
             new DownloadImageTask(imageView).execute(imageLink);
         }
         log();
@@ -300,10 +308,10 @@ public class SpeciesInfoActivity extends AppCompatActivity
 /*Image downloader and display*/
     //https://stackoverflow.com/a/10868126
     //download and display an image given a URL
-    private static class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
     {
         ImageView bmImage;
-
+        LinearLayout layout = (LinearLayout) findViewById(R.id.linear);
 
         private DownloadImageTask(ImageView bmImage)
         {
@@ -342,18 +350,29 @@ public class SpeciesInfoActivity extends AppCompatActivity
             else
             {
                 Log.i("TimageSize", result.getWidth() + ","+result.getWidth());
-                int height=result.getHeight();
-                int width=result.getWidth();
-
-                if(height>5000 || width>5000);
+                int oldHeight=result.getHeight();
+                int oldWidth=result.getWidth();
+                /*
+                if(imgheight>5000 || imgwidth>5000);
                 {
-                    width=width/2;
-                    height=height/2;
-                }
-                result=Bitmap.createScaledBitmap(result,width,height,false);
+                    imgwidth=imgwidth/2;
+                    imgheight=imgheight/2;
+                }*/
+                int newHeight=devHeight/3;
+                int newWidth=oldWidth*newHeight/oldHeight;
+                result=Bitmap.createScaledBitmap(result,newWidth,newHeight,false);
                 try
                 {
                     bmImage.setImageBitmap(result);
+                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(newWidth, newHeight);
+                    layout.setLayoutParams(layoutParams);
+                    //bmImage.getLayoutParams().height=20;
+                    //LayoutParams params = layout.getLayoutParams();
+                    // Changes the height and width to the specified *pixels*
+                    //params.height = 100;
+                    //params.width = 100;
+                    //layout.setLayoutParams(params);
+                    layout.addView(bmImage);
                 }
                 catch (Exception e)
                 {
