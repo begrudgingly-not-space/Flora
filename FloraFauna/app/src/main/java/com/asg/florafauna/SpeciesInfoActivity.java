@@ -99,22 +99,17 @@ public class SpeciesInfoActivity extends AppCompatActivity
                             // Take results, all objects have same link, so take first
                             JSONObject results = response.getJSONArray("results").getJSONObject(0);
 
-                            // Initial link (will be redirected)
-                            String eolLink = results.getString("link").trim();
+                            // link to EoL for extra information
+                            String eolLink = results.getString("link");
 
-                            // Strip ID that EoL uses for that species
-                            String ID = eolLink.substring(eolLink.indexOf("org/") + 4, eolLink.indexOf("?"));
-
-                            // Make sure data was found or set error message
-                            if (eolLink.trim().equals(""))
-                            {
-                                eolLink="No EoL link found.";
-                            }
                             //Set link to EoL page on display
                             TextView eolLinkTV = findViewById(R.id.EoLLink);
                             String html="<A href=\""+eolLink+"\" target=_blank>View on Encyclopedia of Life</A>";
                             eolLinkTV.setText(Html.fromHtml(html));
                             eolLinkTV.setMovementMethod(LinkMovementMethod.getInstance());
+
+                            //get id
+                            int ID=results.getInt("id");
 
                             //Get rest of the data
                             getData(context, ID);
@@ -134,7 +129,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         requestQueue.add(pageRequest);
     }
 
-    private void getData(final Context context, String ID)
+    private void getData(final Context context, int ID)
     {
         //create query with ID from previous call, and default options
         String query = "http://eol.org/api/pages/1.0.json?batch=false&id=" + ID + "&images_per_page=100&images_page=1&videos_per_page=0&videos_page=0&sounds_per_page=0&sounds_page=0&maps_per_page=0&maps_page=0&texts_per_page=1&texts_page=1&subjects=overview&licenses=all&details=true&common_names=true&synonyms=false&references=false&taxonomy=false&vetted=1&cache_ttl=&language=en";
