@@ -42,6 +42,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
 {
     //must be global because it has to be set in onCreate, but used in downloadImageTask
     private int devHeight;
+    //global for dirty hack so i don't have to pass it through 3 functions
     private String scientificName;
 
     @Override
@@ -69,6 +70,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
         TextView commonNameTV = findViewById(R.id.CommonName);
         //hide the scientific name text view
         //will be unhidden when a common name is found
+        //TODO setmaxheight in xml (default) to 0, only expand after common name
         scientificNameTV.setMaxHeight(0);
         //put scientific name in the common name text view(configured for larger text and bold)
         commonNameTV.setText(scientificName);
@@ -104,8 +106,11 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
                             //Set link to EoL page on display
                             TextView eolLinkTV = findViewById(R.id.EoLLink);
+                            //format so links work with different displayed text
                             String html="<A href=\""+eolLink+"\" target=_blank>View on Encyclopedia of Life</A>";
+                            //format based on html tags instead of manually setting
                             eolLinkTV.setText(Html.fromHtml(html));
+                            //allow the link to be followed
                             eolLinkTV.setMovementMethod(LinkMovementMethod.getInstance());
 
                             //get id
@@ -143,7 +148,6 @@ public class SpeciesInfoActivity extends AppCompatActivity
                     @Override
                     public void onResponse(JSONObject response)
                     {
-
                         //get functions for isolation and clarity
                         getCommonName(response);
                         getDescription(response);
@@ -172,7 +176,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
             //loop through each record in the array
             //for each doesn't work with JSONArray
-            for (int i = 0; i < names.length()-1; i++)
+            for (int i = 0; i < names.length(); i++)
             {
                 JSONObject record = names.getJSONObject(i);
 
@@ -250,6 +254,12 @@ public class SpeciesInfoActivity extends AppCompatActivity
 
     private void getImageLink(JSONObject response)
     {
+        //TODO this still runs in the background even if the activity is closed
+        //main problem is all the async tasks, DONE happens after ~1 second
+        //https://stackoverflow.com/questions/15185063/android-how-to-stop-cancel-asynctask-when-too-many-asynctask-are-running
+        //applies to android home, back, and taskview buttons.
+        //applies to app back button
+        //killing entire app fixes
         String imageLink;
         try
         {
@@ -257,7 +267,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
             //loop through array, object 0 was description
             //imageArray is a bad name, but that's what most of the data is
             //may want to lower the number of images possible
-            for(int i=1;i<imageArray.length()-1;i++)
+            for(int i=1;i<imageArray.length();i++)
             {
                 JSONObject imageObject=imageArray.getJSONObject(i);
                 if(imageObject.has("mediaURL")&&imageObject.has("rightsHolder"))
@@ -274,8 +284,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
                     //has to be set because it needs to be async or will never get filled
                     new DownloadImageTask(imageView).execute(imageLink,rights);
                 }
-
             }
+            Log.i("ImageTestDone","DONE");
         }
         catch(Exception e)
         {
@@ -343,6 +353,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
             }
             else
             {
+                Log.i("ImageTest","Not null");
                 //values for calculating the scaling for the image
 
                 //height and width of the raw image from EoL
