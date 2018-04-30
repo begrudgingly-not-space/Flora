@@ -154,6 +154,7 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
                     countyInputForCounty.setHint("County");
                     countyInput.setVisibility(View.VISIBLE);
                     stateInput.setVisibility(View.INVISIBLE);
+                    locationInput.setVisibility(View.INVISIBLE);
                 }
                 else if (selectedItem.equals("Scientific name by state")){
                     speciesInput.setHint("Scientific Name");
@@ -168,20 +169,21 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
                     countyInputForCounty.setHint("County");
                     countyInput.setVisibility(View.VISIBLE);
                     stateInput.setVisibility(View.INVISIBLE);
+                    locationInput.setVisibility(View.INVISIBLE);
                 }
                 else if (selectedItem.equals("Nearby sightings (common name)")){
                     speciesInput.setHint("Common Name");
                     locationInput.setHint("State");
                     countyInput.setVisibility(View.INVISIBLE);
                     stateInput.setVisibility(View.VISIBLE);
-                    locationInput.setVisibility(View.INVISIBLE);
+                    locationInput.setVisibility(View.GONE);
                 }
                 else {
                     speciesInput.setHint("Scientific Name");
                     locationInput.setHint("State");
                     countyInput.setVisibility(View.INVISIBLE);
                     stateInput.setVisibility(View.VISIBLE);
-                    locationInput.setVisibility(View.INVISIBLE);
+                    locationInput.setVisibility(View.GONE);
                 }
             } // To close the onItemSelected
             public void onNothingSelected(AdapterView<?> parent)

@@ -29,7 +29,7 @@
     <RelativeLayout
         android:id="@+id/SearchBox"
         android:layout_width="match_parent"
-        android:layout_height="215dp"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:background="?attr/colorPrimary"
         android:orientation="vertical">
@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="15dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@drawable/rounded_green_box">
@@ -55,9 +55,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_below="@id/DropDownBox"
@@ -71,12 +70,12 @@
                 android:paddingStart="10dp"
                 android:inputType="textNoSuggestions"
                 android:textColor="@color/black"
-                android:layout_marginBottom="15dp"
                 android:textSize="15sp" />
             <EditText
                 android:id="@+id/SearchEditTextRegion"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
+                android:layout_marginTop="15dp"
                 android:background="@drawable/rounded_search_box"
                 android:paddingStart="10dp"
                 android:inputType="textNoSuggestions"
@@ -88,8 +87,7 @@
         <LinearLayout
             android:id="@+id/CountySearch"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_marginTop="10dp"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:orientation="vertical"
@@ -149,7 +147,8 @@
             android:layout_height="35dp"
             android:layout_below="@id/StateSearch"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/rounded_black_box"
             android:gravity="center"
             android:text="GO"
