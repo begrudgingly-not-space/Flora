@@ -697,6 +697,13 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
         // Capitalizes first char in county
         if (county.length() > 0){
             county = county.substring(0, 1).toUpperCase() + county.substring(1);
+
+            if (county.contains(" ") && county.length() > 2){
+                String[] countyParts = county.split(" ");
+                countyParts[1] = countyParts[1].substring(0,1).toUpperCase() + countyParts[1].substring(1);
+                county = countyParts[0] + " " + countyParts[1];
+            }
+
         }
 
         String countyFips = countyFinder(context, state, county);
