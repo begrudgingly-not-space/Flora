@@ -634,6 +634,9 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         {
             public void onClick(View v)
             {
+                //loading dialog
+                dialog = ProgressDialog.show(PersonalRecordingsActivity.this, "", "Deleting. Please wait...", true);
+
                 File deleteThis = new File(FilePathStrings.get(position));
                 //if directory, recursively delete
                 if(deleteThis.isDirectory()){
