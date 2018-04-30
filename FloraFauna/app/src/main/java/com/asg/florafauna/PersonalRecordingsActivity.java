@@ -526,7 +526,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 else
                 {
                     // create new file for image
-                    String folderPath = dirName + selectedDir;
+                    String folderPath = dirName + "/" + selectedDir;
                     Log.i("root directory", folderPath);
                     File newFolder = new File(folderPath);
                     imageLocation = newFolder;
@@ -687,7 +687,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     // Create a folder in the root path /FloraFauna/Recordings
     protected void createNewFolder(String pathname)
     {
-        String folderPath = dirName + pathname;
+        String folderPath = dirName + "/" + pathname;
         Log.i("root directory", folderPath);
         newFolder = new File(folderPath);
 
