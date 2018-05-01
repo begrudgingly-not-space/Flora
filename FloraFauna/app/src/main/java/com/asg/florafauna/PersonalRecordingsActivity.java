@@ -479,9 +479,10 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 }
             }
         });
-
-        defaultDirs.add("Current Folder");
-        defaultDirs.add("Create New");
+        if(nameGiven) {
+            defaultDirs.add("Current Folder");
+            defaultDirs.add("Create New");
+        }
 
         if (listFile != null) {
             // If there are existing folders, populate those in the imageDialog spinner
@@ -494,9 +495,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             }
         }
         if(nameGiven) {
-            // add the two default settings
-//            defaultDirs.add("On Page");
-//            defaultDirs.add("Create New");
 
             spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, defaultDirs);
             spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -526,7 +524,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
                 }
                 // root personal recordings page
-                else if(selectedDir.equals("On Page"))
+                else if(selectedDir.equals("Current Folder"))
                 {
                     Log.i("Save on page", "image");
                     imageLocation = recordings;
