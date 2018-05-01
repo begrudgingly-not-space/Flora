@@ -551,7 +551,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
                 }
                 // root personal recordings page
-                else if(selectedDir.equals("On Page"))
+                else if(selectedDir.equals("Current Folder"))
                 {
                     Log.i("Save on page", "image");
                     imageLocation = recordings;
