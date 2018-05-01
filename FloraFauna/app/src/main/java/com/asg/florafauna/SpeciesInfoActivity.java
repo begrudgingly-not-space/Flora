@@ -1,5 +1,6 @@
 package com.asg.florafauna;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -28,6 +29,8 @@ import com.android.volley.VolleyError;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -44,6 +47,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
     private int devHeight;
     //global for dirty hack so i don't have to pass it through 3 functions
     private String scientificName;
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -54,6 +58,8 @@ public class SpeciesInfoActivity extends AppCompatActivity
         if (getSupportActionBar() != null) {
             FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_speciesinfo);
         }
+
+        dialog = ProgressDialog.show(this, "", "Loading. Please wait...", true);
 
         // SSL Certification for webcalls
         if (BuildConfig.DEBUG) {
@@ -152,6 +158,7 @@ public class SpeciesInfoActivity extends AppCompatActivity
                         getCommonName(response);
                         getDescription(response);
                         getImageLink(response);
+                        dialog.dismiss();
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -260,14 +267,16 @@ public class SpeciesInfoActivity extends AppCompatActivity
         //applies to android home, back, and taskview buttons.
         //applies to app back button
         //killing entire app fixes
-        String imageLink;
+        String imageLink = "";
         try
         {
             JSONArray imageArray=response.getJSONArray("dataObjects");
+            ArrayList<String> imageLinkArrayList = new ArrayList<>();
             //loop through array, object 0 was description
             //imageArray is a bad name, but that's what most of the data is
             //may want to lower the number of images possible
-            for(int i=1;i<imageArray.length();i++)
+            /*for(int i=1;i<imageArray.length();i++)*/
+            for(int i=1;i<10;i++)
             {
                 JSONObject imageObject=imageArray.getJSONObject(i);
                 if(imageObject.has("mediaURL")&&imageObject.has("rightsHolder"))
@@ -276,13 +285,20 @@ public class SpeciesInfoActivity extends AppCompatActivity
                     String rights="Rights Holder: "+imageObject.getString("rightsHolder");
 
                     imageLink = imageObject.getString("mediaURL");
+
                     //create view to place image in
                     ImageView imageView = new ImageView(this);
 
                     //pass that view and the link to the image to have the downloader download and fill
                     //also pass the information for the rights holder
                     //has to be set because it needs to be async or will never get filled
-                    new DownloadImageTask(imageView).execute(imageLink,rights);
+                    String noHttpImageLink = imageLink.substring(imageLink.indexOf("//") + 2, imageLink.length());
+                    Log.i("noHttpImageLink", noHttpImageLink);
+                    if (!imageLinkArrayList.contains(noHttpImageLink)) {
+                        Log.i("imageLink", imageLink);
+                        imageLinkArrayList.add(noHttpImageLink);
+                        new DownloadImageTask(imageView).execute(imageLink,rights);
+                    }
                 }
             }
             Log.i("ImageTestDone","DONE");
