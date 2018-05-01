@@ -92,6 +92,11 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
             FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_map);
         }
 
+        // SSL Certification for webcalls
+        if (BuildConfig.DEBUG) {
+            SSLCertificates.trustAll();
+        }
+
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         final ScrollView sv = findViewById(R.id.scrollview);
 
@@ -149,6 +154,7 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
                     countyInputForCounty.setHint("County");
                     countyInput.setVisibility(View.VISIBLE);
                     stateInput.setVisibility(View.INVISIBLE);
+                    locationInput.setVisibility(View.INVISIBLE);
                 }
                 else if (selectedItem.equals("Scientific name by state")){
                     speciesInput.setHint("Scientific Name");
@@ -163,20 +169,21 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
                     countyInputForCounty.setHint("County");
                     countyInput.setVisibility(View.VISIBLE);
                     stateInput.setVisibility(View.INVISIBLE);
+                    locationInput.setVisibility(View.INVISIBLE);
                 }
                 else if (selectedItem.equals("Nearby sightings (common name)")){
                     speciesInput.setHint("Common Name");
                     locationInput.setHint("State");
                     countyInput.setVisibility(View.INVISIBLE);
                     stateInput.setVisibility(View.VISIBLE);
-                    locationInput.setVisibility(View.INVISIBLE);
+                    locationInput.setVisibility(View.GONE);
                 }
                 else {
                     speciesInput.setHint("Scientific Name");
                     locationInput.setHint("State");
                     countyInput.setVisibility(View.INVISIBLE);
                     stateInput.setVisibility(View.VISIBLE);
-                    locationInput.setVisibility(View.INVISIBLE);
+                    locationInput.setVisibility(View.GONE);
                 }
             } // To close the onItemSelected
             public void onNothingSelected(AdapterView<?> parent)
@@ -690,6 +697,13 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
         // Capitalizes first char in county
         if (county.length() > 0){
             county = county.substring(0, 1).toUpperCase() + county.substring(1);
+
+            if (county.contains(" ") && county.length() > 2){
+                String[] countyParts = county.split(" ");
+                countyParts[1] = countyParts[1].substring(0,1).toUpperCase() + countyParts[1].substring(1);
+                county = countyParts[0] + " " + countyParts[1];
+            }
+
         }
 
         String countyFips = countyFinder(context, state, county);

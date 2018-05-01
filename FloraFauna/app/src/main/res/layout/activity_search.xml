@@ -69,7 +69,8 @@
                     android:inputType="textNoSuggestions"
                     android:textColor="@color/black"
                     android:textSize="15sp"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:imeOptions="actionDone"/>
 
             </LinearLayout>
 

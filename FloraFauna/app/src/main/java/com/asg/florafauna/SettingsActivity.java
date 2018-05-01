@@ -35,6 +35,11 @@ public class SettingsActivity extends AppCompatActivity {
             FloraFaunaActionBar.createActionBar(getSupportActionBar(), R.layout.ab_settings);
         }
 
+        // SSL Certification for webcalls
+        if (BuildConfig.DEBUG) {
+            SSLCertificates.trustAll();
+        }
+
         // Save the settings to file
         Spinner mileage = findViewById(R.id.miles);
         Spinner theme = findViewById(R.id.Style);
