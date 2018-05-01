@@ -139,7 +139,7 @@ public class SettingsActivity extends AppCompatActivity {
         File file = new File(dir, "history");
         file.delete();
         Log.d("Clear History", "History cleared.");
-        Toast.makeText(this,"Clear History", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,"History Cleared", Toast.LENGTH_SHORT).show();
     }
 
     private void saveSettings(Spinner mileage, Spinner theme){

@@ -124,18 +124,18 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         });
 
         // Open the default camera app to take a picture
-        ImageButton openCamera = findViewById(R.id.floatingCameraButton);
-        openCamera.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                File tempFile = null;
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, 2);
-                }
-            }
-        });
+//        ImageButton openCamera = findViewById(R.id.floatingCameraButton);
+//        openCamera.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                File tempFile = null;
+//                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+//                    startActivityForResult(takePictureIntent, 2);
+//                }
+//            }
+//        });
 
         // Create directory for recordings
 //        // Request for permission to write to storage

@@ -19,17 +19,6 @@
         app:backgroundTint="@color/white"
         app:srcCompat="@drawable/plus_sign" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingCameraButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/floatingUpload"
-        android:layout_marginBottom="75dp"
-        android:clickable="true"
-        app:backgroundTint="@android:color/background_light"
-        app:srcCompat="@drawable/ic_camera" />
-
     <GridView
         android:id="@+id/FileList"
         android:layout_width="fill_parent"
