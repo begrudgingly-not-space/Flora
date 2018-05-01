@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -128,8 +130,9 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                File tempFile = null;
                 if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, 1);
+                    startActivityForResult(takePictureIntent, 2);
                 }
             }
         });
@@ -212,8 +215,13 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            Log.i("result okay",  "okay");
+        if(requestCode == 2 && resultCode == RESULT_OK)
+        {
+            Log.i("using camera", "img");
+            createImageDialog(data);
+        }
+        else if (requestCode == 1 && resultCode == RESULT_OK) {
+            Log.i("uploading",  "img");
             createImageDialog(data);
         }
     }
@@ -439,16 +447,15 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
                 //test if previously name was given
                 if(nameGiven) {
-                    // if we have an image stored, let's make sure
-                    // that an image name and description was entered
-                    // additionally, we need to ensure a save location was selected
-                    if (currentImage == null) {
-                        Uri photoUri = data.getData();
-                        if (photoUri != null) {
+                    Log.i("data gathered", "camera");
+
+                    Uri photoUri = data.getData();
+                       if (photoUri != null) {
                             //code to mess with images will be here
                             ContentResolver cr = getContentResolver();
                             try {
                                 currentImage = MediaStore.Images.Media.getBitmap(cr, photoUri);
+                                Log.i("have an image", currentImage.toString());
                                 //selectedImage.setImageBitmap(currentImage); //set the image view to the current image
                                 FileOutputStream output = new FileOutputStream(getSaveFolder() + "/" + imageName.getText() + "!<>!" + description.getText());
                                 currentImage.compress(Bitmap.CompressFormat.PNG, 100, output); //save file
@@ -458,7 +465,25 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
                             refresh();
                         }
-                    }
+                        else
+                       {
+                           // taking an image with the camera doesn't return a URI
+                           // so getting the thumbnail through extras
+                           Bundle extras = data.getExtras();
+                           try
+                           {
+                               Bitmap imageBitmap = (Bitmap) extras.get("data");
+                               currentImage = imageBitmap;
+                               FileOutputStream output = new FileOutputStream(getSaveFolder() + "/" + imageName.getText() + "!<>!" + description.getText());
+                               currentImage.compress(Bitmap.CompressFormat.PNG, 100, output);
+                           }
+                           catch (Exception e)
+                           {
+                               e.printStackTrace();
+                           }
+
+                           refresh();
+                       }
 
                     imageDialog.dismiss();
                 }
@@ -720,5 +745,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     {
         return imageLocation;
     }
+
 }
 
