@@ -71,8 +71,13 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     final ArrayList<String> defaultDirs = new ArrayList<>();
     File newFolder;
 
-    //testing for loading
+    //Loading screen
     private ProgressDialog dialog;
+
+    Spinner spinner_test;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -145,7 +150,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
         //check for permissions, if false tell user
         if(!(hasPerm == PackageManager.PERMISSION_GRANTED)) {
-            Toast.makeText(this, "Permision not granted",LENGTH_LONG).show();
+            Toast.makeText(this, "Permission not granted",LENGTH_LONG).show();
         }
         else {
             imagegrid = findViewById(R.id.FileList);
@@ -500,6 +505,9 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             }
         });
 
+        defaultDirs.add("Current Folder");
+        defaultDirs.add("Create New");
+
         if (listFile != null) {
             // If there are existing folders, populate those in the imageDialog spinner
             for (int i = 0; i < listFile.length; i++)
@@ -512,8 +520,8 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         }
         if(nameGiven) {
             // add the two default settings
-            defaultDirs.add("On Page");
-            defaultDirs.add("Create New");
+//            defaultDirs.add("On Page");
+//            defaultDirs.add("Create New");
 
             spinAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, defaultDirs);
             spinAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -526,6 +534,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         // lastly, the user should be able to save a picture in the 'root' part of the page
         // "On Page" for now
         final Spinner dirSelector = (Spinner) dView.findViewById(R.id.dirSpinner);
+        spinner_test = dirSelector;
         dirSelector.setAdapter(spinAdapter);
 
         dirSelector.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -551,7 +560,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 else
                 {
                     // create new file for image
-                    String folderPath = dirName + selectedDir;
+                    String folderPath = dirName + "/" + selectedDir;
                     Log.i("root directory", folderPath);
                     File newFolder = new File(folderPath);
                     imageLocation = newFolder;
@@ -618,6 +627,9 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                     if(!folderAL.contains(folderName))
                     {
                         createNewFolder(folderName);
+
+                        spinner_test.setSelection(spinner_test.getAdapter().getCount()-1);
+
                         folderDialog.dismiss();
                     }
                 }
@@ -659,6 +671,9 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         {
             public void onClick(View v)
             {
+                //loading dialog
+                dialog = ProgressDialog.show(PersonalRecordingsActivity.this, "", "Deleting. Please wait...", true);
+
                 File deleteThis = new File(FilePathStrings.get(position));
                 //if directory, recursively delete
                 if(deleteThis.isDirectory()){
@@ -709,7 +724,7 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
     // Create a folder in the root path /FloraFauna/Recordings
     protected void createNewFolder(String pathname)
     {
-        String folderPath = dirName + pathname;
+        String folderPath = dirName + "/" + pathname;
         Log.i("root directory", folderPath);
         newFolder = new File(folderPath);
 
@@ -720,7 +735,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
             folderAL.add(newFolder);
             defaultDirs.add(newFolder.getName());
             spinAdapter.notifyDataSetChanged();
-
         }
         else
         {

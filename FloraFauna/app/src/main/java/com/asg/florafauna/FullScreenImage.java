@@ -44,7 +44,7 @@ public class FullScreenImage extends AppCompatActivity {
 
         String[] name = filename.get(position).split("!<>!");
 
-        if (name[1] != null) {
+        if (name.length > 1) {
             textView.setText(name[1]);
         }
 
