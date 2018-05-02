@@ -300,7 +300,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
                 convertView = mInflater.inflate(R.layout.galleryitem, null);
                 holder.imageview = convertView.findViewById(R.id.thumbImage); //thumbnail
                 holder.fileName = convertView.findViewById(R.id.fileName); //name of text
-                holder.checkBox = convertView.findViewById(R.id.itemCheckBox); //checkbox of item
                 holder.delete = convertView.findViewById(R.id.delete); //delete button
                 holder.imgDescription = convertView.findViewById(R.id.description); // image description
 
