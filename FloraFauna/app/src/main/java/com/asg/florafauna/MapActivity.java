@@ -392,6 +392,8 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
         else if (selection.equals("Nearby sightings (common name)")){
             Log.d("selection","nearby common");
             searchType = "common_name";
+            latitude = 32.5261848;
+            longitude = -92.6447334;
             if (latitude != 0 && longitude != 0) {
                 double mileage = Double.parseDouble(mileageArray[0]);
                 locationPolygon = setAOIBbox(latitude, longitude, mileage);
@@ -417,6 +419,8 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
         else {
             Log.d("selection", "nearby scientific");
             searchType = "scientific_name";
+            latitude = 32.5261848;
+            longitude = -92.6447334;
             if (latitude != 0 && longitude != 0) {
                 double mileage = Double.parseDouble(mileageArray[0]);
                 locationPolygon = setAOIBbox(latitude, longitude, mileage);
