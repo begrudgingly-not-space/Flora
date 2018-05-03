@@ -77,14 +77,18 @@
             <TextView
                 android:id="@+id/SearchButton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
                 android:text="Search"
                 android:layout_marginStart="5dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerInParent="true"
                 android:textColor="?attr/colorBackgroundFloating"
                 android:textStyle="bold"
-                android:onClick="search"/>
+                android:onClick="search"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:background="@drawable/rounded_accent_box"/>
         </RelativeLayout>
         <RadioGroup
             android:id="@+id/RadioButtons"
@@ -167,16 +171,18 @@
                 <TextView
                     android:id="@+id/FilterButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="30dp"
                     android:text="Filter"
                     android:layout_marginStart="5dp"
-                    android:paddingStart="5dp"
-                    android:paddingEnd="5dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerInParent="true"
                     android:textColor="?attr/colorBackgroundFloating"
                     android:textStyle="bold"
-                    android:onClick="filter"/>
+                    android:onClick="filter"
+                    android:gravity="center"
+                    android:paddingStart="13dp"
+                    android:paddingEnd="13dp"
+                    android:background="@drawable/rounded_accent_box"/>
             </RelativeLayout>
             <RadioGroup
                 android:id="@+id/FilterRadioButtons"
@@ -221,15 +227,19 @@
 
         <TextView
             android:id="@+id/WhatsAroundMeButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_height="30dp"
             android:text="What's Around Me?"
             android:textColor="?attr/colorBackgroundFloating"
             android:textStyle="bold"
             android:layout_centerInParent="true"
             android:layout_margin="10dp"
             android:layout_below="@id/FilterAndRadioButtons"
-            android:onClick="whatsAroundMe"/>
+            android:onClick="whatsAroundMe"
+            android:gravity="center"
+            android:background="@drawable/rounded_accent_box"/>
     </RelativeLayout>
     <ListView
         android:id="@+id/ListSpecies"

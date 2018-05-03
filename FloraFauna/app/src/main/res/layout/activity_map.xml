@@ -9,23 +9,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-   <!-- <RelativeLayout
-        android:id="@+id/DropDownBox"
-        android:layout_width="300dp"
-        android:layout_height="35dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/map_search_box">
-
-        <Spinner
-            android:id="@+id/search_selection"
-            android:layout_width="225dp"
-            android:layout_centerVertical="true"
-            android:layout_height="wrap_content"
-            android:entries="@array/map_search_options" />
-
-    </RelativeLayout> -->
-
     <RelativeLayout
         android:id="@+id/SearchBox"
         android:layout_width="match_parent"
@@ -42,7 +25,7 @@
             android:layout_marginBottom="15dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/rounded_green_box">
+            android:background="@drawable/rounded_search_box">
 
             <Spinner
                 android:id="@+id/search_selection"
@@ -70,7 +53,7 @@
                 android:paddingStart="10dp"
                 android:inputType="textNoSuggestions"
                 android:textColor="@color/black"
-                android:textSize="15sp" />
+                android:textSize="15sp"/>
             <EditText
                 android:id="@+id/SearchEditTextRegion"
                 android:layout_width="match_parent"
@@ -80,7 +63,8 @@
                 android:paddingStart="10dp"
                 android:inputType="textNoSuggestions"
                 android:textColor="@color/black"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:imeOptions="actionDone"/>
 
         </LinearLayout>
 
@@ -133,7 +117,8 @@
                     android:inputType="textNoSuggestions"
                     android:textColor="@color/black"
                     android:textSize="15sp"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:imeOptions="actionDone"/>
 
             </LinearLayout>
 
@@ -144,12 +129,12 @@
             android:layout_width="match_parent"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_height="35dp"
+            android:layout_height="30dp"
             android:layout_below="@id/StateSearch"
             android:layout_gravity="center"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="10dp"
-            android:background="@drawable/rounded_black_box"
+            android:background="@drawable/rounded_accent_box"
             android:gravity="center"
             android:text="GO"
             android:onClick="sightingsSearch"

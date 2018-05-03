@@ -16,11 +16,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
@@ -30,6 +32,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.android.volley.NoConnectionError;
 import com.android.volley.Request;
@@ -133,6 +136,24 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
         countyInput = findViewById(R.id.CountySearch);
         stateInput = findViewById(R.id.StateSearch);
 
+        stateInputForCounty.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    sightingsSearch(v);
+                }
+                return false;
+            }
+        });
+
+        locationInput.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE)) {
+                    sightingsSearch(v);
+                }
+                return false;
+            }
+        });
+
         spinner = findViewById(R.id.search_selection);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
@@ -142,14 +163,14 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
                 String selectedItem = parent.getItemAtPosition(position).toString();
                 if (selectedItem.equals("Common name by state"))
                 {
-                    speciesInput.setHint("Common Name");
+                    speciesInput.setHint("Common name");
                     locationInput.setHint("State");
                     countyInput.setVisibility(View.INVISIBLE);
                     stateInput.setVisibility(View.VISIBLE);
                     locationInput.setVisibility(View.VISIBLE);
                 }
                 else if (selectedItem.equals("Common name by county")){
-                    speciesInputCounty.setHint("Common Name");
+                    speciesInputCounty.setHint("Common name");
                     stateInputForCounty.setHint("State");
                     countyInputForCounty.setHint("County");
                     countyInput.setVisibility(View.VISIBLE);
@@ -157,14 +178,14 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
                     locationInput.setVisibility(View.INVISIBLE);
                 }
                 else if (selectedItem.equals("Scientific name by state")){
-                    speciesInput.setHint("Scientific Name");
+                    speciesInput.setHint("Scientific name");
                     locationInput.setHint("State");
                     countyInput.setVisibility(View.INVISIBLE);
                     stateInput.setVisibility(View.VISIBLE);
                     locationInput.setVisibility(View.VISIBLE);
                 }
                 else if (selectedItem.equals("Scientific name by county")){
-                    speciesInputCounty.setHint("Scientific Name");
+                    speciesInputCounty.setHint("Scientific name");
                     stateInputForCounty.setHint("State");
                     countyInputForCounty.setHint("County");
                     countyInput.setVisibility(View.VISIBLE);
@@ -172,14 +193,14 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
                     locationInput.setVisibility(View.INVISIBLE);
                 }
                 else if (selectedItem.equals("Nearby sightings (common name)")){
-                    speciesInput.setHint("Common Name");
+                    speciesInput.setHint("Common name");
                     locationInput.setHint("State");
                     countyInput.setVisibility(View.INVISIBLE);
                     stateInput.setVisibility(View.VISIBLE);
                     locationInput.setVisibility(View.GONE);
                 }
                 else {
-                    speciesInput.setHint("Scientific Name");
+                    speciesInput.setHint("Scientific name");
                     locationInput.setHint("State");
                     countyInput.setVisibility(View.INVISIBLE);
                     stateInput.setVisibility(View.VISIBLE);

@@ -305,21 +305,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
 
                 convertView.setTag(holder);
 
-                // Set onCheckListener for each item
-                holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                        if (isChecked){ // If item is checked
-
-                        }
-                        else // If item is unchecked from being checked
-                        {
-
-                        }
-
-                    }
-                });
-
                 // Set onclicklistener for delete for each item
                 holder.delete.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -648,7 +633,6 @@ public class PersonalRecordingsActivity extends AppCompatActivity {
         dirBuilder.setView(dirView);
 
         folderDialog = dirBuilder.create();
-        folderDialog.setTitle("Create New Folder");
         folderDialog.show();
 
     }
