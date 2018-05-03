@@ -1001,6 +1001,8 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         filterAndRadioButtons.setVisibility(View.VISIBLE);
         speciesNamesArray = new ArrayList<>();
         offset = 0;
+        latitude = 32.5261848;
+        longitude = -92.6447334;
         if (latitude != 0 && longitude != 0) {
             double mileage = Double.parseDouble(mileageArray[0]);
             locationPolygon = setAOIBbox(latitude, longitude, mileage);
@@ -1393,6 +1395,8 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
     }
 
     private void locationRequest(Context context, final String scientificName, final String commonName, final boolean lastItem){
+        latitude = 32.5261848;
+        longitude = -92.6447334;
         String locationPolygon = setAOIBbox(latitude, longitude, mileage);
         final String url = "https://bison.usgs.gov/api/search.json?species=" + scientificName + "&type=scientific_name&aoibbox=" + locationPolygon + "&start=0&count=1";
         Log.d("url", url);

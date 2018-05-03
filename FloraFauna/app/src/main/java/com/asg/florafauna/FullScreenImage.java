@@ -39,7 +39,7 @@ public class FullScreenImage extends AppCompatActivity {
         // Decode the filepath with BitmapFactory followed by the position
         Bitmap bmp = BitmapFactory.decodeFile(filepath.get(position));
 
-        //set device  height so it can be used later for scaling images to the right size
+        /*//set device  height so it can be used later for scaling images to the right size
         int devHeight=this.getResources().getDisplayMetrics().heightPixels;
 
         //height and width of the raw image from EoL
@@ -49,7 +49,7 @@ public class FullScreenImage extends AppCompatActivity {
         //more math to preserve ratio
         int newWidth=oldWidth*devHeight/oldHeight;
         //scale the image to set height and width
-        bmp=Bitmap.createScaledBitmap(bmp,newWidth,devHeight,false);
+        bmp=Bitmap.createScaledBitmap(bmp,newWidth,devHeight,false);*/
 
         // Set the decoded bitmap into ImageView
         imageview.setImageBitmap(bmp);
