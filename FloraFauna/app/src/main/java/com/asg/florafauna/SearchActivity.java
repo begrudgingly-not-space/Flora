@@ -1298,6 +1298,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
             }
         }
         else {
+            dialog.dismiss();
             AlertDialog alertDialog = new AlertDialog.Builder(SearchActivity.this).create();
             alertDialog.setTitle("No results to filter by.");
             alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
