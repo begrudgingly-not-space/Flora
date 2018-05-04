@@ -1437,6 +1437,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                                 dialog.dismiss();
                                 adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
                                 speciesListView.setAdapter(adapter);
+                                adapter.notifyDataSetChanged();
                             }
                         }
                     }
