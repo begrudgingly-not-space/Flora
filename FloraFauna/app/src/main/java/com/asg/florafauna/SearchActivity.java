@@ -450,6 +450,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
 
                             adapter = new ArrayAdapter<>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesNamesArray);
                             speciesListView.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
                             speciesListView.setVisibility(View.VISIBLE);
                             speciesListView.setSelection(position);
 
@@ -627,6 +628,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesNamesArray);
 
                             speciesListView.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
                             speciesListView.setVisibility(View.VISIBLE);
                             speciesListView.setSelection(position);
 
@@ -808,6 +810,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     // Throw species name in ListView and display
                     adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesNamesArray);
                     speciesListView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
                     speciesListView.setVisibility(View.VISIBLE);
 
                     // Hide the keyboard
@@ -934,6 +937,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     // Throw all names in ListView and display
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesNamesArray);
                     speciesListView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
                     speciesListView.setVisibility(View.VISIBLE);
 
                     // Hide the keyboard
@@ -1093,6 +1097,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, speciesNamesArray);
 
                             speciesListView.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
                             speciesListView.setVisibility(View.VISIBLE);
                             speciesListView.setSelection(position);
 
@@ -1284,6 +1289,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
         boolean isLastItem;
         adapter = new ArrayAdapter<String>(SearchActivity.this, android.R.layout.simple_list_item_1, android.R.id.text1, filteredArrayList);
         speciesListView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
         if (speciesNamesArray.size() != 0) {
             for (int i = 0; i < speciesNamesArray.size(); i++) {
