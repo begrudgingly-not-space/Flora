@@ -453,7 +453,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             speciesListView.setVisibility(View.VISIBLE);
                             speciesListView.setSelection(position);
 
-                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                            imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
                         }
                         catch (JSONException error) {
                             Log.e("searchResponseException", error.toString());
@@ -628,7 +628,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             speciesListView.setVisibility(View.VISIBLE);
                             speciesListView.setSelection(position);
 
-                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                            imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
                         }
                         catch (JSONException error) {
                             Log.e("searchResponseException", error.toString());
@@ -806,7 +806,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     speciesListView.setVisibility(View.VISIBLE);
 
                     // Hide the keyboard
-                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
                 }
                 catch(Exception exception)
                 {
@@ -930,7 +930,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                     speciesListView.setVisibility(View.VISIBLE);
 
                     // Hide the keyboard
-                    imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                    imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
                 }
                 catch(Exception exception)
                 {
@@ -1087,7 +1087,7 @@ public class SearchActivity extends AppCompatActivity implements LocationListene
                             speciesListView.setVisibility(View.VISIBLE);
                             speciesListView.setSelection(position);
 
-                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                            imm.toggleSoftInput(InputMethodManager.HIDE_NOT_ALWAYS, 0);
                         }
                         catch (JSONException error) {
                             Log.e("whatsAroundMeRespExcept", error.toString());
