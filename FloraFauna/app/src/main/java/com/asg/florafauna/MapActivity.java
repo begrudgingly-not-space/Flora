@@ -910,8 +910,8 @@ public class MapActivity extends AppCompatActivity implements LocationListener{
                             }
                             myWebView.reload();
 
-                            imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-
+                            //imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                            imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS);
                         }
                         catch (JSONException error) {
                             Log.e("searchResponseException", error.toString());
